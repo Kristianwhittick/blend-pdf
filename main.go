@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 )
 
 func main() {
@@ -105,8 +106,48 @@ func processMenu() {
 	
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter choice (S/M/H/V/Q): ")
-	input, err := reader.ReadString('\n')
-	if err != nil {
+	
+	// Create a channel to receive the input
+	inputChan := make(chan string, 1)
+	errorChan := make(chan error, 1)
+	
+	// Start a goroutine to read input
+	go func() {
+		input, err := reader.ReadString('\n')
+		if err != nil {
+			errorChan <- err
+		} else {
+			inputChan <- input
+		}
+	}()
+	
+	// Wait for input or timeout (300 seconds = 5 minutes)
+	select {
+	case input := <-inputChan:
+		input = strings.TrimSpace(strings.ToUpper(input))
+		
+		switch input {
+		case "S":
+			processSingleFileWithValidation()
+		case "M":
+			processMergeFilesWithValidation()
+		case "H":
+			showHelp()
+		case "V":
+			VERBOSE = !VERBOSE
+			if VERBOSE {
+				printSuccess("Verbose mode enabled")
+			} else {
+				printInfo("Verbose mode disabled")
+			}
+		case "Q":
+			fmt.Printf("%sExiting program...%s\n", YELLOW, NC)
+			CONTINUE = false
+		default:
+			printWarning("Invalid choice. Please enter S, M, H, V, or Q.")
+		}
+		
+	case err := <-errorChan:
 		// Handle EOF gracefully (happens when input is piped)
 		if err == io.EOF {
 			fmt.Printf("\n%sEnd of input reached. Exiting...%s\n", YELLOW, NC)
@@ -114,30 +155,11 @@ func processMenu() {
 			return
 		}
 		printError(fmt.Sprintf("Error reading input: %v", err))
-		return
-	}
-	
-	input = strings.TrimSpace(strings.ToUpper(input))
-	
-	switch input {
-	case "S":
-		processSingleFileWithValidation()
-	case "M":
-		processMergeFilesWithValidation()
-	case "H":
-		showHelp()
-	case "V":
-		VERBOSE = !VERBOSE
-		if VERBOSE {
-			printSuccess("Verbose mode enabled")
-		} else {
-			printInfo("Verbose mode disabled")
-		}
-	case "Q":
-		fmt.Printf("%sExiting program...%s\n", YELLOW, NC)
+		
+	case <-time.After(300 * time.Second): // 5 minutes timeout
+		fmt.Printf("\n%sTimeout reached (5 minutes). Exiting...%s\n", YELLOW, NC)
 		CONTINUE = false
-	default:
-		printWarning("Invalid choice. Please enter S, M, H, V, or Q.")
+		os.Exit(7) // Exit code 7 for timeout
 	}
 }
 
