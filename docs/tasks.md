@@ -254,7 +254,7 @@ feat: Add multi-platform build system
 ```
 
 ### 16. Directory-Specific Lock Files (Phase 5, Task 11)
-- **Status**: 🔄 IN PROGRESS
+- **Status**: ✅ COMPLETED
 - **Priority**: Enhancement (User Requested)
 - **Description**: Implement directory-specific lock files to allow multiple instances in different folders
 - **Requirement**: Allow multiple program instances as long as they watch different directories
@@ -295,12 +295,12 @@ feat: Add multi-platform build system
 - `main.go` - Update lock file error handling if needed
 
 #### Acceptance Criteria
-- [ ] Multiple instances can run simultaneously in different directories
-- [ ] Single directory still prevents multiple instances (same hash)
-- [ ] Lock files use 8-character hash suffix
-- [ ] Cross-platform compatibility (Windows, Linux, macOS)
-- [ ] Path normalization handles symlinks and relative paths
-- [ ] Proper cleanup of directory-specific lock files
+- [x] Multiple instances can run simultaneously in different directories
+- [x] Single directory still prevents multiple instances (same hash)
+- [x] Lock files use 8-character hash suffix
+- [x] Cross-platform compatibility (Windows, Linux, macOS)
+- [x] Path normalization handles symlinks and relative paths
+- [x] Proper cleanup of directory-specific lock files
 
 #### Estimated Effort
 - **Development**: 2-3 hours
