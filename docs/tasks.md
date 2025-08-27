@@ -51,7 +51,7 @@
 - Future development should maintain backward compatibility
 - Comprehensive research and test code available for reference in `/experiments/`
 - All API knowledge documented in `/docs/api_knowledge.md`
-- Memory processing research documented in `/docs/memory_processing_summary.md`
+- Memory processing research documented in `/docs/memory_processing_research.md`
 - Follow git workflow and commit conventions in `/docs/git_flow.md`
 
 ---
@@ -360,7 +360,7 @@
 
 #### Reference Implementation
 - See `experiments/experiment16_final_memory_approach.go` for working example
-- See `docs/memory_processing_summary.md` for implementation pattern
+- See `docs/memory_processing_research.md` for implementation pattern
 - See `docs/api_knowledge.md` for API reference
 
 #### Acceptance Criteria

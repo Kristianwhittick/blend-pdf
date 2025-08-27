@@ -142,7 +142,7 @@ Testing individual pdfcpu API functions to understand their behavior and require
 ## Notes
 - Each test creates a standalone Go program
 - Results verified using pdftotext
-- Knowledge captured in api_knowledge.md and memory_processing_summary.md
+- Knowledge captured in api_knowledge.md and memory_processing_research.md
 
 ## API Testing Procedures
 
