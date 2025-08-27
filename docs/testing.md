@@ -14,7 +14,7 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 ### Test Files Location
 - Unit tests: `*_test.go` files alongside source code
 - Integration tests: `tests/` directory
-- API tests: `experiments/experiment01_pagecount.go` through `experiment16_final_memory_approach.go` (see api_experiments.md)
+- API tests: `experiments/experiment01_pagecount.go` through `experiment16_final_memory_approach.go` (see api_experiments_procedures.md)
 - Documentation: `docs/` folder
 - Working directories: `archive/`, `output/`, `error/`
 

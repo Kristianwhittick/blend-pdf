@@ -95,7 +95,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - Debug mode with structured logging
 
 ### 🔄 Optional Enhancement
-- **In-Memory Processing**: Hybrid approach for performance optimization (See [docs/backlog.md](docs/backlog.md))
+- **In-Memory Processing**: Hybrid approach for performance optimization (See [docs/tasks.md](docs/tasks.md))
 
 ## Installation
 
@@ -289,8 +289,8 @@ blend_pdf/
 ├── pdfops.go           # PDF processing operations
 ├── fileops.go          # File management operations
 ├── docs/               # Comprehensive documentation
-│   ├── backlog.md      # Development roadmap (Phase 4 remaining)
-│   ├── COMMIT_PLAN.md  # Git history and workflow
+│   ├── tasks.md        # Development roadmap (Phase 4 remaining)
+│   ├── git_flow.md     # Git history and workflow
 │   ├── api_knowledge.md # pdfcpu API research
 │   ├── specification.md # Project requirements
 │   └── TEST.md         # Testing procedures
@@ -358,8 +358,8 @@ This Go implementation provides **complete feature parity** with the original ba
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes following the development phases in [docs/backlog.md](docs/backlog.md)
-4. Test thoroughly using the procedures in [docs/TEST.md](docs/TEST.md)
+3. Make your changes following the development phases in [docs/tasks.md](docs/tasks.md)
+4. Test thoroughly using the procedures in [docs/testing.md](docs/testing.md)
 5. Commit your changes (`git commit -m 'Add amazing feature'`)
 6. Push to the branch (`git push origin feature/amazing-feature`)
 7. Open a Pull Request

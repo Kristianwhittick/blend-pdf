@@ -3,6 +3,11 @@
 ## Overview
 Documentation of pdfcpu API functions based on experimental testing.
 
+## Related Documentation
+- **[API Experiments Procedures](api_experiments_procedures.md)**: Step-by-step testing procedures
+- **[Memory Processing Research](memory_processing_research.md)**: In-memory processing research and conclusions
+- **[Testing Guide](testing.md)**: Comprehensive testing procedures for the application
+
 ## API Functions Tested
 
 ### `api.PageCountFile(filename string) (int, error)`
@@ -174,6 +179,97 @@ api.MergeCreateFile(pageFiles, outputFile, false, conf)
 - **Default Config**: `model.NewDefaultConfiguration()`
 - **Required for**: TrimFile, MergeCreateFile, ReadContext, WriteContext
 - **Not required for**: PageCountFile, ReadContextFile, WriteContextFile, ValidateContext
+
+## Experimental Testing Results
+
+### Core API Experiments
+
+#### Experiment 01: Page Count API ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test `api.PageCountFile()` function
+- **Result**: SUCCESS - Both files return 3 pages
+- **File**: experiment01_pagecount.go
+
+#### Experiment 02: PDF Validation API ✅
+- **Status**: ✅ COMPLETED  
+- **Goal**: Test `api.ValidateFile()` function
+- **Result**: SUCCESS - Both PDFs validate with relaxed and strict modes
+- **File**: experiment02_validate.go
+
+#### Experiment 03: Extract Single Page ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test `api.TrimFile()` to extract one page
+- **Result**: SUCCESS - Page 1 extracted successfully
+- **File**: experiment03_extract.go
+
+#### Experiment 04: Extract Multiple Pages ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test `api.TrimFile()` with page range
+- **Result**: SUCCESS - Multiple pages extracted
+- **File**: experiment04_extract_multi.go
+
+#### Experiment 05: Extract Pages in Reverse Order ⚠️
+- **Status**: ⚠️ LIMITATION DISCOVERED
+- **Goal**: Test `api.TrimFile()` with reverse page selection
+- **Result**: LIMITATION - Comma-separated selections extract pages in document order, not specified order
+- **Workaround**: Extract pages individually and merge manually for proper reordering
+- **File**: experiment05_reverse.go
+
+#### Experiment 06: Simple Merge Two Files ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test `api.MergeCreateFile()` basic functionality
+- **Result**: SUCCESS - Simple merge works
+- **File**: experiment06_merge.go
+
+#### Experiment 07: Merge Individual Pages ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test merging extracted individual pages
+- **Result**: SUCCESS - Individual page merging works
+- **File**: experiment07_page_merge.go
+
+#### Experiment 08: Complete Interleaved Pattern ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test full interleaved merge implementation
+- **Result**: SUCCESS - Interleaved pattern works
+- **File**: experiment08_interleaved.go
+
+### Memory Processing Experiments
+
+#### Experiment 09: Memory Context Loading ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test loading PDFs into memory contexts
+- **Result**: SUCCESS - `api.ReadContextFile()` and `api.ValidateContext()` work
+- **File**: experiment09_memory_context.go
+
+#### Experiment 10: Memory Page Extraction ⚠️
+- **Status**: ⚠️ PARTIALLY WORKING
+- **Goal**: Test extracting pages using memory contexts
+- **Result**: PARTIAL - Context operations work, but some page extractions fail
+- **File**: experiment10_memory_extract_simple.go
+
+#### Experiment 13: API Exploration ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Explore available in-memory APIs
+- **Result**: SUCCESS - Identified working and non-working functions
+- **File**: experiment13_api_exploration.go
+
+#### Experiment 14: Working Memory Approach ⚠️
+- **Status**: ⚠️ PARTIALLY WORKING
+- **Goal**: Test pure in-memory processing
+- **Result**: PARTIAL - ReadContext from bytes unreliable (returns 0 pages)
+- **File**: experiment14_working_memory.go
+
+#### Experiment 15: Hybrid Memory Approach ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test hybrid approach (memory + minimal temp files)
+- **Result**: SUCCESS - Works with some page extraction failures
+- **File**: experiment15_hybrid_memory.go
+
+#### Experiment 16: Final Memory Approach ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Demonstrate optimal in-memory processing approach
+- **Result**: SUCCESS - 52.9% memory efficiency, graceful error handling
+- **File**: experiment16_final_memory_approach.go
 
 ## Best Practices
 1. **Use ReadContextFile** instead of ReadContext for reliability

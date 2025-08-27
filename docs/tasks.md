@@ -256,7 +256,7 @@
 - **Requirements**: Quality assurance for all requirements (R1.1-R16.9)
 - **Priority**: Quality Assurance (High)
 - **Description**: Implement comprehensive unit testing framework for Go code
-- **Prerequisites**: Move experiment content from testing.md to api_experiments.md
+- **Prerequisites**: Move experiment content from testing.md to api_experiments_procedures.md
 - **Implementation**:
   - Research and recommend Go testing framework (built-in testing, testify, ginkgo, etc.)
   - Define comprehensive unit testing process and standards
