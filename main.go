@@ -36,16 +36,27 @@ func main() {
 		os.Exit(0)
 	}()
 
+	// Setup lock file to prevent multiple instances
+	if err := setupLock(); err != nil {
+		if strings.Contains(err.Error(), "exit code 6") {
+			os.Exit(6)
+		}
+		printError(err.Error())
+		os.Exit(1)
+	}
+
 	// Parse command line arguments
 	folder, err := parseArgs()
 	if err != nil {
 		printError(err.Error())
+		cleanupLock()
 		os.Exit(1)
 	}
 
 	// Setup directories
 	if err := setupDirectories(folder); err != nil {
 		printError(err.Error())
+		cleanupLock()
 		os.Exit(1)
 	}
 
@@ -59,6 +70,7 @@ func main() {
 
 func cleanup() {
 	showStatistics()
+	cleanupLock()
 }
 
 func showHelp() {
@@ -109,9 +121,9 @@ func processMenu() {
 	
 	switch input {
 	case "S":
-		processSingleFile()
+		processSingleFileWithValidation()
 	case "M":
-		processMergeFiles()
+		processMergeFilesWithValidation()
 	case "H":
 		showHelp()
 	case "V":
@@ -127,4 +139,116 @@ func processMenu() {
 	default:
 		printWarning("Invalid choice. Please enter S, M, H, V, or Q.")
 	}
+}
+
+// Enhanced single file processing with validation
+func processSingleFileWithValidation() {
+	files, err := findPDFFiles()
+	if err != nil {
+		printError(fmt.Sprintf("Error finding PDF files: %v", err))
+		return
+	}
+
+	if len(files) == 0 {
+		printWarning("No PDF files found in " + FOLDER)
+		return
+	}
+
+	file := files[0]
+	filename := filepath.Base(file)
+	
+	// Validate PDF before processing
+	if err := validatePDFFile(file); err != nil {
+		printError(fmt.Sprintf("'%s' is not a valid PDF file: %v", filename, err))
+		// Move invalid file to error directory
+		destFile := filepath.Join(ERROR_DIR, filename)
+		if moveErr := moveFileWithRecovery(file, destFile); moveErr != nil {
+			printError(fmt.Sprintf("Failed to move invalid file to error directory: %v", moveErr))
+		} else {
+			ERROR_COUNT++
+			printError("Invalid PDF moved to error folder")
+		}
+		return
+	}
+	
+	if VERBOSE {
+		filesize := getHumanReadableSize(file)
+		fmt.Printf("Processing: %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
+	}
+
+	// Move file to output directory
+	destFile := filepath.Join(OUTPUT, filename)
+	if err := moveFileWithRecovery(file, destFile); err != nil {
+		printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
+		return
+	}
+
+	COUNTER++
+	printSuccess(fmt.Sprintf("File moved. (%d)", COUNTER))
+}
+
+// Enhanced merge processing with validation
+func processMergeFilesWithValidation() {
+	files, err := findPDFFiles()
+	if err != nil {
+		printError(fmt.Sprintf("Error finding PDF files: %v", err))
+		return
+	}
+
+	if len(files) < 2 {
+		printWarning(fmt.Sprintf("Did not find two PDF files in %s", FOLDER))
+		return
+	}
+
+	file1 := files[0]
+	file2 := files[1]
+
+	// Validate both PDFs before processing
+	if err := validatePDFFile(file1); err != nil {
+		printError(fmt.Sprintf("First PDF '%s' is invalid: %v", filepath.Base(file1), err))
+		moveInvalidFiles(file1, file2)
+		return
+	}
+	
+	if err := validatePDFFile(file2); err != nil {
+		printError(fmt.Sprintf("Second PDF '%s' is invalid: %v", filepath.Base(file2), err))
+		moveInvalidFiles(file1, file2)
+		return
+	}
+
+	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n", 
+		BLUE, filepath.Base(file1), NC, 
+		BLUE, filepath.Base(file2), NC,
+		GREEN, filepath.Base(file1)+"-"+filepath.Base(file2), NC)
+
+	if VERBOSE {
+		size1 := getHumanReadableSize(file1)
+		size2 := getHumanReadableSize(file2)
+		fmt.Printf("File 1 size: %s\n", size1)
+		fmt.Printf("File 2 size: %s\n", size2)
+	}
+
+	// Create output filename (combine both names with hyphen)
+	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
+	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
+	outputFile := filepath.Join(OUTPUT, name1+"-"+name2+".pdf")
+
+	// Process and merge the files with smart page reversal logic
+	processAndMerge(outputFile, file1, file2, 0) // pages parameter not used in new implementation
+}
+
+// Move invalid files to error directory
+func moveInvalidFiles(files ...string) {
+	for _, file := range files {
+		if file == "" {
+			continue
+		}
+		filename := filepath.Base(file)
+		destFile := filepath.Join(ERROR_DIR, filename)
+		if err := moveFileWithRecovery(file, destFile); err != nil {
+			printError(fmt.Sprintf("Failed to move invalid file %s: %v", filename, err))
+		}
+	}
+	ERROR_COUNT++
+	printError("Invalid PDF files moved to error folder")
 }

@@ -172,25 +172,37 @@ func findPDFFiles() ([]string, error) {
 	return files, nil
 }
 
-// Move processed files to destination directory
+// Move processed files to destination directory with enhanced error handling
 func moveProcessedFiles(destination, message string, files ...string) {
+	allMoved := true
+	
 	for _, file := range files {
 		if file == "" {
 			continue
 		}
 		
-		destFile := filepath.Join(destination, filepath.Base(file))
-		if err := os.Rename(file, destFile); err != nil {
-			printError(fmt.Sprintf("Failed to move %s: %v", filepath.Base(file), err))
-			return
+		filename := filepath.Base(file)
+		destFile := filepath.Join(destination, filename)
+		
+		if err := moveFileWithRecovery(file, destFile); err != nil {
+			printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
+			allMoved = false
+		} else if VERBOSE {
+			printInfo(fmt.Sprintf("Moved %s to %s", filename, filepath.Base(destination)))
 		}
 	}
 	
-	if destination == ARCHIVE {
-		COUNTER++
-		printSuccess(fmt.Sprintf("%s (%d)", message, COUNTER))
+	if allMoved {
+		if destination == ARCHIVE {
+			COUNTER++
+			printSuccess(fmt.Sprintf("%s (%d)", message, COUNTER))
+		} else {
+			ERROR_COUNT++
+			printError(message)
+		}
 	} else {
-		printError(message)
+		ERROR_COUNT++
+		printError("Some files could not be moved")
 	}
 }
 
