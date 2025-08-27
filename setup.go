@@ -43,12 +43,18 @@ func setupLock() error {
 	// Write process ID to lock file
 	_, err = file.WriteString(strconv.Itoa(os.Getpid()))
 	if err != nil {
-		file.Close()
-		os.Remove(LOCKFILE)
+		if closeErr := file.Close(); closeErr != nil {
+			printError(fmt.Sprintf("Failed to close lock file: %v", closeErr))
+		}
+		if removeErr := os.Remove(LOCKFILE); removeErr != nil {
+			printError(fmt.Sprintf("Failed to remove lock file: %v", removeErr))
+		}
 		return fmt.Errorf("failed to write to lock file: %v", err)
 	}
 	
-	file.Close()
+	if err := file.Close(); err != nil {
+		printError(fmt.Sprintf("Failed to close lock file: %v", err))
+	}
 	
 	if VERBOSE {
 		printInfo(fmt.Sprintf("Created lock file: %s", LOCKFILE))
@@ -138,59 +144,6 @@ func parseArgs() (string, error) {
 	return absFolder, nil
 }
 
-// Enhanced directory setup with comprehensive error handling
-func setupDirectories(folder string) error {
-	// Validate folder exists and is accessible
-	info, err := os.Stat(folder)
-	if os.IsNotExist(err) {
-		return fmt.Errorf("directory '%s' does not exist", folder)
-	}
-	if err != nil {
-		return fmt.Errorf("cannot access directory '%s': %v", folder, err)
-	}
-	if !info.IsDir() {
-		return fmt.Errorf("'%s' is not a directory", folder)
-	}
-
-	// Check if directory is writable
-	testFile := filepath.Join(folder, ".blendpdfgo_test")
-	file, err := os.Create(testFile)
-	if err != nil {
-		return fmt.Errorf("directory '%s' is not writable: %v", folder, err)
-	}
-	file.Close()
-	os.Remove(testFile)
-
-	FOLDER = folder
-	ARCHIVE = filepath.Join(folder, "archive")
-	OUTPUT = filepath.Join(folder, "output")
-	ERROR_DIR = filepath.Join(folder, "error")
-
-	// Create required directories with error handling
-	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
-	for _, dir := range dirs {
-		if err := os.MkdirAll(dir, 0755); err != nil {
-			return fmt.Errorf("failed to create directory '%s': %v", dir, err)
-		}
-		
-		// Verify directory was created and is writable
-		if info, err := os.Stat(dir); err != nil {
-			return fmt.Errorf("failed to verify directory '%s': %v", dir, err)
-		} else if !info.IsDir() {
-			return fmt.Errorf("'%s' exists but is not a directory", dir)
-		}
-	}
-
-	// Display setup information
-	fmt.Printf("Watching folder: %s%s%s\n", BLUE, FOLDER, NC)
-	fmt.Printf("Archive  folder: %s%s%s\n", BLUE, ARCHIVE, NC)
-	fmt.Printf("Output   folder: %s%s%s\n", BLUE, OUTPUT, NC)
-	fmt.Printf("Error    folder: %s%s%s\n", BLUE, ERROR_DIR, NC)
-	fmt.Println()
-
-	return nil
-}
-
 // Validate PDF file with enhanced error reporting
 func validatePDFFile(file string) error {
 	// Check if file exists
@@ -229,7 +182,7 @@ func validatePDFFile(file string) error {
 func moveFileWithRecovery(src, dst string) error {
 	// Ensure destination directory exists
 	dstDir := filepath.Dir(dst)
-	if err := os.MkdirAll(dstDir, 0755); err != nil {
+	if err := os.MkdirAll(dstDir, 0750); err != nil {
 		return fmt.Errorf("failed to create destination directory: %v", err)
 	}
 	
@@ -275,13 +228,22 @@ func moveFileWithRecovery(src, dst string) error {
 
 // Copy file as fallback for move operations
 func copyFile(src, dst string) error {
-	sourceFile, err := os.Open(src)
+	// Validate and clean paths to prevent directory traversal
+	cleanSrc := filepath.Clean(src)
+	cleanDst := filepath.Clean(dst)
+	
+	// Ensure paths don't contain directory traversal attempts
+	if strings.Contains(cleanSrc, "..") || strings.Contains(cleanDst, "..") {
+		return fmt.Errorf("invalid file path: directory traversal not allowed")
+	}
+	
+	sourceFile, err := os.Open(cleanSrc) // #nosec G304 - path validated above
 	if err != nil {
 		return err
 	}
 	defer sourceFile.Close()
 	
-	destFile, err := os.Create(dst)
+	destFile, err := os.Create(cleanDst) // #nosec G304 - path validated above
 	if err != nil {
 		return err
 	}

@@ -183,7 +183,7 @@ func setupDirectories(folder string) error {
 	// Create directories if they don't exist
 	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
 	for _, dir := range dirs {
-		if err := os.MkdirAll(dir, 0755); err != nil {
+		if err := os.MkdirAll(dir, 0750); err != nil {
 			return fmt.Errorf("failed to create directory %s: %v", dir, err)
 		}
 	}
