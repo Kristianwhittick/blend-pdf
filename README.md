@@ -1,5 +1,58 @@
 # BlendPDFGo
 
+
+## Purpose
+
+Turn your single-sided scanner into a double-sided scanning powerhouse!
+
+BlendPDFGo was created from a real-world frustration: digitizing double-sided documents when all you have is a single-sided scanner.
+If you’ve ever wasted time manually reordering and merging pages, this tool is built for you.
+
+### The Problem
+
+When scanning double-sided documents with a single-sided scanner, you usually end up with two files:
+
+**Front PDF** → pages 1, 3, 5, 7 … (in correct order)
+
+**Back PDF** → pages 8, 6, 4, 2 … (in reverse order)
+
+Combining them into a clean, properly ordered document is tedious, error-prone, and easy to get wrong.
+
+### The Solution
+
+BlendPDFGo does the heavy lifting automatically:
+
+✅ Detects and validates your scanned PDFs
+
+✅ Reverses back-side pages when needed
+
+✅ Merges both files into a perfectly ordered PDF (1, 2, 3, 4 …)
+
+✅ Archives processed files and handles errors gracefully
+
+✅ Shows progress and useful stats in real time
+
+Who It’s For
+
+🏠 Home users digitizing bills, letters, or family documents
+
+🏢 Small offices that don’t have costly duplex scanners
+
+🎓 Students scanning textbooks and research material
+
+📚 Anyone who values speed and accuracy in document management
+
+Why You’ll Love It
+
+No more manual page shuffling.
+No more mistakes.
+No more wasted time.
+
+Just scan, run BlendPDFGo, and enjoy perfectly ordered documents every single time.
+
+
+## History
+
 A Go-based tool for merging and managing PDF files with automatic page reversal and file organization. This is a modern reimplementation of the original bash-based BlendPDF tool with enhanced performance and reliability.
 
 ## Features
