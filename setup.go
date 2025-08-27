@@ -15,16 +15,56 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
 
+// Generate directory-specific lock file name using hash
+func generateLockFileName(watchDir string) string {
+	// 1. Normalize path for consistency across platforms
+	absPath, err := filepath.Abs(watchDir)
+	if err != nil {
+		absPath = watchDir // Fallback to original path
+	}
+	cleanPath := filepath.Clean(absPath)
+	
+	// 2. Normalize for case-insensitive filesystems and cross-platform compatibility
+	normalizedPath := strings.ToLower(filepath.ToSlash(cleanPath))
+	
+	// 3. Generate 8-character MD5 hash
+	hash := md5.Sum([]byte(normalizedPath))
+	hashStr := fmt.Sprintf("%x", hash)[:8]
+	
+	// 4. Create platform-specific lock file path
+	lockFileName := fmt.Sprintf("blendpdfgo-%s.lock", hashStr)
+	
+	if runtime.GOOS == "windows" {
+		// On Windows, store in the watch directory to avoid permission issues
+		return filepath.Join(watchDir, lockFileName)
+	} else {
+		// On Unix systems, use /tmp directory
+		return filepath.Join("/tmp", lockFileName)
+	}
+}
+
 // Setup lock file to prevent multiple instances
 func setupLock() error {
-	LOCKFILE = filepath.Join(os.TempDir(), "blendpdfgo.lock")
+	// Generate directory-specific lock file name
+	watchDir := "." // Default to current directory
+	if len(os.Args) > 1 {
+		// Check if last argument is a directory path (not a flag)
+		lastArg := os.Args[len(os.Args)-1]
+		if !strings.HasPrefix(lastArg, "-") {
+			watchDir = lastArg
+		}
+	}
+	
+	LOCKFILE = generateLockFileName(watchDir)
 
 	// Check if lock file exists
 	if _, err := os.Stat(LOCKFILE); err == nil {
