@@ -23,37 +23,37 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 03: Extract Single Page ===")
+	fmt.Println("=== Experiment 04: Extract Multiple Pages ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
 	
-	// Extract page 1 from Doc_A.pdf
-	fmt.Println("Extracting page 1 from Doc_A.pdf...")
+	// Extract pages 1-2 from Doc_A.pdf
+	fmt.Println("Extracting pages 1-2 from Doc_A.pdf...")
 	
-	pageSelection, err := api.ParsePageSelection("1")
+	pageSelection, err := api.ParsePageSelection("1-2")
 	if err != nil {
 		log.Fatalf("Failed to parse page selection: %v", err)
 	}
 	
-	err = api.TrimFile("Doc_A.pdf", "output/test03_single_page.pdf", pageSelection, conf)
+	err = api.TrimFile("Doc_A.pdf", "output/experiment04_multi_pages.pdf", pageSelection, conf)
 	if err != nil {
-		log.Fatalf("Failed to extract page: %v", err)
+		log.Fatalf("Failed to extract pages: %v", err)
 	}
 	
-	fmt.Println("Successfully extracted page 1 to output/test03_single_page.pdf")
+	fmt.Println("Successfully extracted pages 1-2 to output/experiment04_multi_pages.pdf")
 	
 	// Verify the result
-	pageCount, err := api.PageCountFile("output/test03_single_page.pdf")
+	pageCount, err := api.PageCountFile("output/experiment04_multi_pages.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}
 	
 	fmt.Printf("Result file has %d page(s)\n", pageCount)
 	
-	if pageCount == 1 {
-		fmt.Println("✅ Test 03 PASSED - Single page extracted successfully!")
+	if pageCount == 2 {
+		fmt.Println("✅ Test 04 PASSED - Multiple pages extracted successfully!")
 	} else {
-		fmt.Printf("❌ Test 03 FAILED - Expected 1 page, got %d\n", pageCount)
+		fmt.Printf("❌ Test 04 FAILED - Expected 2 pages, got %d\n", pageCount)
 	}
 }

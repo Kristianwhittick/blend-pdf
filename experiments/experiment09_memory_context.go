@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 09: Memory Context API ===")
+	fmt.Println("=== Experiment 09: Memory Context API ===")
 	
 	// Test loading Doc_A.pdf into memory context
 	fmt.Println("Loading Doc_A.pdf into memory context...")
@@ -64,5 +64,5 @@ func main() {
 	fmt.Printf("- Doc_B context pages: %d\n", ctxB.PageCount)
 	fmt.Printf("- Both contexts loaded successfully\n")
 	
-	fmt.Println("Test 09 completed successfully!")
+	fmt.Println("Experiment 09 completed successfully!")
 }

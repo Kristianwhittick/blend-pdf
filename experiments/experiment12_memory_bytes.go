@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 12: Memory Bytes Processing ===")
+	fmt.Println("=== Experiment 12: Memory Bytes Processing ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -73,11 +73,11 @@ func main() {
 			fmt.Printf("Successfully converted context back to bytes: %d bytes\n", len(resultBytes))
 			
 			// Write bytes to file for verification
-			err = ioutil.WriteFile("output/test12_from_bytes.pdf", resultBytes, 0644)
+			err = ioutil.WriteFile("output/experiment12_from_bytes.pdf", resultBytes, 0644)
 			if err != nil {
 				log.Printf("Error writing bytes to file: %v", err)
 			} else {
-				fmt.Println("Successfully wrote bytes to output/test12_from_bytes.pdf")
+				fmt.Println("Successfully wrote bytes to output/experiment12_from_bytes.pdf")
 			}
 		}
 	}
@@ -99,15 +99,15 @@ func main() {
 				fmt.Printf("Extracted page as bytes: %d bytes\n", len(page1Bytes))
 				
 				// Write to file
-				err = ioutil.WriteFile("output/test12_extracted_page1.pdf", page1Bytes, 0644)
+				err = ioutil.WriteFile("output/experiment12_extracted_page1.pdf", page1Bytes, 0644)
 				if err != nil {
 					log.Printf("Error writing extracted page: %v", err)
 				} else {
-					fmt.Println("Successfully wrote extracted page to output/test12_extracted_page1.pdf")
+					fmt.Println("Successfully wrote extracted page to output/experiment12_extracted_page1.pdf")
 				}
 			}
 		}
 	}
 	
-	fmt.Println("Test 12 completed!")
+	fmt.Println("Experiment 12 completed!")
 }

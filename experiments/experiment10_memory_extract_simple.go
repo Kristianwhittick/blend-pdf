@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 10: Memory Page Extraction (Simple) ===")
+	fmt.Println("=== Experiment 10: Memory Page Extraction (Simple) ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -39,14 +39,14 @@ func main() {
 	
 	// Try to write the context back to a file (this should work)
 	fmt.Println("Testing WriteContextFile...")
-	err = api.WriteContextFile(ctxA, "output/test10_context_copy.pdf")
+	err = api.WriteContextFile(ctxA, "output/experiment10_context_copy.pdf")
 	if err != nil {
 		log.Printf("WriteContextFile error: %v", err)
 	} else {
-		fmt.Println("Successfully wrote context to output/test10_context_copy.pdf")
+		fmt.Println("Successfully wrote context to output/experiment10_context_copy.pdf")
 		
 		// Verify the copy
-		pageCount, err := api.PageCountFile("output/test10_context_copy.pdf")
+		pageCount, err := api.PageCountFile("output/experiment10_context_copy.pdf")
 		if err != nil {
 			log.Printf("Error checking copied file: %v", err)
 		} else {
@@ -72,14 +72,14 @@ func main() {
 		return
 	}
 	
-	err = api.TrimFile(tempFile, "output/test10_extracted_page1.pdf", pageSelection, conf)
+	err = api.TrimFile(tempFile, "output/experiment10_extracted_page1.pdf", pageSelection, conf)
 	if err != nil {
 		log.Printf("TrimFile error: %v", err)
 	} else {
-		fmt.Println("Successfully extracted page 1 to output/test10_extracted_page1.pdf")
+		fmt.Println("Successfully extracted page 1 to output/experiment10_extracted_page1.pdf")
 		
 		// Load the extracted page back into context
-		ctxExtracted, err := api.ReadContextFile("output/test10_extracted_page1.pdf")
+		ctxExtracted, err := api.ReadContextFile("output/experiment10_extracted_page1.pdf")
 		if err != nil {
 			log.Printf("Error loading extracted page: %v", err)
 		} else {
@@ -90,5 +90,5 @@ func main() {
 	// Clean up temp file
 	os.Remove(tempFile)
 	
-	fmt.Println("Test 10 completed!")
+	fmt.Println("Experiment 10 completed!")
 }

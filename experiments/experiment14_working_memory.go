@@ -26,7 +26,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 14: Working Memory Approach ===")
+	fmt.Println("=== Experiment 14: Working Memory Approach ===")
 	
 	conf := model.NewDefaultConfiguration()
 	
@@ -146,14 +146,14 @@ func main() {
 	// Merge all pages
 	if len(pageFiles) > 0 {
 		fmt.Printf("4. Merging %d page files...\n", len(pageFiles))
-		err = api.MergeCreateFile(pageFiles, "output/test14_interleaved.pdf", false, conf)
+		err = api.MergeCreateFile(pageFiles, "output/experiment14_interleaved.pdf", false, conf)
 		if err != nil {
 			log.Printf("Error merging pages: %v", err)
 		} else {
 			fmt.Println("   ✅ Successfully created interleaved merge!")
 			
 			// Verify result
-			resultCount, err := api.PageCountFile("output/test14_interleaved.pdf")
+			resultCount, err := api.PageCountFile("output/experiment14_interleaved.pdf")
 			if err != nil {
 				log.Printf("Error checking result: %v", err)
 			} else {
@@ -168,5 +168,5 @@ func main() {
 		}
 	}
 	
-	fmt.Println("Test 14 completed!")
+	fmt.Println("Experiment 14 completed!")
 }

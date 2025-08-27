@@ -100,6 +100,6 @@ The application is now **production-ready** with all core features implemented. 
 - Phase 4 is an optional performance enhancement
 - Comprehensive test plan available in `docs/TEST.md` with 140+ test cases
 - All research and reference materials preserved in `/experiments/` and `/docs/`
-- Phase 4 implementation should follow the pattern demonstrated in `test16_final_memory_approach.go`
+- Phase 4 implementation should follow the pattern demonstrated in `experiment16_final_memory_approach.go`
 - API knowledge base complete in `/docs/api_knowledge.md`
 - Memory processing research documented in `/docs/memory_processing_summary.md`

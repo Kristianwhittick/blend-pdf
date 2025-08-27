@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 07: Merge Individual Pages ===")
+	fmt.Println("=== Experiment 07: Merge Individual Pages ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -65,7 +65,7 @@ func main() {
 	
 	inputFiles := []string{"temp_A1.pdf", "temp_B3.pdf", "temp_A2.pdf", "temp_B2.pdf"}
 	
-	err = api.MergeCreateFile(inputFiles, "output/test07_page_merge.pdf", false, conf)
+	err = api.MergeCreateFile(inputFiles, "output/experiment07_page_merge.pdf", false, conf)
 	if err != nil {
 		log.Fatalf("Failed to merge individual pages: %v", err)
 	}
@@ -76,10 +76,10 @@ func main() {
 	os.Remove("temp_B3.pdf")
 	os.Remove("temp_B2.pdf")
 	
-	fmt.Println("Successfully merged individual pages to output/test07_page_merge.pdf")
+	fmt.Println("Successfully merged individual pages to output/experiment07_page_merge.pdf")
 	
 	// Verify the result
-	pageCount, err := api.PageCountFile("output/test07_page_merge.pdf")
+	pageCount, err := api.PageCountFile("output/experiment07_page_merge.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}

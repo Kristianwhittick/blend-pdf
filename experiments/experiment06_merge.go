@@ -23,40 +23,34 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 02: PDF Validation API ===")
+	fmt.Println("=== Experiment 06: Simple Merge Two Files ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
-	conf.ValidationMode = model.ValidationRelaxed
 	
-	// Test Doc_A.pdf
-	fmt.Println("Validating Doc_A.pdf...")
-	err := api.ValidateFile("Doc_A.pdf", conf)
+	// Simple merge: Doc_A.pdf + Doc_B.pdf
+	fmt.Println("Merging Doc_A.pdf + Doc_B.pdf...")
+	
+	inputFiles := []string{"Doc_A.pdf", "Doc_B.pdf"}
+	
+	err := api.MergeCreateFile(inputFiles, "output/experiment06_simple_merge.pdf", false, conf)
 	if err != nil {
-		log.Printf("Doc_A.pdf validation failed: %v", err)
-	} else {
-		fmt.Println("Doc_A.pdf is valid!")
+		log.Fatalf("Failed to merge files: %v", err)
 	}
 	
-	// Test Doc_B.pdf
-	fmt.Println("Validating Doc_B.pdf...")
-	err = api.ValidateFile("Doc_B.pdf", conf)
+	fmt.Println("Successfully merged to output/experiment06_simple_merge.pdf")
+	
+	// Verify the result
+	pageCount, err := api.PageCountFile("output/experiment06_simple_merge.pdf")
 	if err != nil {
-		log.Printf("Doc_B.pdf validation failed: %v", err)
-	} else {
-		fmt.Println("Doc_B.pdf is valid!")
+		log.Fatalf("Failed to get page count of result: %v", err)
 	}
 	
-	// Test with strict validation
-	fmt.Println("\nTesting with strict validation...")
-	conf.ValidationMode = model.ValidationStrict
+	fmt.Printf("Result file has %d page(s)\n", pageCount)
 	
-	err = api.ValidateFile("Doc_A.pdf", conf)
-	if err != nil {
-		fmt.Printf("Doc_A.pdf strict validation failed: %v\n", err)
+	if pageCount == 6 {
+		fmt.Println("✅ Test 06 PASSED - Files merged successfully!")
 	} else {
-		fmt.Println("Doc_A.pdf passes strict validation!")
+		fmt.Printf("❌ Test 06 FAILED - Expected 6 pages, got %d\n", pageCount)
 	}
-	
-	fmt.Println("Test 02 completed!")
 }

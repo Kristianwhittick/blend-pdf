@@ -23,37 +23,37 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 05: Extract Pages in Reverse Order ===")
+	fmt.Println("=== Experiment 03: Extract Single Page ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
 	
-	// Extract pages 3,2,1 from Doc_B.pdf (reverse order)
-	fmt.Println("Extracting pages 3,2,1 from Doc_B.pdf...")
+	// Extract page 1 from Doc_A.pdf
+	fmt.Println("Extracting page 1 from Doc_A.pdf...")
 	
-	pageSelection, err := api.ParsePageSelection("3,2,1")
+	pageSelection, err := api.ParsePageSelection("1")
 	if err != nil {
 		log.Fatalf("Failed to parse page selection: %v", err)
 	}
 	
-	err = api.TrimFile("Doc_B.pdf", "output/test05_reverse.pdf", pageSelection, conf)
+	err = api.TrimFile("Doc_A.pdf", "output/experiment03_single_page.pdf", pageSelection, conf)
 	if err != nil {
-		log.Fatalf("Failed to extract pages: %v", err)
+		log.Fatalf("Failed to extract page: %v", err)
 	}
 	
-	fmt.Println("Successfully extracted pages 3,2,1 to output/test05_reverse.pdf")
+	fmt.Println("Successfully extracted page 1 to output/experiment03_single_page.pdf")
 	
 	// Verify the result
-	pageCount, err := api.PageCountFile("output/test05_reverse.pdf")
+	pageCount, err := api.PageCountFile("output/experiment03_single_page.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}
 	
 	fmt.Printf("Result file has %d page(s)\n", pageCount)
 	
-	if pageCount == 3 {
-		fmt.Println("✅ Test 05 PASSED - Pages extracted in reverse order!")
+	if pageCount == 1 {
+		fmt.Println("✅ Test 03 PASSED - Single page extracted successfully!")
 	} else {
-		fmt.Printf("❌ Test 05 FAILED - Expected 3 pages, got %d\n", pageCount)
+		fmt.Printf("❌ Test 03 FAILED - Expected 1 page, got %d\n", pageCount)
 	}
 }

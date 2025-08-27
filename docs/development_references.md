@@ -16,8 +16,8 @@
 - **Implementation pattern**: See `docs/memory_processing_summary.md`
 
 ### Code Examples
-- **Working example**: See `experiments/test16_final_memory_approach.go`
-- **API tests**: See `experiments/test09_memory_context.go` through `test16_final_memory_approach.go`
+- **Working example**: See `experiments/experiment16_final_memory_approach.go`
+- **API tests**: See `experiments/experiment09_memory_context.go` through `experiment16_final_memory_approach.go`
 - **Research code**: All test files in `/experiments/` directory
 - **Page reversal fix**: Individual page extraction instead of comma-separated selections
 

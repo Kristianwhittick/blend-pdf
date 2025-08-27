@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 15: Hybrid Memory Approach ===")
+	fmt.Println("=== Experiment 15: Hybrid Memory Approach ===")
 	
 	conf := model.NewDefaultConfiguration()
 	
@@ -155,14 +155,14 @@ func main() {
 	
 	// Perform the merge
 	if len(mergeFiles) > 0 {
-		err = api.MergeCreateFile(mergeFiles, "output/test15_hybrid_interleaved.pdf", false, conf)
+		err = api.MergeCreateFile(mergeFiles, "output/experiment15_hybrid_interleaved.pdf", false, conf)
 		if err != nil {
 			log.Printf("Error merging: %v", err)
 		} else {
 			fmt.Println("   ✅ Successfully created hybrid interleaved merge!")
 			
 			// Verify result
-			resultCount, err := api.PageCountFile("output/test15_hybrid_interleaved.pdf")
+			resultCount, err := api.PageCountFile("output/experiment15_hybrid_interleaved.pdf")
 			if err != nil {
 				log.Printf("Error checking result: %v", err)
 			} else {
@@ -179,5 +179,5 @@ func main() {
 		}
 	}
 	
-	fmt.Println("Test 15 completed!")
+	fmt.Println("Experiment 15 completed!")
 }

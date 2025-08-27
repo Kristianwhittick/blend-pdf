@@ -145,7 +145,7 @@
 #### Implementation Details
 - **Research Completed**: ✅ (Experiments 09-16 in `/experiments/` directory)
 - **API Knowledge**: ✅ (Documented in `/docs/api_knowledge.md`)
-- **Approach Validated**: ✅ (Hybrid approach in `test16_final_memory_approach.go`)
+- **Approach Validated**: ✅ (Hybrid approach in `experiment16_final_memory_approach.go`)
 
 #### Technical Requirements
 1. **Load PDFs into memory** as byte arrays for validation
@@ -161,7 +161,7 @@
 - `fileops.go` - May need updates for temp file handling
 
 #### Reference Implementation
-- See `experiments/test16_final_memory_approach.go` for working example
+- See `experiments/experiment16_final_memory_approach.go` for working example
 - See `docs/memory_processing_summary.md` for implementation pattern
 - See `docs/api_knowledge.md` for API reference
 

@@ -22,7 +22,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 01: Page Count API ===")
+	fmt.Println("=== Experiment 01: Page Count API ===")
 	
 	// Test Doc_A.pdf
 	fmt.Println("Testing Doc_A.pdf...")
@@ -46,5 +46,5 @@ func main() {
 	fmt.Printf("- Doc_B.pdf: %d pages\n", countB)
 	fmt.Printf("- Pages match: %t\n", countA == countB)
 	
-	fmt.Println("Test 01 completed successfully!")
+	fmt.Println("Experiment 01 completed successfully!")
 }

@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 13: API Exploration ===")
+	fmt.Println("=== Experiment 13: API Exploration ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -40,7 +40,7 @@ func main() {
 	
 	// Test 2: Write context to file (we know this works)
 	fmt.Println("2. Writing context to file...")
-	err = api.WriteContextFile(ctxA, "output/test13_copy.pdf")
+	err = api.WriteContextFile(ctxA, "output/experiment13_copy.pdf")
 	if err != nil {
 		log.Printf("   ❌ WriteContextFile error: %v", err)
 	} else {
@@ -94,14 +94,14 @@ func main() {
 	
 	// Try to merge the temp files
 	inFiles := []string{tempA, tempB}
-	err = api.MergeCreateFile(inFiles, "output/test13_merged.pdf", false, conf)
+	err = api.MergeCreateFile(inFiles, "output/experiment13_merged.pdf", false, conf)
 	if err != nil {
 		log.Printf("   ❌ MergeCreateFile error: %v", err)
 	} else {
 		fmt.Println("   ✅ MergeCreateFile works")
 		
 		// Check result
-		mergedCount, err := api.PageCountFile("output/test13_merged.pdf")
+		mergedCount, err := api.PageCountFile("output/experiment13_merged.pdf")
 		if err != nil {
 			log.Printf("   ❌ Error checking merged file: %v", err)
 		} else {

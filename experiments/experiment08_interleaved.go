@@ -24,7 +24,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 08: Complete Interleaved Pattern ===")
+	fmt.Println("=== Experiment 08: Complete Interleaved Pattern ===")
 	fmt.Println("Expected: Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, Doc1_Page3, Doc2_Page1")
 	fmt.Println("Which is: A1, B3, A2, B2, A3, B1")
 	
@@ -77,7 +77,7 @@ func main() {
 	
 	// Merge all temporary files
 	fmt.Println("Merging all pages in interleaved pattern...")
-	err = api.MergeCreateFile(tempFiles, "output/test08_interleaved.pdf", false, conf)
+	err = api.MergeCreateFile(tempFiles, "output/experiment08_interleaved.pdf", false, conf)
 	if err != nil {
 		log.Fatalf("Failed to merge files: %v", err)
 	}
@@ -87,10 +87,10 @@ func main() {
 		os.Remove(tempFile)
 	}
 	
-	fmt.Println("Successfully created output/test08_interleaved.pdf")
+	fmt.Println("Successfully created output/experiment08_interleaved.pdf")
 	
 	// Verify the result
-	resultPageCount, err := api.PageCountFile("output/test08_interleaved.pdf")
+	resultPageCount, err := api.PageCountFile("output/experiment08_interleaved.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}

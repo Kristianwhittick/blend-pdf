@@ -25,7 +25,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 16: Final Memory Approach ===")
+	fmt.Println("=== Experiment 16: Final Memory Approach ===")
 	fmt.Println("Demonstrates optimal in-memory PDF processing with minimal temp files")
 	
 	conf := model.NewDefaultConfiguration()
@@ -179,7 +179,7 @@ func main() {
 	}
 	
 	// Perform final merge
-	outputFile := "output/test16_final_interleaved.pdf"
+	outputFile := "output/experiment16_final_interleaved.pdf"
 	err = api.MergeCreateFile(finalMergeFiles, outputFile, false, conf)
 	if err != nil {
 		log.Printf("❌ Final merge error: %v", err)
@@ -208,5 +208,5 @@ func main() {
 		}
 	}
 	
-	fmt.Println("\n🎉 Test 16 completed - Final memory approach demonstrated!")
+	fmt.Println("\n🎉 Experiment 16 completed - Final memory approach demonstrated!")
 }

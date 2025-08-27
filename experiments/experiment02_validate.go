@@ -23,37 +23,40 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 04: Extract Multiple Pages ===")
+	fmt.Println("=== Experiment 02: PDF Validation API ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
+	conf.ValidationMode = model.ValidationRelaxed
 	
-	// Extract pages 1-2 from Doc_A.pdf
-	fmt.Println("Extracting pages 1-2 from Doc_A.pdf...")
-	
-	pageSelection, err := api.ParsePageSelection("1-2")
+	// Test Doc_A.pdf
+	fmt.Println("Validating Doc_A.pdf...")
+	err := api.ValidateFile("Doc_A.pdf", conf)
 	if err != nil {
-		log.Fatalf("Failed to parse page selection: %v", err)
-	}
-	
-	err = api.TrimFile("Doc_A.pdf", "output/test04_multi_pages.pdf", pageSelection, conf)
-	if err != nil {
-		log.Fatalf("Failed to extract pages: %v", err)
-	}
-	
-	fmt.Println("Successfully extracted pages 1-2 to output/test04_multi_pages.pdf")
-	
-	// Verify the result
-	pageCount, err := api.PageCountFile("output/test04_multi_pages.pdf")
-	if err != nil {
-		log.Fatalf("Failed to get page count of result: %v", err)
-	}
-	
-	fmt.Printf("Result file has %d page(s)\n", pageCount)
-	
-	if pageCount == 2 {
-		fmt.Println("✅ Test 04 PASSED - Multiple pages extracted successfully!")
+		log.Printf("Doc_A.pdf validation failed: %v", err)
 	} else {
-		fmt.Printf("❌ Test 04 FAILED - Expected 2 pages, got %d\n", pageCount)
+		fmt.Println("Doc_A.pdf is valid!")
 	}
+	
+	// Test Doc_B.pdf
+	fmt.Println("Validating Doc_B.pdf...")
+	err = api.ValidateFile("Doc_B.pdf", conf)
+	if err != nil {
+		log.Printf("Doc_B.pdf validation failed: %v", err)
+	} else {
+		fmt.Println("Doc_B.pdf is valid!")
+	}
+	
+	// Test with strict validation
+	fmt.Println("\nTesting with strict validation...")
+	conf.ValidationMode = model.ValidationStrict
+	
+	err = api.ValidateFile("Doc_A.pdf", conf)
+	if err != nil {
+		fmt.Printf("Doc_A.pdf strict validation failed: %v\n", err)
+	} else {
+		fmt.Println("Doc_A.pdf passes strict validation!")
+	}
+	
+	fmt.Println("Experiment 02 completed!")
 }

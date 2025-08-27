@@ -135,12 +135,12 @@ for _, file := range tempFiles {
 3. **Pre-process PDFs**: Fix problematic PDFs before processing
 
 ## Test Files Created
-- `test09_memory_context.go` - Basic context loading
-- `test10_memory_extract_simple.go` - Simple page extraction
-- `test13_api_exploration.go` - API function exploration
-- `test14_working_memory.go` - Working memory approach
-- `test15_hybrid_memory.go` - Hybrid approach
-- `test16_final_memory_approach.go` - Final optimized approach
+- `experiment09_memory_context.go` - Basic context loading
+- `experiment10_memory_extract_simple.go` - Simple page extraction
+- `experiment13_api_exploration.go` - API function exploration
+- `experiment14_working_memory.go` - Working memory approach
+- `experiment15_hybrid_memory.go` - Hybrid approach
+- `experiment16_final_memory_approach.go` - Final optimized approach
 
 ## Conclusion
 While pure in-memory processing isn't fully possible with pdfcpu, the hybrid approach provides significant benefits:

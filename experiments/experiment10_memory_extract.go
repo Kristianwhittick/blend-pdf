@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 10: Memory Page Extraction ===")
+	fmt.Println("=== Experiment 10: Memory Page Extraction ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -48,11 +48,11 @@ func main() {
 		fmt.Printf("ExtractPages success! Extracted context has %d pages\n", ctxExtracted.PageCount)
 		
 		// Try to write extracted page to file
-		err = api.WriteContextFile(ctxExtracted, "output/test10_extracted_page1.pdf")
+		err = api.WriteContextFile(ctxExtracted, "output/experiment10_extracted_page1.pdf")
 		if err != nil {
 			log.Printf("Error writing extracted page: %v", err)
 		} else {
-			fmt.Println("Successfully wrote extracted page to output/test10_extracted_page1.pdf")
+			fmt.Println("Successfully wrote extracted page to output/experiment10_extracted_page1.pdf")
 		}
 	}
 	
@@ -65,13 +65,13 @@ func main() {
 		fmt.Printf("TrimContext success! Trimmed context has %d pages\n", ctxTrimmed.PageCount)
 		
 		// Try to write trimmed page to file
-		err = api.WriteContextFile(ctxTrimmed, "output/test10_trimmed_page1.pdf")
+		err = api.WriteContextFile(ctxTrimmed, "output/experiment10_trimmed_page1.pdf")
 		if err != nil {
 			log.Printf("Error writing trimmed page: %v", err)
 		} else {
-			fmt.Println("Successfully wrote trimmed page to output/test10_trimmed_page1.pdf")
+			fmt.Println("Successfully wrote trimmed page to output/experiment10_trimmed_page1.pdf")
 		}
 	}
 	
-	fmt.Println("Test 10 completed!")
+	fmt.Println("Experiment 10 completed!")
 }

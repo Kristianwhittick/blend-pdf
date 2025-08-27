@@ -23,7 +23,7 @@ import (
 )
 
 func main() {
-	fmt.Println("=== Test 11: Memory Context Merging ===")
+	fmt.Println("=== Experiment 11: Memory Context Merging ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
@@ -52,11 +52,11 @@ func main() {
 		fmt.Printf("MergeContext success! Merged context has %d pages\n", ctxMerged.PageCount)
 		
 		// Write merged result
-		err = api.WriteContextFile(ctxMerged, "output/test11_merged_simple.pdf")
+		err = api.WriteContextFile(ctxMerged, "output/experiment11_merged_simple.pdf")
 		if err != nil {
 			log.Printf("Error writing merged file: %v", err)
 		} else {
-			fmt.Println("Successfully wrote merged file to output/test11_merged_simple.pdf")
+			fmt.Println("Successfully wrote merged file to output/experiment11_merged_simple.pdf")
 		}
 	}
 	
@@ -101,13 +101,13 @@ func main() {
 		fmt.Printf("Interleaved merge success! Result has %d pages\n", ctxInterleaved.PageCount)
 		
 		// Write interleaved result
-		err = api.WriteContextFile(ctxInterleaved, "output/test11_interleaved.pdf")
+		err = api.WriteContextFile(ctxInterleaved, "output/experiment11_interleaved.pdf")
 		if err != nil {
 			log.Printf("Error writing interleaved file: %v", err)
 		} else {
-			fmt.Println("Successfully wrote interleaved file to output/test11_interleaved.pdf")
+			fmt.Println("Successfully wrote interleaved file to output/experiment11_interleaved.pdf")
 		}
 	}
 	
-	fmt.Println("Test 11 completed!")
+	fmt.Println("Experiment 11 completed!")
 }
