@@ -239,7 +239,8 @@ This Go implementation aims to provide feature parity with the original bash ver
 
 ## License
 
-This project is open source. Feel free to modify and distribute.
+This project is licensed under the Apache License 2.0.  
+See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgments
 
