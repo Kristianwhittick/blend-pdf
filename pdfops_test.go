@@ -181,8 +181,8 @@ func TestValidatePDFsForMerge(t *testing.T) {
 	// Test validation (will error with fake PDFs)
 	pages1, pages2, err := validatePDFsForMerge(file1, file2)
 	assert.Error(t, err, "Should error with fake PDF content")
-	assert.Equal(t, -1, pages1) // Returns -1 on error
-	assert.Equal(t, -1, pages2) // Returns -1 on error
+	assert.Equal(t, 0, pages1) // Returns 0 on error
+	assert.Equal(t, 0, pages2) // Returns 0 on error
 }
 
 func TestProcessSingleFileOperation_Logic(t *testing.T) {

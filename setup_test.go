@@ -95,18 +95,22 @@ func TestNormalizeDirectoryPath(t *testing.T) {
 func TestSetupLock(t *testing.T) {
 	tempDir := t.TempDir()
 	
-	// Save original global variables
+	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
+	originalArgs := os.Args
 	defer func() {
 		FOLDER = originalFolder
 		LOCKFILE = originalLockfile
+		os.Args = originalArgs
 		cleanupLock() // Ensure cleanup
 	}()
 	
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
+	// Set os.Args to use our temp directory
+	os.Args = []string{"blendpdfgo.test", tempDir}
 	
 	// Test lock setup
 	err := setupLock()
@@ -120,18 +124,22 @@ func TestSetupLock(t *testing.T) {
 func TestSetupLockAlreadyExists(t *testing.T) {
 	tempDir := t.TempDir()
 	
-	// Save original global variables
+	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
+	originalArgs := os.Args
 	defer func() {
 		FOLDER = originalFolder
 		LOCKFILE = originalLockfile
+		os.Args = originalArgs
 		cleanupLock() // Ensure cleanup
 	}()
 	
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
+	// Set os.Args to use our temp directory
+	os.Args = []string{"blendpdfgo.test", tempDir}
 	
 	// Create first lock
 	err := setupLock()
@@ -153,17 +161,21 @@ func TestSetupLockAlreadyExists(t *testing.T) {
 func TestCleanupLock(t *testing.T) {
 	tempDir := t.TempDir()
 	
-	// Save original global variables
+	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
+	originalArgs := os.Args
 	defer func() {
 		FOLDER = originalFolder
 		LOCKFILE = originalLockfile
+		os.Args = originalArgs
 	}()
 	
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
+	// Set os.Args to use our temp directory
+	os.Args = []string{"blendpdfgo.test", tempDir}
 	
 	// Create lock file
 	err := setupLock()
