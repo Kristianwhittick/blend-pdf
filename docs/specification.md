@@ -194,13 +194,13 @@ Interactive options:
 ### Expected Merge Results
 **Input Files**:
 - Doc_A.pdf: A1, A2, A3 (pages 1, 2, 3)
-- Doc_B.pdf: M, 9, * (pages 1, 2, 3)
+- Doc_B.pdf: M, 9, f (pages 1, 2, 3)
 
 **Expected Output**:
-Interleaved Pattern: A1, *, A2, 9, A3, M
+Interleaved Pattern: A1, f, A2, 9, A3, M
 
 This represents:
-- Doc1_Page1 (A1) + Doc2_Page3 (*)
+- Doc1_Page1 (A1) + Doc2_Page3 (f)
 - Doc1_Page2 (A2) + Doc2_Page2 (9)  
 - Doc1_Page3 (A3) + Doc2_Page1 (M)
 
