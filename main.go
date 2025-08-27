@@ -179,6 +179,7 @@ func processMenu() {
 	case <-time.After(300 * time.Second): // 5 minutes timeout
 		fmt.Printf("\n%sTimeout reached (5 minutes). Exiting...%s\n", YELLOW, NC)
 		CONTINUE = false
+		cleanup()
 		os.Exit(7) // Exit code 7 for timeout
 	}
 }
