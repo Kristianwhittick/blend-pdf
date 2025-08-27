@@ -177,10 +177,92 @@
 
 ## 3. Next Stages
 
-### Currently: No Active Development Tasks
-- All core functionality is complete and production-ready
-- Application is in maintenance mode
-- Future tasks will be added here when requested
+### Task 17: Unit Testing Implementation
+- **Status**: 📋 PLANNED
+- **Priority**: Quality Assurance (High)
+- **Description**: Implement comprehensive unit testing framework for Go code
+- **Prerequisites**: Move experiment content from testing.md to api_experiments.md
+- **Implementation**:
+  - Research and recommend Go testing framework (built-in testing, testify, ginkgo, etc.)
+  - Define comprehensive unit testing process and standards
+  - Cover all main functions, utility functions, error handling, and CLI parsing
+  - Achieve minimum 90% code coverage target
+  - Test with real PDFs using external tools for generation and validation
+  - Document complete testing process in testing.md
+
+### Task 18: Documentation Review and Cleanup
+- **Status**: 📋 PLANNED
+- **Priority**: Documentation Quality (Medium)
+- **Description**: Review all documentation files for overlaps, duplicates, and clarity improvements
+- **Scope**: All files in `/docs/` directory (treat README.md separately)
+- **Implementation**:
+  - Analyze all 10 documentation files for content overlaps
+  - Identify duplicate information across files
+  - Suggest clear separation of content between files
+  - Recommend file renaming or content rewording for clarity
+  - Provide summary recommendations in text file for review
+
+### Task 19: Documentation Cleanup Implementation
+- **Status**: 📋 PLANNED
+- **Priority**: Documentation Quality (Medium)
+- **Description**: Implement the recommendations from Task 18 documentation review
+- **Prerequisites**: Complete Task 18 and review recommendations
+- **Implementation**: Apply approved changes from documentation review analysis
+
+### Task 20: CLI Library Research
+- **Status**: 📋 PLANNED
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Research Go CLI libraries for enhanced user experience
+- **Focus Areas**:
+  - Interactive menus and navigation
+  - Progress bars and spinners for operations
+  - Enhanced help systems and documentation
+  - Advanced color and styling options
+  - Input validation and user prompts
+- **Implementation**:
+  - Research available Go CLI libraries
+  - Focus on new UI patterns (not just current element enhancement)
+  - Provide comprehensive library comparison with pros and cons
+  - Consider implementation complexity and maintenance
+
+### Task 21: UI Interface Recommendations
+- **Status**: 📋 PLANNED
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Design enhanced UI interface recommendations
+- **Prerequisites**: Complete Task 20 CLI library research
+- **Implementation**:
+  - Suggest new UI patterns and interface improvements
+  - Leverage research from Task 20 to propose enhanced user experience
+  - Provide specific UI mockups or detailed descriptions
+  - Focus on modern CLI user experience patterns
+
+### Task 22: Code Refactoring Implementation
+- **Status**: 📋 PLANNED
+- **Priority**: Code Quality (Medium)
+- **Description**: Refactor codebase for improved maintainability and clarity
+- **Scope**: All code files (main.go, constants.go, setup.go, pdfops.go, fileops.go)
+- **Refactoring Criteria**:
+  - Break down large functions into smaller, focused functions
+  - Apply single responsibility principle
+  - Eliminate code duplication
+  - Improve naming conventions for clarity
+  - Split files if they become too large or complex
+- **Implementation**: Direct implementation of refactoring improvements
+
+### Task 23: GitHub Issue for pdfcpu Library
+- **Status**: 📋 PLANNED
+- **Priority**: Community Contribution (Low)
+- **Description**: Create GitHub issue/feature request for pdfcpu page extraction ordering
+- **Issue Details**:
+  - Research appropriate issue type (bug report, feature request, or enhancement)
+  - Explain page extraction ordering problem with api.TrimFile
+  - Include project context and links to BlendPDFGo repository
+  - Reference specific experiment files demonstrating the issue
+  - Provide technical details: code examples, expected vs actual behavior, version info
+  - Include short description of current workaround solution
+- **Deliverables**:
+  - Markdown file for review before submission
+  - Prepared GitHub commands for issue submission
 
 ### Maintenance Activities
 - Regular dependency updates
