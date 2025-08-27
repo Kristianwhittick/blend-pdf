@@ -12,7 +12,7 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 - Test PDF files: Doc_A.pdf (A1, A2, A3) and Doc_B.pdf (M, 9, *)
 
 ### Test Files Location
-- API tests: `tests/test01_pagecount.go` through `test08_interleaved.go`
+- API tests: `tests/test01_pagecount.go` through `test16_final_memory_approach.go`
 - Documentation: `docs/` folder
 - Working directories: `archive/`, `output/`, `error/`
 
@@ -78,6 +78,184 @@ pdftotext output/Doc_A_Doc_B.pdf -
 3. Run with invalid PDF files
 4. Test with mismatched page counts
 5. Test with insufficient permissions
+
+## Comprehensive Test Plan (Based on Bash Version)
+
+### Command Line Arguments Tests
+1. Run with `-h` flag to verify help display
+2. Run with `--help` flag to verify help display
+3. Run with `-v` flag to verify version display (should show v1.0.1)
+4. Run with `--version` flag to verify version display (should show v1.0.1)
+5. Run with `-V` flag to verify verbose mode enabling
+6. Run with `--verbose` flag to verify verbose mode enabling
+7. Run with valid folder path
+8. Run with non-existent folder path
+9. Run with no arguments (should use current directory)
+10. Run with multiple command line options combined (e.g., `-V /path/to/folder`)
+11. Run with invalid command line options (should show error)
+
+### Dependency Checks
+12. Run with pdfcpu missing
+13. Run with all dependencies present
+14. Verify dependency error messages are clear and helpful
+
+### Lock File Tests
+15. Run while another instance is running (should exit with code 6)
+16. Verify lock file is removed after normal exit
+17. Verify lock file is removed after signal interruption
+18. Test lock file creation in /tmp directory
+19. Verify lock file prevents multiple instances correctly
+
+### Directory Setup Tests
+20. Run with existing folder that has no subdirectories
+21. Run with existing folder that already has archive/output/error subdirectories
+22. Verify permissions for creating subdirectories
+23. Test with read-only parent directory (should fail gracefully)
+24. Test with symbolic links to directories
+25. Verify path resolution works correctly
+
+### File Count Display Tests
+26. Verify file counts are accurate for each directory (Main/Archive/Output/Error)
+27. Test file count display with empty directories
+28. Test file count display with files in all directories
+29. Verify counts update correctly after operations
+30. Test with non-PDF files in directories (should not be counted)
+
+### File Preview Tests (Verbose Mode)
+31. Test file preview with no PDF files (should not show preview)
+32. Test file preview with 1-3 PDF files (should show all)
+33. Test file preview with exactly 5 PDF files (should show all 5)
+34. Test file preview with more than 5 PDF files (should show 5 + "... and X more")
+35. Verify file sizes are displayed correctly in preview
+36. Test file preview with files having special characters in names
+37. Verify file preview only shows in verbose mode
+38. Test file preview sorting (should be alphabetical)
+
+### Single File Move Tests
+39. Move a single PDF file when only one exists
+40. Attempt to move when no PDF files exist
+41. Move a single PDF file when multiple exist (should take first alphabetically)
+42. Move an invalid PDF file (should fail validation and move to error)
+43. Test file size display in verbose mode during single file move
+44. Verify success counter increments correctly
+45. Verify files move to correct output directory
+
+### Merge Files Tests
+46. Merge two PDF files with single-page second file (no reversal)
+47. Merge two PDF files with multi-page second file (tests page reversal)
+48. Attempt to merge when only one PDF file exists
+49. Attempt to merge when no PDF files exist
+50. Merge with invalid first PDF file
+51. Merge with invalid second PDF file
+52. Merge with successful pdfcpu execution
+53. Merge with failed pdfcpu execution
+54. Test page count detection using pdfcpu
+55. Verify temporary reverse files are created and cleaned up
+56. Test merge output filename format (file1-file2.pdf)
+57. Verify original files move to archive after successful merge
+58. Verify files move to error directory after failed merge
+
+### Interactive Menu Tests
+59. Test 'S' option (single file move)
+60. Test 's' option (lowercase)
+61. Test 'M' option (merge files)
+62. Test 'm' option (lowercase)
+63. Test 'H' option (help)
+64. Test 'h' option (lowercase)
+65. Test 'V' option (toggle verbose)
+66. Test 'v' option (lowercase)
+67. Test 'Q' option (quit)
+68. Test 'q' option (lowercase)
+69. Test invalid option (should show warning)
+70. Test timeout (no input for 300 seconds, should exit with code 7)
+71. Verify menu prompt format and colors
+72. Test file count display before each menu prompt
+
+### Verbose Mode Tests
+73. Test command output with verbose mode enabled
+74. Test command output with verbose mode disabled
+75. Test toggling verbose mode multiple times
+76. Verify verbose mode shows file sizes during operations
+77. Verify verbose mode shows page counts and reversal information
+78. Verify verbose mode shows detailed pdfcpu command output
+79. Test file preview display in verbose mode
+80. Verify verbose mode toggle messages (enabled/disabled)
+
+### Session Statistics Tests
+81. Verify statistics display on normal exit
+82. Verify statistics display on signal interruption
+83. Test successful operations counter accuracy
+84. Test error counter accuracy
+85. Test elapsed time calculation
+86. Verify statistics format and colors
+87. Test statistics with zero operations
+88. Test statistics with mixed success/error operations
+
+### Error Handling Tests
+89. Test PDF validation with corrupted files
+90. Test operations with insufficient disk space
+91. Test operations with read-only files
+92. Test operations with files being deleted during processing
+93. Verify error messages are clear and helpful
+94. Test graceful handling of pdfcpu failures
+95. Verify proper cleanup on errors
+96. Test error directory functionality
+
+### Signal Handling Tests
+97. Send SIGINT signal (Ctrl+C) - verify graceful shutdown
+98. Send SIGTERM signal - verify graceful shutdown
+99. Verify statistics display on signal interruption
+100. Verify lock file cleanup on signal interruption
+101. Test signal handling during file operations
+
+### Temporary File Management Tests
+102. Verify temporary reverse files are created during multi-page merges
+103. Verify temporary files are cleaned up after successful operations
+104. Verify temporary files are cleaned up after failed operations
+105. Test temporary file naming convention (*-reverse.pdf)
+106. Verify lock file creation and cleanup
+
+### Color and Output Formatting Tests
+107. Verify color codes work correctly in terminal
+108. Test output formatting with different terminal widths
+109. Verify color consistency across different message types
+110. Test output readability in verbose vs normal mode
+
+### Edge Cases and Stress Tests
+111. Test with very large PDF files (>100MB)
+112. Test with PDF files with special characters in names
+113. Test with PDF files with spaces in names
+114. Test with very long filenames
+115. Test with read-only PDF files
+116. Test with insufficient disk space scenarios
+117. Test with full paths vs. relative paths
+118. Test with symbolic links to PDF files
+119. Test rapid successive operations
+120. Test with corrupted PDF files
+121. Test with password-protected PDFs
+122. Test with zero-byte files
+123. Test with non-PDF files with .pdf extension
+
+### Performance Tests
+124. Test processing time with multiple large files
+125. Test memory usage during operations
+126. Test concurrent access scenarios (multiple terminals)
+127. Verify timeout functionality works correctly
+128. Test responsiveness during large file operations
+
+### Integration Tests
+129. Test complete workflow: startup → single move → merge → quit
+130. Test complete workflow with verbose mode throughout
+131. Test error recovery scenarios
+132. Test mixed success/failure operations in single session
+133. Verify all directories are created and used correctly
+134. Test session continuity across multiple operations
+
+### Regression Tests
+135. Verify all original functionality still works after updates
+136. Test backward compatibility with existing file structures
+137. Verify no performance degradation from new features
+138. Test that new features don't interfere with existing operations
 
 ## Expected Merge Results
 
