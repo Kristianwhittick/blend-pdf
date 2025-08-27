@@ -16,9 +16,9 @@
 - **Implementation pattern**: See `docs/memory_processing_summary.md`
 
 ### Code Examples
-- **Working example**: See `tests/test16_final_memory_approach.go`
-- **API tests**: See `tests/test09_memory_context.go` through `test16_final_memory_approach.go`
-- **Research code**: All test files in `/tests/` directory
+- **Working example**: See `experiments/test16_final_memory_approach.go`
+- **API tests**: See `experiments/test09_memory_context.go` through `test16_final_memory_approach.go`
+- **Research code**: All test files in `/experiments/` directory
 - **Page reversal fix**: Individual page extraction instead of comma-separated selections
 
 ### Implementation Guidelines
@@ -32,7 +32,7 @@
 ### Project Structure
 - **Main code**: `main.go`, `constants.go`, `setup.go`, `pdfops.go`, `fileops.go`
 - **Documentation**: `/docs/` directory with specialized files
-- **Tests**: `/tests/` directory with API research and validation
+- **Experiments**: `/experiments/` directory with API research and validation
 - **Examples**: Working code examples for all major features
 
 ### Development Workflow

@@ -12,7 +12,7 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 - Test PDF files: Doc_A.pdf (A1, A2, A3) and Doc_B.pdf (M, 9, *)
 
 ### Test Files Location
-- API tests: `tests/test01_pagecount.go` through `test16_final_memory_approach.go`
+- API tests: `experiments/test01_pagecount.go` through `test16_final_memory_approach.go`
 - Documentation: `docs/` folder
 - Working directories: `archive/`, `output/`, `error/`
 
@@ -21,14 +21,14 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 ### Running Individual API Tests
 ```bash
 cd /home/kris/scan/blendpdfgo
-go run tests/test01_pagecount.go    # Test page counting
-go run tests/test02_validate.go     # Test PDF validation
-go run tests/test03_extract.go      # Test single page extraction
-go run tests/test04_extract_multi.go # Test multiple page extraction
-go run tests/test05_reverse.go      # Test reverse page extraction
-go run tests/test06_merge.go        # Test simple merge
-go run tests/test07_page_merge.go   # Test individual page merge
-go run tests/test08_interleaved.go  # Test complete interleaved pattern
+go run experiments/test01_pagecount.go    # Test page counting
+go run experiments/test02_validate.go     # Test PDF validation
+go run experiments/test03_extract.go      # Test single page extraction
+go run experiments/test04_extract_multi.go # Test multiple page extraction
+go run experiments/test05_reverse.go      # Test reverse page extraction
+go run experiments/test06_merge.go        # Test simple merge
+go run experiments/test07_page_merge.go   # Test individual page merge
+go run experiments/test08_interleaved.go  # Test complete interleaved pattern
 ```
 
 ### Expected API Test Results

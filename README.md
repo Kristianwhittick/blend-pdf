@@ -294,7 +294,7 @@ blend_pdf/
 │   ├── api_knowledge.md # pdfcpu API research
 │   ├── specification.md # Project requirements
 │   └── TEST.md         # Testing procedures
-└── tests/              # API research and test programs
+└── experiments/        # API research and test programs
 ```
 
 ### Development Status
