@@ -73,7 +73,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **Progress Indicators**: Detailed operation progress in verbose mode
 
 ### Advanced Features ✅
-- **Lock File Protection**: Prevents multiple instances from running simultaneously
+- **Directory-Specific Lock Files**: Prevents multiple instances in same directory, allows multiple instances in different directories
 - **Graceful Shutdown**: Proper cleanup and statistics display on exit
 - **Timeout Protection**: Automatic exit after period of inactivity (5 minutes)
 - **Command Line Interface**: Comprehensive CLI flags and arguments
@@ -90,7 +90,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - Page count validation and smart reversal logic
 - Comprehensive error handling and recovery
 - Session statistics and performance monitoring
-- Lock file protection and timeout handling
+- Directory-specific lock file protection and timeout handling
 - Debug mode with structured logging
 
 ### 🔄 Optional Enhancement
@@ -349,7 +349,7 @@ This Go implementation provides **complete feature parity** with the original ba
 - Comprehensive file validation
 - Session statistics and tracking
 - Colored output and verbose mode
-- Lock file protection
+- Directory-specific lock file protection
 - Graceful shutdown handling
 - Timeout protection
 

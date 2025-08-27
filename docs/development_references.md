@@ -1,6 +1,13 @@
 # Development References
 
-## 📋 Phase 4 Implementation References (Optional)
+## 📋 Phase 5 Implementation References
+
+### Task 16: Directory-Specific Lock Files
+- **Hash Algorithm**: MD5 truncated to 8 characters (32 bits)
+- **Collision Analysis**: 4.3 billion combinations, 50% collision at ~65,000 paths
+- **Cross-Platform**: Unix uses `/tmp/`, Windows uses watch folder
+- **Path Normalization**: Absolute, cleaned, lowercase, forward slashes
+- **Implementation**: Update `setup.go` lock functions
 
 ### Documentation
 - **Detailed specifications**: See `docs/tasks.md` (Task 14)

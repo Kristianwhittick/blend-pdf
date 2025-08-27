@@ -253,6 +253,71 @@ feat: Add multi-platform build system
 - Support individual and batch platform builds
 ```
 
+### 16. Directory-Specific Lock Files (Phase 5, Task 11)
+- **Status**: 🔄 IN PROGRESS
+- **Priority**: Enhancement (User Requested)
+- **Description**: Implement directory-specific lock files to allow multiple instances in different folders
+- **Requirement**: Allow multiple program instances as long as they watch different directories
+
+#### Implementation Details
+1. **Hash-Based Lock File Names**
+   - Generate 8-character hash from absolute watch directory path
+   - Use MD5 hash for speed and simplicity
+   - Format: `blendpdfgo-<8-char-hash>.lock`
+
+2. **Path Normalization**
+   - Convert to absolute path using `filepath.Abs()`
+   - Clean path with `filepath.Clean()` to resolve `.` and `..`
+   - Normalize to lowercase for case-insensitive filesystems
+   - Convert to forward slashes with `filepath.ToSlash()` for consistency
+
+3. **Cross-Platform Lock File Location**
+   - **Linux/macOS**: `/tmp/blendpdfgo-<hash>.lock`
+   - **Windows**: `<watch-folder>/blendpdfgo-<hash>.lock`
+   - Prevents permission issues on Windows temp directories
+
+4. **Hash Collision Analysis**
+   - **8 characters (32 bits)**: 4.3 billion combinations
+   - **Birthday paradox**: 50% collision at ~65,000 different paths
+   - **Risk Assessment**: Low for typical usage patterns
+   - **Alternative considered**: 12 characters (negligible collision risk)
+   - **Decision**: 8 characters chosen for shorter filenames and adequate security
+
+#### Technical Requirements
+- Use `crypto/md5` for hash generation (fast, sufficient for this use case)
+- Implement cross-platform path handling with `runtime.GOOS`
+- Update lock file creation, checking, and cleanup functions
+- Maintain backward compatibility with existing error messages
+
+#### Files to Modify
+- `setup.go` - Update `setupLock()` and `cleanupLock()` functions
+- `constants.go` - Update LOCKFILE variable handling
+- `main.go` - Update lock file error handling if needed
+
+#### Acceptance Criteria
+- [ ] Multiple instances can run simultaneously in different directories
+- [ ] Single directory still prevents multiple instances (same hash)
+- [ ] Lock files use 8-character hash suffix
+- [ ] Cross-platform compatibility (Windows, Linux, macOS)
+- [ ] Path normalization handles symlinks and relative paths
+- [ ] Proper cleanup of directory-specific lock files
+
+#### Estimated Effort
+- **Development**: 2-3 hours
+- **Testing**: 1-2 hours
+- **Documentation**: 30 minutes
+
+#### Suggested Commit Message
+```
+feat: Add directory-specific lock files with hash-based naming
+
+- Generate 8-character MD5 hash from absolute watch directory path
+- Allow multiple instances in different directories simultaneously
+- Cross-platform lock file placement (tmp on Unix, watch folder on Windows)
+- Normalize paths for case-insensitive filesystem compatibility
+- Maintain single-directory instance prevention
+```
+
 ---
 
 ## High-Level Project Notes

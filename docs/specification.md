@@ -144,10 +144,12 @@ project/
 - Provide specific error messages for different failure types
 
 ### Lock File Protection ✅
-- Create lock file to prevent multiple instances
-- Location: `/tmp/blendpdfgo.lock`
+- Create directory-specific lock file to prevent multiple instances in same folder
+- Location: `/tmp/blendpdfgo-<8-char-hash>.lock` (Unix) or `<watch-folder>/blendpdfgo-<8-char-hash>.lock` (Windows)
+- Hash generated from absolute watch directory path using MD5 (8 characters)
 - Clean up lock file on normal exit and signal interruption
-- Show clear error message if already running
+- Show clear error message if already running in same directory
+- Allow multiple instances in different directories simultaneously
 
 ### Graceful Shutdown ✅
 - Handle SIGINT (Ctrl+C) and SIGTERM signals
