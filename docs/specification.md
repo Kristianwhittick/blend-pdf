@@ -3,90 +3,164 @@
 ## Overview
 A tool for merging PDF files with special handling for double-sided scanning workflows.
 
-## ✅ Implemented Core Requirements
+---
 
-### PDF Merging ✅
-- Merge exactly 2 PDF documents
-- Both documents must have the exact same number of pages
-- If page counts don't match, error out immediately and move files to error directory
-- The second document's pages are in reverse order and need to be processed in reverse during merging
+## Section 1: Requirements
 
-### Smart Page Reversal Logic ✅
-- **Single-page second file**: Direct merge (no reversal needed)
-- **Multi-page second file**: Extract pages individually in reverse order, then merge
-- **Individual page extraction**: Use separate `api.TrimFile` calls for each page to ensure proper ordering
-- Clean up temporary extracted files after processing
+### R1. Core PDF Processing Requirements
+- **R1.1** Merge exactly 2 PDF documents
+- **R1.2** Both documents must have the exact same number of pages
+- **R1.3** Error out immediately and move files to error directory if page counts don't match
+- **R1.4** Process second document's pages in reverse order during merging
+- **R1.5** Use interleaved merging pattern: Doc1_Page1, Doc2_PageLast, Doc1_Page2, Doc2_PageSecondLast, etc.
+- **R1.6** Validate that both files are valid PDF documents before processing
+- **R1.7** Provide clear error messages for validation failures
 
-### Merging Pattern ✅
-- Use interleaved merging pattern: Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, Doc1_Page3, Doc2_Page1
-- Final output should alternate between pages from first document and corresponding reversed pages from second document
-- The second document's pages are processed in reverse order (last page first, first page last)
+### R2. Smart Page Reversal Requirements
+- **R2.1** Single-page second file: Direct merge (no reversal needed)
+- **R2.2** Multi-page second file: Extract pages individually in reverse order, then merge
+- **R2.3** Use separate `api.TrimFile` calls for each page to ensure proper ordering
+- **R2.4** Clean up temporary extracted files after processing
 
-### File Handling ✅
-- **Success**: Move both input files to `archive/` directory, place merged PDF in `output/` directory
-- **Error**: Move both input files to `error/` directory if page counts don't match or processing fails
-- **File Selection**: Automatically select the first two PDF files found in the directory (sorted alphabetically)
+### R3. File Handling Requirements
+- **R3.1** Success: Move both input files to `archive/` directory
+- **R3.2** Success: Place merged PDF in `output/` directory
+- **R3.3** Error: Move both input files to `error/` directory if processing fails
+- **R3.4** Automatically select the first two PDF files found in the directory (sorted alphabetically)
+- **R3.5** Create archive/, output/, error/ directories if missing
+- **R3.6** Validate directory permissions before operations
+- **R3.7** Handle permission errors gracefully
 
-### Output Naming ✅
-- Combine both input filenames with hyphen separator
-- Format: `FirstFileName-SecondFileName.pdf`
-- Example: `Doc_A.pdf` + `Doc_B.pdf` → `Doc_A-Doc_B.pdf`
+### R4. Output Naming Requirements
+- **R4.1** Combine both input filenames with hyphen separator
+- **R4.2** Format: `FirstFileName-SecondFileName.pdf`
+- **R4.3** Example: `Doc_A.pdf` + `Doc_B.pdf` → `Doc_A-Doc_B.pdf`
 
-### Validation ✅
-- Validate that both files are valid PDF documents before processing
-- Check exact page count match (no tolerance for differences)
-- Provide clear error messages for validation failures
+### R5. User Interface Requirements
+- **R5.1** Show real-time file counts before each menu prompt
+- **R5.2** Format: `Files: Main(X) Archive(Y) Output(Z) Error(W)`
+- **R5.3** Update counts dynamically after each operation
+- **R5.4** Interactive menu with S/M/H/V/D/Q options
+- **R5.5** S - Move single PDF to output directory
+- **R5.6** M - Merge two PDFs with smart reversal logic
+- **R5.7** H - Show comprehensive help information
+- **R5.8** V - Toggle verbose mode on/off
+- **R5.9** D - Toggle debug mode on/off
+- **R5.10** Q - Quit program with statistics display
 
-## ✅ Implemented User Interface Requirements
+### R6. Verbose Mode Requirements
+- **R6.1** File Preview: Show up to 5 PDF files with sizes when verbose enabled
+- **R6.2** File Size Display: Show file sizes during operations
+- **R6.3** Page Information: Display page counts and reversal details
+- **R6.4** Command Output: Show detailed pdfcpu command execution
+- **R6.5** Toggle Support: Allow runtime toggling of verbose mode
 
-### File Count Display ✅
-- Show real-time file counts before each menu prompt
-- Format: `Files: Main(X) Archive(Y) Output(Z) Error(W)`
-- Update counts dynamically after each operation
+### R7. Output Formatting Requirements
+- **R7.1** Red: Error messages and failures
+- **R7.2** Green: Success messages and confirmations
+- **R7.3** Yellow: Warnings and informational messages
+- **R7.4** Blue: File names, paths, and data values
+- **R7.5** No Color: Default text and prompts
 
-### Verbose Mode Features ✅
-- **File Preview**: Show up to 5 PDF files with sizes when verbose enabled
-- **File Size Display**: Show file sizes during operations
-- **Page Information**: Display page counts and reversal details
-- **Command Output**: Show detailed pdfcpu command execution
-- **Toggle Support**: Allow runtime toggling of verbose mode
+### R8. Session Statistics Requirements
+- **R8.1** Track successful operations during session
+- **R8.2** Track failed operations and errors
+- **R8.3** Calculate elapsed time from start to exit
+- **R8.4** Display comprehensive statistics on program exit
 
-### Colored Output ✅
-- **Red**: Error messages and failures
-- **Green**: Success messages and confirmations
-- **Yellow**: Warnings and informational messages
-- **Blue**: File names, paths, and data values
-- **No Color**: Default text and prompts
+### R9. Command Line Interface Requirements
+- **R9.1** `-h, --help`: Show comprehensive help information and exit
+- **R9.2** `-v, --version`: Show version information and exit
+- **R9.3** `-V, --verbose`: Enable verbose mode from startup
+- **R9.4** `-D, --debug`: Enable debug mode (includes verbose + structured logging)
+- **R9.5** `[folder]`: Specify folder path to watch (default: current directory)
+- **R9.6** Support multiple flags together: `-V /path/to/folder`, `-D /path/to/folder`
+- **R9.7** Validate folder paths and show clear error messages
+- **R9.8** Handle both relative and absolute paths
 
-### Session Statistics ✅
-- Track successful operations during session
-- Track failed operations and errors
-- Calculate elapsed time from start to exit
-- Display comprehensive statistics on program exit
+### R10. Error Handling Requirements
+- **R10.1** Validate PDF structure before processing
+- **R10.2** Move invalid PDFs to error/ directory with descriptive messages
+- **R10.3** Continue operation after individual file failures
+- **R10.4** Exact page count match required between two PDFs
+- **R10.5** Move files to error/ with clear mismatch message
+- **R10.6** Display both page counts in error message
+- **R10.7** Handle pdfcpu command failures gracefully
+- **R10.8** Provide specific error messages for different failure types
 
-### Interactive Menu ✅
-- **S** - Move single PDF to output directory
-- **M** - Merge two PDFs with smart reversal logic
-- **H** - Show comprehensive help information
-- **V** - Toggle verbose mode on/off
-- **D** - Toggle debug mode on/off
-- **Q** - Quit program with statistics display
+### R11. Lock File Protection Requirements
+- **R11.1** Create directory-specific lock file to prevent multiple instances in same folder
+- **R11.2** Location: `/tmp/blendpdfgo-<8-char-hash>.lock` (Unix) or `<watch-folder>/blendpdfgo-<8-char-hash>.lock` (Windows)
+- **R11.3** Hash generated from absolute watch directory path using MD5 (8 characters)
+- **R11.4** Clean up lock file on normal exit and signal interruption
+- **R11.5** Show clear error message if already running in same directory
+- **R11.6** Allow multiple instances in different directories simultaneously
 
-## ✅ Implemented Command Line Interface
+### R12. Signal Handling Requirements
+- **R12.1** Handle SIGINT (Ctrl+C) and SIGTERM signals
+- **R12.2** Display session statistics on interruption
+- **R12.3** Clean up temporary files and lock file
+- **R12.4** Proper cleanup of any in-progress operations
 
-### Flags and Arguments ✅
-- `-h, --help`: Show comprehensive help information and exit
-- `-v, --version`: Show version information and exit
-- `-V, --verbose`: Enable verbose mode from startup
-- `-D, --debug`: Enable debug mode (includes verbose + structured logging)
-- `[folder]`: Specify folder path to watch (default: current directory)
+### R13. File Operations Requirements
+- **R13.1** Process files in alphabetical order
+- **R13.2** Select first two PDFs for merge operations
+- **R13.3** Select first PDF for single file operations
+- **R13.4** Create temporary reversed PDFs during multi-page merges
+- **R13.5** Use naming convention: `originalname-reverse.pdf`
+- **R13.6** Clean up temporary files after successful operations
+- **R13.7** Clean up temporary files on failures and interruptions
+- **R13.8** Display file sizes in human-readable format (KB, MB, GB)
+- **R13.9** Show sizes during verbose operations
+- **R13.10** Include size information in file previews
 
-### Combined Options ✅
-- Support multiple flags together: `-V /path/to/folder`, `-D /path/to/folder`
-- Validate folder paths and show clear error messages
-- Handle both relative and absolute paths
+### R14. Performance Requirements
+- **R14.1** Auto-exit after 5 minutes (300 seconds) of user inactivity
+- **R14.2** Show timeout warning before exit
+- **R14.3** Exit with specific timeout exit code (7)
+- **R14.4** Efficient handling of large PDF files
+- **R14.5** Minimal memory footprint during operations
+- **R14.6** Proper cleanup of resources
+- **R14.7** Optimize for common use cases (small to medium PDFs)
+- **R14.8** Provide progress indicators for large file operations
+- **R14.9** Performance monitoring in debug mode
 
-### Help Output ✅
+### R15. Exit Code Requirements
+- **R15.1** `0`: Success
+- **R15.2** `1`: General error
+- **R15.3** `2`: Missing dependencies
+- **R15.4** `3`: Invalid directory
+- **R15.5** `4`: Invalid PDF file
+- **R15.6** `5`: Merge operation failed
+- **R15.7** `6`: Already running (lock file exists)
+- **R15.8** `7`: User timeout
+
+### R16. Compatibility Requirements
+- **R16.1** Support standard PDF formats
+- **R16.2** Handle password-protected PDFs gracefully
+- **R16.3** Validate PDF structure before processing
+- **R16.4** Cross-platform compatibility (Linux, macOS, Windows)
+- **R16.5** Single binary deployment
+- **R16.6** No external dependencies beyond pdfcpu
+- **R16.7** Go 1.19 or higher
+- **R16.8** pdfcpu library (latest stable version)
+- **R16.9** Standard library dependencies only
+
+---
+---
+
+## Section 2: Implementation Details
+
+### Directory Structure
+```
+project/
+├── archive/     # Successfully processed input files
+├── output/      # Final merged PDF files and single file moves
+├── error/       # Files that couldn't be processed
+└── [input PDFs] # Source PDF files to be processed
+```
+
+### Command Line Interface Examples
 ```
 BlendPDFGo v1.0.0 - A tool for merging PDF files
 
@@ -117,124 +191,45 @@ Interactive options:
   Q - Quit the program
 ```
 
-## ✅ Implemented Directory Structure
-```
-project/
-├── archive/     # Successfully processed input files
-├── output/      # Final merged PDF files and single file moves
-├── error/       # Files that couldn't be processed
-└── [input PDFs] # Source PDF files to be processed
-```
+### Expected Merge Results
+**Input Files**:
+- Doc_A.pdf: A1, A2, A3 (pages 1, 2, 3)
+- Doc_B.pdf: M, 9, * (pages 1, 2, 3)
 
-## ✅ Implemented Error Handling
+**Expected Output**:
+Interleaved Pattern: A1, *, A2, 9, A3, M
 
-### PDF Validation ✅
-- Validate PDF structure before processing
-- Move invalid PDFs to error/ directory with descriptive messages
-- Continue operation after individual file failures
+This represents:
+- Doc1_Page1 (A1) + Doc2_Page3 (*)
+- Doc1_Page2 (A2) + Doc2_Page2 (9)  
+- Doc1_Page3 (A3) + Doc2_Page1 (M)
 
-### Page Count Validation ✅
-- Exact page count match required between two PDFs
-- Move files to error/ with clear mismatch message
-- Display both page counts in error message
+### File Movement behaviour
+- **Success**: Input files moved to `archive/`, output in `output/`
+- **Error**: Input files moved to `error/` with error message
 
-### Processing Failures ✅
-- Handle pdfcpu command failures gracefully
-- Move files to error/ directory on merge failures
-- Provide specific error messages for different failure types
+---
 
-### Lock File Protection ✅
-- Create directory-specific lock file to prevent multiple instances in same folder
-- Location: `/tmp/blendpdfgo-<8-char-hash>.lock` (Unix) or `<watch-folder>/blendpdfgo-<8-char-hash>.lock` (Windows)
-- Hash generated from absolute watch directory path using MD5 (8 characters)
-- Clean up lock file on normal exit and signal interruption
-- Show clear error message if already running in same directory
-- Allow multiple instances in different directories simultaneously
+## Section 3: Implementation Status
 
-### Graceful Shutdown ✅
-- Handle SIGINT (Ctrl+C) and SIGTERM signals
-- Display session statistics on interruption
-- Clean up temporary files and lock file
-- Proper cleanup of any in-progress operations
+### ✅ All Requirements Implemented
+All requirements R1.1 through R16.9 have been successfully implemented and tested.
 
-## ✅ Implemented File Operations
+### Current Status: PRODUCTION READY
+- Complete feature parity with original bash version achieved
+- Professional user interface with comprehensive feedback
+- Robust error handling and recovery mechanisms
+- Structured logging and debug capabilities
+- Multi-platform build system with automated releases
 
-### Automatic Directory Creation ✅
-- Create archive/, output/, error/ directories if missing
-- Validate directory permissions before operations
-- Handle permission errors gracefully
-
-### File Sorting and Selection ✅
-- Process files in alphabetical order
-- Select first two PDFs for merge operations
-- Select first PDF for single file operations
-
-### Temporary File Management ✅
-- Create temporary reversed PDFs during multi-page merges
-- Use naming convention: `originalname-reverse.pdf`
-- Clean up temporary files after successful operations
-- Clean up temporary files on failures and interruptions
-
-### File Size Reporting ✅
-- Display file sizes in human-readable format (KB, MB, GB)
-- Show sizes during verbose operations
-- Include size information in file previews
-
-## ✅ Implemented Performance Requirements
-
-### Timeout Protection ✅
-- Auto-exit after 5 minutes (300 seconds) of user inactivity
-- Show timeout warning before exit
-- Exit with specific timeout exit code (7)
-
-### Memory Management ✅
-- Efficient handling of large PDF files
-- Minimal memory footprint during operations
-- Proper cleanup of resources
-
-### Processing Speed ✅
-- Optimize for common use cases (small to medium PDFs)
-- Provide progress indicators for large file operations
-- Performance monitoring in debug mode
-
-## ✅ Implemented Exit Codes
-- `0`: Success
-- `1`: General error
-- `2`: Missing dependencies
-- `3`: Invalid directory
-- `4`: Invalid PDF file
-- `5`: Merge operation failed
-- `6`: Already running (lock file exists)
-- `7`: User timeout
-
-## ✅ Implemented Compatibility
-
-### PDF Support ✅
-- Support standard PDF formats
-- Handle password-protected PDFs gracefully
-- Validate PDF structure before processing
-
-### Platform Support ✅
-- Cross-platform compatibility (Linux, macOS, Windows)
-- Single binary deployment
-- No external dependencies beyond pdfcpu
-
-### Version Requirements ✅
-- Go 1.19 or higher
-- pdfcpu library (latest stable version)
-- Standard library dependencies only
-
-## 🔄 Optional Enhancement
-
-### Phase 4: In-Memory Processing
-- **Status**: Ready for implementation
-- **Benefits**: 52.9% memory efficiency, reduced disk I/O
-- **Research**: Complete with working test implementation
+### Optional Enhancement Available
+- **Phase 4: In-Memory Processing** - 52.9% memory efficiency improvement
+- **Status**: Ready for implementation with complete research and test code
 - **Priority**: Performance optimization (optional)
 
 ---
 
-## 🎯 Long-term Roadmap
+## Section 4: Long-term Roadmap
 
 ### Maintenance
 - Regular dependency updates
@@ -253,9 +248,3 @@ project/
 - Feature requests evaluation
 - Documentation improvements
 - Example usage scenarios
-
----
-
-## Implementation Status: ✅ PRODUCTION READY
-
-All core requirements have been implemented and tested. The application provides complete feature parity with the original bash version plus enhanced capabilities including debug mode, structured logging, and performance monitoring.

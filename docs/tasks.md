@@ -60,12 +60,14 @@
 
 ### Task 1: Fix getPageCount Function
 - **Status**: ✅ COMPLETED
+- **Requirements**: R1.6 (PDF validation), R10.1 (PDF structure validation)
 - **Description**: Fixed the `getPageCount` function to use correct pdfcpu API (`api.PageCountFile`)
 - **Issue**: Was trying to use `api.PDFInfo` with incorrect parameters
 - **Solution**: Replaced with `api.PageCountFile(file)` which directly returns page count
 
 ### Task 2: Implement Page Count Validation
-- **Status**: ✅ COMPLETED  
+- **Status**: ✅ COMPLETED
+- **Requirements**: R1.2 (exact page count match), R1.3 (error handling), R10.4-R10.6 (page count validation)
 - **Description**: Added exact page count validation between two PDFs
 - **Implementation**: 
   - Get page counts for both files
@@ -75,6 +77,7 @@
 
 ### Task 3: Fix Merging Logic for Interleaved Pattern
 - **Status**: ✅ COMPLETED
+- **Requirements**: R1.1 (merge 2 PDFs), R1.4-R1.5 (interleaved pattern), R2.1-R2.4 (smart page reversal)
 - **Description**: Rewrote merging logic to create interleaved pattern (Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, Doc1_Page3, Doc2_Page1)
 - **Implementation**:
   - Created `createInterleavedMerge` function
@@ -89,17 +92,20 @@
 
 ### Task 4: Update Filename Generation
 - **Status**: ✅ COMPLETED
+- **Requirements**: R4.1-R4.3 (output naming requirements)
 - **Description**: Updated output filename to combine both input names with hyphen separator
 - **Format**: `FirstFileName-SecondFileName.pdf`
 - **Example**: `Doc_A.pdf` + `Doc_B.pdf` → `Doc_A-Doc_B.pdf`
 
 ### Task 5: Auto-select First Two PDFs
 - **Status**: ✅ COMPLETED
+- **Requirements**: R3.4 (automatic file selection), R13.1-R13.3 (file sorting and selection)
 - **Description**: Modified file selection to automatically pick first two PDF files
 - **Implementation**: Sorts files alphabetically and selects first two
 
 ### Task 6: Enhanced User Interface and Display
 - **Status**: ✅ COMPLETED - Commit: 61eb72c
+- **Requirements**: R5.1-R5.3 (file count display), R6.1-R6.2 (verbose mode), R7.1-R7.5 (colored output), R8.1-R8.4 (session statistics)
 - **Features Implemented**:
   - File count display: "Files: Main(X) Archive(Y) Output(Z) Error(W)"
   - File preview in verbose mode showing up to 5 files with sizes
@@ -110,6 +116,7 @@
 
 ### Task 7: Smart PDF Processing with Page Reversal Logic
 - **Status**: ✅ COMPLETED - Commit: a949421
+- **Requirements**: R2.1-R2.4 (smart page reversal), R1.6-R1.7 (PDF validation), R13.4-R13.7 (temporary file management)
 - **Features Implemented**:
   - Smart page reversal: only reverse multi-page PDFs
   - Enhanced PDF validation before processing
@@ -119,6 +126,7 @@
 
 ### Task 8: Robust Error Handling and File Management
 - **Status**: ✅ COMPLETED - Commit: 8710720
+- **Requirements**: R11.1-R11.6 (lock file protection), R10.1-R10.8 (error handling), R9.1-R9.8 (CLI parsing), R3.5-R3.7 (directory management)
 - **Features Implemented**:
   - Lock file protection to prevent multiple instances
   - PDF validation with detailed error reporting
@@ -128,6 +136,7 @@
 
 ### Task 9: Command Line Interface Enhancements
 - **Status**: ✅ COMPLETED - Commit: 5c26188
+- **Requirements**: R9.1-R9.8 (CLI interface requirements)
 - **Features Implemented**:
   - Version display with -v/--version flag
   - Help display with -h/--help flag
@@ -138,6 +147,7 @@
 
 ### Task 10: Session Management and Statistics
 - **Status**: ✅ COMPLETED - Commit: 5c26188
+- **Requirements**: R8.1-R8.4 (session statistics), R12.1-R12.4 (signal handling)
 - **Features Implemented**:
   - Operation counter tracking successful operations
   - Error counter tracking failed operations
@@ -147,6 +157,7 @@
 
 ### Task 11: Advanced File Operations
 - **Status**: ✅ COMPLETED - Commit: 5c26188
+- **Requirements**: R3.5 (directory creation), R13.1-R13.10 (file operations), R14.1-R14.3 (timeout protection)
 - **Features Implemented**:
   - Automatic directory creation
   - File sorting in alphabetical order
@@ -156,6 +167,7 @@
 
 ### Task 12: Output and Logging Improvements
 - **Status**: ✅ COMPLETED - Commit: 9a94010
+- **Requirements**: R9.4 (debug mode), R7.1-R7.5 (output formatting), R6.4 (command output)
 - **Features Implemented**:
   - Structured logging with separate loggers for DEBUG/INFO/WARN/ERROR
   - Debug mode with comprehensive operation logging
@@ -165,6 +177,7 @@
 
 ### Task 13: Performance and Reliability
 - **Status**: ✅ COMPLETED - Commit: 9a94010
+- **Requirements**: R14.4-R14.9 (performance requirements), R10.3 (error recovery)
 - **Features Implemented**:
   - Large file handling with performance metrics
   - Memory usage monitoring through file size tracking
@@ -174,6 +187,7 @@
 
 ### Task 15: Multi-Platform Build System
 - **Status**: ✅ COMPLETED
+- **Requirements**: R16.4-R16.5 (cross-platform compatibility, single binary deployment)
 - **Priority**: Production Enhancement (Required)
 - **Description**: Implement automated build system for multiple platforms and architectures
 - **Platforms**: Windows (amd64), Linux (amd64), Linux (arm64), macOS (amd64)
@@ -186,6 +200,7 @@
 
 ### Task 16: Directory-Specific Lock Files
 - **Status**: ✅ COMPLETED
+- **Requirements**: R11.1-R11.6 (lock file protection requirements)
 - **Priority**: Enhancement (User Requested)
 - **Description**: Implement directory-specific lock files to allow multiple instances in different folders
 - **Features Implemented**:
@@ -197,6 +212,7 @@
 
 ### Task 22: Code Refactoring Implementation
 - **Status**: ✅ COMPLETED - Commit: 62fab9a
+- **Requirements**: Code quality improvement (supports all requirements through better maintainability)
 - **Priority**: Code Quality (Medium)
 - **Description**: Refactor codebase for improved maintainability and clarity
 - **Scope**: All code files (main.go, constants.go, setup.go, pdfops.go, fileops.go)
@@ -215,6 +231,7 @@
 
 ### Task 18: Documentation Review and Cleanup
 - **Status**: ✅ COMPLETED
+- **Requirements**: Documentation quality improvement (supports all requirements through better documentation)
 - **Priority**: Documentation Quality (Medium)
 - **Description**: Review all documentation files for overlaps, duplicates, and clarity improvements
 - **Scope**: All files in `/docs/` directory (treat README.md separately)
@@ -236,6 +253,7 @@
 
 ### Task 17: Unit Testing Implementation
 - **Status**: 📋 PLANNED
+- **Requirements**: Quality assurance for all requirements (R1.1-R16.9)
 - **Priority**: Quality Assurance (High)
 - **Description**: Implement comprehensive unit testing framework for Go code
 - **Prerequisites**: Move experiment content from testing.md to api_experiments.md
@@ -249,6 +267,7 @@
 
 ### Task 19: Documentation Cleanup Implementation
 - **Status**: 📋 PLANNED
+- **Requirements**: Documentation quality improvement (supports all requirements through better documentation)
 - **Priority**: Documentation Quality (Medium)
 - **Description**: Implement the recommendations from Task 18 documentation review
 - **Prerequisites**: Complete Task 18 and review recommendations
@@ -256,6 +275,7 @@
 
 ### Task 20: CLI Library Research
 - **Status**: 📋 PLANNED
+- **Requirements**: R5.4-R5.10 (interactive menu), R9.1-R9.8 (CLI interface), user experience enhancement
 - **Priority**: User Experience Enhancement (Medium)
 - **Description**: Research Go CLI libraries for enhanced user experience
 - **Focus Areas**:
@@ -272,6 +292,7 @@
 
 ### Task 21: UI Interface Recommendations
 - **Status**: 📋 PLANNED
+- **Requirements**: R5.1-R5.10 (user interface), R6.1-R6.5 (verbose mode), R7.1-R7.5 (output formatting)
 - **Priority**: User Experience Enhancement (Medium)
 - **Description**: Design enhanced UI interface recommendations
 - **Prerequisites**: Complete Task 20 CLI library research
@@ -310,6 +331,7 @@
 
 ### Task 14: Implement In-Memory Processing Approach (Phase 4)
 - **Status**: 🔄 READY FOR IMPLEMENTATION (ON HOLD)
+- **Requirements**: R14.4-R14.6 (performance requirements), R2.1-R2.4 (smart page reversal), R13.4-R13.7 (temporary file management)
 - **Priority**: Performance Enhancement (Optional)
 - **Description**: Replace current file-based merging with hybrid in-memory approach to reduce temporary file usage
 - **Benefits**: 
