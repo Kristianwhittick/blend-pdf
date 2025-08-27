@@ -14,7 +14,11 @@
 
 package main
 
-import "time"
+import (
+	"log"
+	"os"
+	"time"
+)
 
 const (
 	VERSION = "1.0.0"
@@ -24,10 +28,17 @@ const (
 	YELLOW = "\033[0;33m"
 	BLUE   = "\033[0;34m"
 	NC     = "\033[0m" // No Color
+	
+	// Log levels
+	LOG_DEBUG = 0
+	LOG_INFO  = 1
+	LOG_WARN  = 2
+	LOG_ERROR = 3
 )
 
 var (
 	VERBOSE      = false
+	DEBUG        = false
 	CONTINUE     = true
 	FOLDER       = ""
 	ARCHIVE      = ""
@@ -39,4 +50,18 @@ var (
 	COUNTER      = 0
 	ERROR_COUNT  = 0
 	START_TIME   = time.Now()
+	
+	// Structured logging
+	debugLogger  *log.Logger
+	infoLogger   *log.Logger
+	warnLogger   *log.Logger
+	errorLogger  *log.Logger
 )
+
+// Initialize loggers
+func initLoggers() {
+	debugLogger = log.New(os.Stdout, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLogger = log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime)
+	warnLogger = log.New(os.Stdout, "[WARN] ", log.Ldate|log.Ltime)
+	errorLogger = log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lshortfile)
+}

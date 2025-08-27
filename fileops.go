@@ -121,19 +121,56 @@ func showStatistics() {
 // Colored output helper functions
 func printSuccess(message string) {
 	fmt.Printf("%sSuccess:%s %s\n", GREEN, NC, message)
+	if DEBUG {
+		infoLogger.Printf("SUCCESS: %s", message)
+	}
 }
 
 func printError(message string) {
 	fmt.Printf("%sError:%s %s\n", RED, NC, message)
 	ERROR_COUNT++
+	if DEBUG {
+		errorLogger.Printf("ERROR: %s", message)
+	}
 }
 
 func printWarning(message string) {
 	fmt.Printf("%sWarning:%s %s\n", YELLOW, NC, message)
+	if DEBUG {
+		warnLogger.Printf("WARNING: %s", message)
+	}
 }
 
 func printInfo(message string) {
 	fmt.Printf("%sInfo:%s %s\n", BLUE, NC, message)
+	if DEBUG {
+		infoLogger.Printf("INFO: %s", message)
+	}
+}
+
+func printDebug(message string) {
+	if DEBUG {
+		fmt.Printf("[DEBUG] %s\n", message)
+		debugLogger.Printf("DEBUG: %s", message)
+	}
+}
+
+// Structured logging functions
+func logOperation(operation, file1, file2, result string) {
+	if DEBUG {
+		if file2 != "" {
+			infoLogger.Printf("OPERATION: %s | Files: %s, %s | Result: %s", operation, file1, file2, result)
+		} else {
+			infoLogger.Printf("OPERATION: %s | File: %s | Result: %s", operation, file1, result)
+		}
+	}
+}
+
+func logPerformance(operation string, duration time.Duration, fileSize int64) {
+	if DEBUG {
+		infoLogger.Printf("PERFORMANCE: %s | Duration: %v | Size: %d bytes | Speed: %.2f MB/s", 
+			operation, duration, fileSize, float64(fileSize)/(1024*1024)/duration.Seconds())
+	}
 }
 
 // Setup directories

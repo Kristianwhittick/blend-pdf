@@ -27,6 +27,11 @@ import (
 )
 
 func main() {
+	// Initialize loggers if needed
+	if DEBUG {
+		initLoggers()
+	}
+	
 	// Set up signal handling for graceful shutdown
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
@@ -81,18 +86,22 @@ func showHelp() {
 	fmt.Printf("  -h, --help     Show this help information and exit\n")
 	fmt.Printf("  -v, --version  Show version information and exit\n")
 	fmt.Printf("  -V, --verbose  Enable verbose mode (show all program output)\n")
+	fmt.Printf("  -D, --debug    Enable debug mode (includes verbose + structured logging)\n")
 	fmt.Printf("  [folder]       Specify folder to watch (default: current directory)\n\n")
 	fmt.Printf("Examples:\n")
 	fmt.Printf("  %s -h                # Show help\n", filepath.Base(os.Args[0]))
 	fmt.Printf("  %s -v                # Show version\n", filepath.Base(os.Args[0]))
 	fmt.Printf("  %s -V                # Run in verbose mode\n", filepath.Base(os.Args[0]))
+	fmt.Printf("  %s -D                # Run in debug mode\n", filepath.Base(os.Args[0]))
 	fmt.Printf("  %s /path/to/pdfs     # Watch specific folder\n", filepath.Base(os.Args[0]))
+	fmt.Printf("  %s -V /path/to/pdfs  # Verbose mode with specific folder\n", filepath.Base(os.Args[0]))
 	fmt.Printf("  %s                   # Watch current directory\n\n", filepath.Base(os.Args[0]))
 	fmt.Printf("Interactive options:\n")
 	fmt.Printf("  S - Move a single PDF file to the output directory\n")
 	fmt.Printf("  M - Merge two PDF files (first file + reversed second file)\n")
 	fmt.Printf("  H - Show this help information\n")
 	fmt.Printf("  V - Toggle verbose mode\n")
+	fmt.Printf("  D - Toggle debug mode\n")
 	fmt.Printf("  Q - Quit the program\n\n")
 }
 
@@ -101,11 +110,11 @@ func processMenu() {
 	displayFileCounts()
 	showFilePreview()
 	
-	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[Q]%suit\n", 
-		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
+	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[D]%sebug, %s[Q]%suit\n", 
+		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
 	
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter choice (S/M/H/V/Q): ")
+	fmt.Print("Enter choice (S/M/H/V/D/Q): ")
 	
 	// Create a channel to receive the input
 	inputChan := make(chan string, 1)
@@ -140,11 +149,22 @@ func processMenu() {
 			} else {
 				printInfo("Verbose mode disabled")
 			}
+		case "D":
+			DEBUG = !DEBUG
+			if DEBUG {
+				VERBOSE = true // Debug implies verbose
+				if debugLogger == nil {
+					initLoggers()
+				}
+				printSuccess("Debug mode enabled (includes verbose)")
+			} else {
+				printInfo("Debug mode disabled")
+			}
 		case "Q":
 			fmt.Printf("%sExiting program...%s\n", YELLOW, NC)
 			CONTINUE = false
 		default:
-			printWarning("Invalid choice. Please enter S, M, H, V, or Q.")
+			printWarning("Invalid choice. Please enter S, M, H, V, D, or Q.")
 		}
 		
 	case err := <-errorChan:
@@ -165,6 +185,8 @@ func processMenu() {
 
 // Enhanced single file processing with validation
 func processSingleFileWithValidation() {
+	startTime := time.Now()
+	
 	files, err := findPDFFiles()
 	if err != nil {
 		printError(fmt.Sprintf("Error finding PDF files: %v", err))
@@ -179,6 +201,10 @@ func processSingleFileWithValidation() {
 	file := files[0]
 	filename := filepath.Base(file)
 	
+	if DEBUG {
+		printDebug(fmt.Sprintf("Processing single file: %s", filename))
+	}
+	
 	// Validate PDF before processing
 	if err := validatePDFFile(file); err != nil {
 		printError(fmt.Sprintf("'%s' is not a valid PDF file: %v", filename, err))
@@ -190,6 +216,7 @@ func processSingleFileWithValidation() {
 			ERROR_COUNT++
 			printError("Invalid PDF moved to error folder")
 		}
+		logOperation("SINGLE_FILE_INVALID", filename, "", "FAILED")
 		return
 	}
 	
@@ -198,19 +225,32 @@ func processSingleFileWithValidation() {
 		fmt.Printf("Processing: %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
 	}
 
+	// Get file size for performance monitoring
+	var fileSize int64
+	if info, err := os.Stat(file); err == nil {
+		fileSize = info.Size()
+	}
+
 	// Move file to output directory
 	destFile := filepath.Join(OUTPUT, filename)
 	if err := moveFileWithRecovery(file, destFile); err != nil {
 		printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
+		logOperation("SINGLE_FILE_MOVE", filename, "", "FAILED")
 		return
 	}
 
+	duration := time.Since(startTime)
 	COUNTER++
 	printSuccess(fmt.Sprintf("File moved. (%d)", COUNTER))
+	
+	logOperation("SINGLE_FILE_MOVE", filename, "", "SUCCESS")
+	logPerformance("SINGLE_FILE_MOVE", duration, fileSize)
 }
 
 // Enhanced merge processing with validation
 func processMergeFilesWithValidation() {
+	startTime := time.Now()
+	
 	files, err := findPDFFiles()
 	if err != nil {
 		printError(fmt.Sprintf("Error finding PDF files: %v", err))
@@ -224,17 +264,23 @@ func processMergeFilesWithValidation() {
 
 	file1 := files[0]
 	file2 := files[1]
+	
+	if DEBUG {
+		printDebug(fmt.Sprintf("Processing merge: %s + %s", filepath.Base(file1), filepath.Base(file2)))
+	}
 
 	// Validate both PDFs before processing
 	if err := validatePDFFile(file1); err != nil {
 		printError(fmt.Sprintf("First PDF '%s' is invalid: %v", filepath.Base(file1), err))
 		moveInvalidFiles(file1, file2)
+		logOperation("MERGE_INVALID", filepath.Base(file1), filepath.Base(file2), "FAILED")
 		return
 	}
 	
 	if err := validatePDFFile(file2); err != nil {
 		printError(fmt.Sprintf("Second PDF '%s' is invalid: %v", filepath.Base(file2), err))
 		moveInvalidFiles(file1, file2)
+		logOperation("MERGE_INVALID", filepath.Base(file1), filepath.Base(file2), "FAILED")
 		return
 	}
 
@@ -242,6 +288,15 @@ func processMergeFilesWithValidation() {
 		BLUE, filepath.Base(file1), NC, 
 		BLUE, filepath.Base(file2), NC,
 		GREEN, filepath.Base(file1)+"-"+filepath.Base(file2), NC)
+
+	// Get combined file size for performance monitoring
+	var totalSize int64
+	if info1, err := os.Stat(file1); err == nil {
+		totalSize += info1.Size()
+	}
+	if info2, err := os.Stat(file2); err == nil {
+		totalSize += info2.Size()
+	}
 
 	if VERBOSE {
 		size1 := getHumanReadableSize(file1)
@@ -257,6 +312,10 @@ func processMergeFilesWithValidation() {
 
 	// Process and merge the files with smart page reversal logic
 	processAndMerge(outputFile, file1, file2, 0) // pages parameter not used in new implementation
+	
+	duration := time.Since(startTime)
+	logOperation("MERGE", filepath.Base(file1), filepath.Base(file2), "COMPLETED")
+	logPerformance("MERGE", duration, totalSize)
 }
 
 // Move invalid files to error directory

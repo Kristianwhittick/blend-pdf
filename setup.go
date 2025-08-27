@@ -84,6 +84,11 @@ func parseArgs() (string, error) {
 		case "-V", "--verbose":
 			VERBOSE = true
 			printSuccess("Verbose mode enabled")
+		case "-D", "--debug":
+			DEBUG = true
+			VERBOSE = true // Debug mode implies verbose
+			initLoggers()
+			printSuccess("Debug mode enabled (includes verbose)")
 		default:
 			// Check if it's a flag we don't recognize
 			if strings.HasPrefix(arg, "-") {
@@ -97,13 +102,18 @@ func parseArgs() (string, error) {
 			}
 		}
 		
-		// Handle combined flags like -V /path/to/folder
-		if arg == "-V" || arg == "--verbose" {
+		// Handle combined flags like -V /path/to/folder or -D /path/to/folder
+		if (arg == "-V" || arg == "--verbose" || arg == "-D" || arg == "--debug") {
 			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
 				folder = args[i+1]
 				break
 			}
 		}
+	}
+	
+	// Initialize loggers if debug mode is enabled
+	if DEBUG && debugLogger == nil {
+		initLoggers()
 	}
 	
 	// Use current directory if no folder specified
@@ -119,6 +129,10 @@ func parseArgs() (string, error) {
 	absFolder, err := filepath.Abs(folder)
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve absolute path for '%s': %v", folder, err)
+	}
+	
+	if DEBUG {
+		printDebug(fmt.Sprintf("Parsed arguments: folder=%s, verbose=%t, debug=%t", absFolder, VERBOSE, DEBUG))
 	}
 	
 	return absFolder, nil
