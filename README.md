@@ -98,21 +98,76 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 
 ## Installation
 
-### Prerequisites
-- Go 1.19 or higher
-- pdfcpu library (automatically installed via Go modules)
+### Download Pre-built Binaries
+
+Download the latest release for your platform from the [Releases page](https://github.com/Kristianwhittick/blend_pdf/releases):
+
+- **Windows (64-bit)**: `blendpdfgo-{version}-windows-amd64.exe`
+- **Linux (64-bit)**: `blendpdfgo-{version}-linux-amd64`
+- **Linux (ARM64)**: `blendpdfgo-{version}-linux-arm64`
+- **macOS (64-bit)**: `blendpdfgo-{version}-darwin-amd64`
+
+#### Installation Steps
+1. Download the appropriate binary for your platform
+2. Make it executable (Linux/macOS): `chmod +x blendpdfgo-*`
+3. Move to your PATH: `sudo mv blendpdfgo-* /usr/local/bin/blendpdfgo`
+4. Verify installation: `blendpdfgo --version`
 
 ### Build from Source
+
+#### Prerequisites
+- Go 1.21 or higher
+- Git
+- Make (optional, for using Makefile targets)
+
+#### Quick Build
 ```bash
 # Clone the repository
 git clone https://github.com/Kristianwhittick/blend_pdf.git
 cd blend_pdf
 
-# Build the application
+# Build for current platform
 go build
+
+# Or use Make
+make build
 
 # Run the application
 ./blendpdfgo
+```
+
+#### Multi-Platform Build
+```bash
+# Build for all supported platforms
+make build-all
+
+# Or use the build script directly
+./build.sh --all --checksums
+
+# Build for specific platform
+make linux-amd64
+./build.sh linux-amd64
+```
+
+#### Available Make Targets
+```bash
+make help          # Show all available targets
+make build          # Build for current platform
+make build-all      # Build for all platforms
+make test           # Run tests
+make lint           # Run linter
+make clean          # Clean build artifacts
+make install        # Install to GOPATH/bin
+make release        # Create complete release build
+```
+
+#### Build Script Options
+```bash
+./build.sh --help                    # Show help
+./build.sh --all                     # Build all platforms
+./build.sh --clean --all             # Clean and build all
+./build.sh --checksums linux-amd64   # Build with checksums
+./build.sh --verbose windows-amd64   # Verbose output
 ```
 
 ## Usage
