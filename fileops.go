@@ -16,23 +16,70 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 	"time"
 )
 
-// Get file counts for display
-func getFileCounts() (int, int, int, int) {
-	mainCount := countPDFFiles(FOLDER)
-	archiveCount := countPDFFiles(ARCHIVE)
-	outputCount := countPDFFiles(OUTPUT)
-	errorCount := countPDFFiles(ERROR_DIR)
-	return mainCount, archiveCount, outputCount, errorCount
+// Directory and file management functions
+
+// Setup application directories
+func setupDirectories(folder string) error {
+	FOLDER = folder
+	ARCHIVE = filepath.Join(folder, "archive")
+	OUTPUT = filepath.Join(folder, "output")
+	ERROR_DIR = filepath.Join(folder, "error")
+
+	if err := createRequiredDirectories(); err != nil {
+		return err
+	}
+
+	displayDirectoryPaths()
+	return nil
 }
 
-// Count PDF files in a directory
+// Create required directories if they don't exist
+func createRequiredDirectories() error {
+	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
+	for _, dir := range dirs {
+		if err := os.MkdirAll(dir, 0750); err != nil {
+			return fmt.Errorf("failed to create directory %s: %v", dir, err)
+		}
+	}
+	return nil
+}
+
+// Display directory paths
+func displayDirectoryPaths() {
+	fmt.Printf("Watching folder: %s%s%s\n", BLUE, FOLDER, NC)
+	fmt.Printf("Archive  folder: %s%s%s\n", BLUE, ARCHIVE, NC)
+	fmt.Printf("Output   folder: %s%s%s\n", BLUE, OUTPUT, NC)
+	fmt.Printf("Error    folder: %s%s%s\n", BLUE, ERROR_DIR, NC)
+	fmt.Println()
+}
+
+// Find PDF files in the main directory
+func findPDFFiles() ([]string, error) {
+	pattern := filepath.Join(FOLDER, "*.pdf")
+	files, err := filepath.Glob(pattern)
+	if err != nil {
+		return nil, err
+	}
+	
+	sort.Strings(files)
+	return files, nil
+}
+
+// File counting and display functions
+
+// Get file counts for all directories
+func getFileCounts() (int, int, int, int) {
+	return countPDFFiles(FOLDER), countPDFFiles(ARCHIVE), countPDFFiles(OUTPUT), countPDFFiles(ERROR_DIR)
+}
+
+// Count PDF files in a specific directory
 func countPDFFiles(dir string) int {
 	files, err := filepath.Glob(filepath.Join(dir, "*.pdf"))
 	if err != nil {
@@ -53,17 +100,31 @@ func showFilePreview() {
 		return
 	}
 	
-	files, err := filepath.Glob(filepath.Join(FOLDER, "*.pdf"))
+	files, err := findPDFFiles()
 	if err != nil || len(files) == 0 {
 		return
 	}
 	
-	sort.Strings(files)
+	displayFileList(files)
+}
+
+// Display list of files with size information
+func displayFileList(files []string) {
 	fmt.Printf("%sAvailable PDF files:%s\n", BLUE, NC)
 	
 	maxDisplay := 5
-	displayed := 0
+	displayedCount := displayFiles(files, maxDisplay)
 	
+	if len(files) > maxDisplay {
+		remaining := len(files) - displayedCount
+		fmt.Printf("  ... and %d more file(s)\n", remaining)
+	}
+	fmt.Println()
+}
+
+// Display individual files up to maximum count
+func displayFiles(files []string, maxDisplay int) int {
+	displayed := 0
 	for _, file := range files {
 		if displayed >= maxDisplay {
 			break
@@ -74,13 +135,10 @@ func showFilePreview() {
 		fmt.Printf("  %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
 		displayed++
 	}
-	
-	if len(files) > maxDisplay {
-		remaining := len(files) - maxDisplay
-		fmt.Printf("  ... and %d more file(s)\n", remaining)
-	}
-	fmt.Println()
+	return displayed
 }
+
+// File size utilities
 
 // Get human readable file size
 func getHumanReadableSize(filepath string) string {
@@ -89,146 +147,82 @@ func getHumanReadableSize(filepath string) string {
 		return "unknown"
 	}
 	
-	size := info.Size()
-	if size < 1024 {
+	return formatFileSize(info.Size())
+}
+
+// Format file size in human readable format
+func formatFileSize(size int64) string {
+	const (
+		KB = 1024
+		MB = KB * 1024
+		GB = MB * 1024
+	)
+	
+	switch {
+	case size < KB:
 		return fmt.Sprintf("%dB", size)
-	} else if size < 1024*1024 {
-		return fmt.Sprintf("%.1fK", float64(size)/1024)
-	} else if size < 1024*1024*1024 {
-		return fmt.Sprintf("%.1fM", float64(size)/(1024*1024))
-	} else {
-		return fmt.Sprintf("%.1fG", float64(size)/(1024*1024*1024))
+	case size < MB:
+		return fmt.Sprintf("%.1fK", float64(size)/KB)
+	case size < GB:
+		return fmt.Sprintf("%.1fM", float64(size)/MB)
+	default:
+		return fmt.Sprintf("%.1fG", float64(size)/GB)
 	}
 }
 
-// Show session statistics on exit
-func showStatistics() {
-	elapsed := time.Since(START_TIME)
-	minutes := int(elapsed.Minutes())
-	seconds := int(elapsed.Seconds()) % 60
-	
-	fmt.Printf("\n%sSession Statistics:%s\n", BLUE, NC)
-	fmt.Printf("Successful operations: %s%d%s\n", GREEN, COUNTER, NC)
-	fmt.Printf("Errors encountered: %s%d%s\n", RED, ERROR_COUNT, NC)
-	
-	if minutes > 0 {
-		fmt.Printf("Time elapsed: %dm %ds\n", minutes, seconds)
-	} else {
-		fmt.Printf("Time elapsed: %ds\n", seconds)
-	}
-}
-
-// Colored output helper functions
-func printSuccess(message string) {
-	fmt.Printf("%sSuccess:%s %s\n", GREEN, NC, message)
-	if DEBUG {
-		infoLogger.Printf("SUCCESS: %s", message)
-	}
-}
-
-func printError(message string) {
-	fmt.Printf("%sError:%s %s\n", RED, NC, message)
-	ERROR_COUNT++
-	if DEBUG {
-		errorLogger.Printf("ERROR: %s", message)
-	}
-}
-
-func printWarning(message string) {
-	fmt.Printf("%sWarning:%s %s\n", YELLOW, NC, message)
-	if DEBUG {
-		warnLogger.Printf("WARNING: %s", message)
-	}
-}
-
-func printInfo(message string) {
-	fmt.Printf("%sInfo:%s %s\n", BLUE, NC, message)
-	if DEBUG {
-		infoLogger.Printf("INFO: %s", message)
-	}
-}
-
-func printDebug(message string) {
-	if DEBUG {
-		fmt.Printf("[DEBUG] %s\n", message)
-		debugLogger.Printf("DEBUG: %s", message)
-	}
-}
-
-// Structured logging functions
-func logOperation(operation, file1, file2, result string) {
-	if DEBUG {
-		if file2 != "" {
-			infoLogger.Printf("OPERATION: %s | Files: %s, %s | Result: %s", operation, file1, file2, result)
-		} else {
-			infoLogger.Printf("OPERATION: %s | File: %s | Result: %s", operation, file1, result)
-		}
-	}
-}
-
-func logPerformance(operation string, duration time.Duration, fileSize int64) {
-	if DEBUG {
-		infoLogger.Printf("PERFORMANCE: %s | Duration: %v | Size: %d bytes | Speed: %.2f MB/s", 
-			operation, duration, fileSize, float64(fileSize)/(1024*1024)/duration.Seconds())
-	}
-}
-
-// Setup directories
-func setupDirectories(folder string) error {
-	FOLDER = folder
-	ARCHIVE = filepath.Join(folder, "archive")
-	OUTPUT = filepath.Join(folder, "output")
-	ERROR_DIR = filepath.Join(folder, "error")
-
-	// Create directories if they don't exist
-	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
-	for _, dir := range dirs {
-		if err := os.MkdirAll(dir, 0750); err != nil {
-			return fmt.Errorf("failed to create directory %s: %v", dir, err)
-		}
-	}
-
-	fmt.Printf("Watching folder: %s%s%s\n", BLUE, FOLDER, NC)
-	fmt.Printf("Archive  folder: %s%s%s\n", BLUE, ARCHIVE, NC)
-	fmt.Printf("Output   folder: %s%s%s\n", BLUE, OUTPUT, NC)
-	fmt.Printf("Error    folder: %s%s%s\n", BLUE, ERROR_DIR, NC)
-	fmt.Println()
-
-	return nil
-}
-
-// Find PDF files in the main directory
-func findPDFFiles() ([]string, error) {
-	pattern := filepath.Join(FOLDER, "*.pdf")
-	files, err := filepath.Glob(pattern)
-	if err != nil {
-		return nil, err
-	}
-	
-	sort.Strings(files)
-	return files, nil
-}
+// File movement and processing functions
 
 // Move processed files to destination directory with enhanced error handling
 func moveProcessedFiles(destination, message string, files ...string) {
-	allMoved := true
+	moveResults := processMoveOperations(destination, files)
+	handleMoveResults(moveResults, destination, message)
+}
+
+// Process individual move operations
+func processMoveOperations(destination string, files []string) []moveResult {
+	var results []moveResult
 	
 	for _, file := range files {
 		if file == "" {
 			continue
 		}
 		
-		filename := filepath.Base(file)
-		destFile := filepath.Join(destination, filename)
+		result := moveResult{
+			filename: filepath.Base(file),
+			success:  false,
+		}
 		
+		destFile := filepath.Join(destination, result.filename)
 		if err := moveFileWithRecovery(file, destFile); err != nil {
-			printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
+			result.error = err
+		} else {
+			result.success = true
+		}
+		
+		results = append(results, result)
+	}
+	
+	return results
+}
+
+// Handle results of move operations
+func handleMoveResults(results []moveResult, destination, message string) {
+	allMoved := true
+	
+	for _, result := range results {
+		if !result.success {
+			printError(fmt.Sprintf("Failed to move %s: %v", result.filename, result.error))
 			allMoved = false
 		} else if VERBOSE {
-			printInfo(fmt.Sprintf("Moved %s to %s", filename, filepath.Base(destination)))
+			printInfo(fmt.Sprintf("Moved %s to %s", result.filename, filepath.Base(destination)))
 		}
 	}
 	
+	updateCountersBasedOnResults(allMoved, destination, message)
+}
+
+// Update counters based on move operation results
+func updateCountersBasedOnResults(allMoved bool, destination, message string) {
 	if allMoved {
 		if destination == ARCHIVE {
 			COUNTER++
@@ -243,71 +237,102 @@ func moveProcessedFiles(destination, message string, files ...string) {
 	}
 }
 
-// Process single file
-func processSingleFile() {
-	files, err := findPDFFiles()
-	if err != nil {
-		printError(fmt.Sprintf("Error finding PDF files: %v", err))
-		return
-	}
+// Statistics and reporting functions
 
-	if len(files) == 0 {
-		printWarning("No PDF files found in " + FOLDER)
-		return
-	}
-
-	file := files[0]
-	filename := filepath.Base(file)
+// Show session statistics on exit
+func showStatistics() {
+	elapsed := time.Since(START_TIME)
 	
-	if VERBOSE {
-		filesize := getHumanReadableSize(file)
-		fmt.Printf("Processing: %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
-	}
-
-	// Move file to output directory
-	destFile := filepath.Join(OUTPUT, filename)
-	if err := os.Rename(file, destFile); err != nil {
-		printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
-		return
-	}
-
-	COUNTER++
-	printSuccess(fmt.Sprintf("File moved. (%d)", COUNTER))
+	fmt.Printf("\n%sSession Statistics:%s\n", BLUE, NC)
+	displayOperationCounts()
+	displayElapsedTime(elapsed)
 }
 
-// Process merge files
-func processMergeFiles() {
-	files, err := findPDFFiles()
-	if err != nil {
-		printError(fmt.Sprintf("Error finding PDF files: %v", err))
+// Display operation counts
+func displayOperationCounts() {
+	fmt.Printf("Successful operations: %s%d%s\n", GREEN, COUNTER, NC)
+	fmt.Printf("Errors encountered: %s%d%s\n", RED, ERROR_COUNT, NC)
+}
+
+// Display elapsed time in appropriate format
+func displayElapsedTime(elapsed time.Duration) {
+	minutes := int(elapsed.Minutes())
+	seconds := int(elapsed.Seconds()) % 60
+	
+	if minutes > 0 {
+		fmt.Printf("Time elapsed: %dm %ds\n", minutes, seconds)
+	} else {
+		fmt.Printf("Time elapsed: %ds\n", seconds)
+	}
+}
+
+// Output and logging functions
+
+// Colored output helper functions
+func printSuccess(message string) {
+	fmt.Printf("%sSuccess:%s %s\n", GREEN, NC, message)
+	logIfDebugEnabled("SUCCESS", message, infoLogger)
+}
+
+func printError(message string) {
+	fmt.Printf("%sError:%s %s\n", RED, NC, message)
+	ERROR_COUNT++
+	logIfDebugEnabled("ERROR", message, errorLogger)
+}
+
+func printWarning(message string) {
+	fmt.Printf("%sWarning:%s %s\n", YELLOW, NC, message)
+	logIfDebugEnabled("WARNING", message, warnLogger)
+}
+
+func printInfo(message string) {
+	fmt.Printf("%sInfo:%s %s\n", BLUE, NC, message)
+	logIfDebugEnabled("INFO", message, infoLogger)
+}
+
+func printDebug(message string) {
+	if DEBUG {
+		fmt.Printf("[DEBUG] %s\n", message)
+		logIfDebugEnabled("DEBUG", message, debugLogger)
+	}
+}
+
+// Structured logging functions
+func logOperation(operation, file1, file2, result string) {
+	if !DEBUG {
 		return
 	}
-
-	if len(files) < 2 {
-		printWarning(fmt.Sprintf("Did not find two PDF files in %s", FOLDER))
-		return
+	
+	if file2 != "" {
+		infoLogger.Printf("OPERATION: %s | Files: %s, %s | Result: %s", operation, file1, file2, result)
+	} else {
+		infoLogger.Printf("OPERATION: %s | File: %s | Result: %s", operation, file1, result)
 	}
+}
 
-	file1 := files[0]
-	file2 := files[1]
-
-	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n", 
-		BLUE, filepath.Base(file1), NC, 
-		BLUE, filepath.Base(file2), NC,
-		GREEN, filepath.Base(file1)+"-"+filepath.Base(file2), NC)
-
-	if VERBOSE {
-		size1 := getHumanReadableSize(file1)
-		size2 := getHumanReadableSize(file2)
-		fmt.Printf("File 1 size: %s\n", size1)
-		fmt.Printf("File 2 size: %s\n", size2)
+func logPerformance(operation string, duration time.Duration, fileSize int64) {
+	if DEBUG && duration.Seconds() > 0 {
+		speed := float64(fileSize) / (1024 * 1024) / duration.Seconds()
+		infoLogger.Printf("PERFORMANCE: %s | Duration: %v | Size: %d bytes | Speed: %.2f MB/s", 
+			operation, duration, fileSize, speed)
 	}
+}
 
-	// Create output filename (combine both names with hyphen)
-	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
-	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
-	outputFile := filepath.Join(OUTPUT, name1+"-"+name2+".pdf")
+// Helper types and functions
 
-	// Process and merge the files with smart page reversal logic
-	processAndMerge(outputFile, file1, file2, 0) // pages parameter not used in new implementation
+// moveResult represents the result of a file move operation
+type moveResult struct {
+	filename string
+	success  bool
+	error    error
+}
+
+// Log message if debug mode is enabled
+func logIfDebugEnabled(level, message string, logger interface{}) {
+	if DEBUG && logger != nil {
+		switch l := logger.(type) {
+		case *log.Logger:
+			l.Printf("%s: %s", level, message)
+		}
+	}
 }

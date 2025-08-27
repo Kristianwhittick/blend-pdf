@@ -20,48 +20,67 @@ import (
 	"time"
 )
 
+// Application constants
 const (
 	VERSION = "1.0.0"
-	// ANSI color codes
+)
+
+// ANSI color codes for terminal output
+const (
 	RED    = "\033[0;31m"
 	GREEN  = "\033[0;32m"
 	YELLOW = "\033[0;33m"
 	BLUE   = "\033[0;34m"
 	NC     = "\033[0m" // No Color
-	
-	// Log levels
+)
+
+// Log level constants
+const (
 	LOG_DEBUG = 0
 	LOG_INFO  = 1
 	LOG_WARN  = 2
 	LOG_ERROR = 3
 )
 
+// Application state variables
 var (
-	VERBOSE      = false
-	DEBUG        = false
-	CONTINUE     = true
-	FOLDER       = ""
-	ARCHIVE      = ""
-	OUTPUT       = ""
-	ERROR_DIR    = ""
-	LOCKFILE     = ""
+	// Mode flags
+	VERBOSE  = false
+	DEBUG    = false
+	CONTINUE = true
 	
-	// Session statistics
-	COUNTER      = 0
-	ERROR_COUNT  = 0
-	START_TIME   = time.Now()
-	
-	// Structured logging
-	debugLogger  *log.Logger
-	infoLogger   *log.Logger
-	warnLogger   *log.Logger
-	errorLogger  *log.Logger
+	// Directory paths
+	FOLDER    = ""
+	ARCHIVE   = ""
+	OUTPUT    = ""
+	ERROR_DIR = ""
+	LOCKFILE  = ""
 )
 
-// Initialize loggers
+// Session tracking variables
+var (
+	COUNTER     = 0
+	ERROR_COUNT = 0
+	START_TIME  = time.Now()
+)
+
+// Structured logging instances
+var (
+	debugLogger *log.Logger
+	infoLogger  *log.Logger
+	warnLogger  *log.Logger
+	errorLogger *log.Logger
+)
+
+// Initialize structured loggers for debug mode
 func initLoggers() {
-	debugLogger = log.New(os.Stdout, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
-	infoLogger = log.New(os.Stdout, "[INFO] ", log.Ldate|log.Ltime)
-	warnLogger = log.New(os.Stdout, "[WARN] ", log.Ldate|log.Ltime)
-	errorLogger = log.New(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lshortfile)
+	debugLogger = createLogger(os.Stdout, "[DEBUG] ", log.Ldate|log.Ltime|log.Lshortfile)
+	infoLogger = createLogger(os.Stdout, "[INFO] ", log.Ldate|log.Ltime)
+	warnLogger = createLogger(os.Stdout, "[WARN] ", log.Ldate|log.Ltime)
+	errorLogger = createLogger(os.Stderr, "[ERROR] ", log.Ldate|log.Ltime|log.Lshortfile)
+}
+
+// Create logger with specified output and format
+func createLogger(output *os.File, prefix string, flags int) *log.Logger {
+	return log.New(output, prefix, flags)
 }

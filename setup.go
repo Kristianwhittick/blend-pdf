@@ -24,95 +24,142 @@ import (
 	"strings"
 )
 
-// Generate directory-specific lock file name using hash
-func generateLockFileName(watchDir string) string {
-	// 1. Normalize path for consistency across platforms
-	absPath, err := filepath.Abs(watchDir)
-	if err != nil {
-		absPath = watchDir // Fallback to original path
-	}
-	cleanPath := filepath.Clean(absPath)
-	
-	// 2. Normalize for case-insensitive filesystems and cross-platform compatibility
-	normalizedPath := strings.ToLower(filepath.ToSlash(cleanPath))
-	
-	// 3. Generate 8-character MD5 hash
-	hash := md5.Sum([]byte(normalizedPath))
-	hashStr := fmt.Sprintf("%x", hash)[:8]
-	
-	// 4. Create platform-specific lock file path
-	lockFileName := fmt.Sprintf("blendpdfgo-%s.lock", hashStr)
-	
-	if runtime.GOOS == "windows" {
-		// On Windows, store in the watch directory to avoid permission issues
-		return filepath.Join(watchDir, lockFileName)
-	} else {
-		// On Unix systems, use /tmp directory
-		return filepath.Join("/tmp", lockFileName)
-	}
-}
+// Lock file management functions
 
 // Setup lock file to prevent multiple instances
 func setupLock() error {
-	// Generate directory-specific lock file name
+	watchDir := determineWatchDirectory()
+	LOCKFILE = generateLockFileName(watchDir)
+
+	if err := checkExistingLockFile(); err != nil {
+		return err
+	}
+
+	return createLockFile()
+}
+
+// Determine watch directory from command line arguments
+func determineWatchDirectory() string {
 	watchDir := "." // Default to current directory
+	
 	if len(os.Args) > 1 {
-		// Check if last argument is a directory path (not a flag)
 		lastArg := os.Args[len(os.Args)-1]
 		if !strings.HasPrefix(lastArg, "-") {
 			watchDir = lastArg
 		}
 	}
 	
-	LOCKFILE = generateLockFileName(watchDir)
+	return watchDir
+}
 
-	// Check if lock file exists
-	if _, err := os.Stat(LOCKFILE); err == nil {
-		printError("Another instance is already running")
-		printInfo(fmt.Sprintf("Lock file exists: %s", LOCKFILE))
-		printInfo("If you're sure no other instance is running, remove the lock file manually")
-		return fmt.Errorf("already running (exit code 6)")
+// Generate directory-specific lock file name using hash
+func generateLockFileName(watchDir string) string {
+	normalizedPath := normalizeDirectoryPath(watchDir)
+	hashStr := generateDirectoryHash(normalizedPath)
+	lockFileName := fmt.Sprintf("blendpdfgo-%s.lock", hashStr)
+	
+	return createPlatformSpecificLockPath(watchDir, lockFileName)
+}
+
+// Normalize directory path for consistent hashing
+func normalizeDirectoryPath(watchDir string) string {
+	absPath, err := filepath.Abs(watchDir)
+	if err != nil {
+		absPath = watchDir // Fallback to original path
 	}
+	
+	cleanPath := filepath.Clean(absPath)
+	return strings.ToLower(filepath.ToSlash(cleanPath))
+}
 
-	// Create lock file with process ID
+// Generate 8-character MD5 hash from path
+func generateDirectoryHash(normalizedPath string) string {
+	hash := md5.Sum([]byte(normalizedPath))
+	return fmt.Sprintf("%x", hash)[:8]
+}
+
+// Create platform-specific lock file path
+func createPlatformSpecificLockPath(watchDir, lockFileName string) string {
+	if runtime.GOOS == "windows" {
+		// On Windows, store in the watch directory to avoid permission issues
+		return filepath.Join(watchDir, lockFileName)
+	}
+	// On Unix systems, use /tmp directory
+	return filepath.Join("/tmp", lockFileName)
+}
+
+// Check if lock file already exists
+func checkExistingLockFile() error {
+	if _, err := os.Stat(LOCKFILE); err == nil {
+		return createLockFileExistsError()
+	}
+	return nil
+}
+
+// Create error for existing lock file
+func createLockFileExistsError() error {
+	printError("Another instance is already running")
+	printInfo(fmt.Sprintf("Lock file exists: %s", LOCKFILE))
+	printInfo("If you're sure no other instance is running, remove the lock file manually")
+	return fmt.Errorf("already running (exit code 6)")
+}
+
+// Create new lock file with process ID
+func createLockFile() error {
 	file, err := os.Create(LOCKFILE)
 	if err != nil {
 		return fmt.Errorf("failed to create lock file: %v", err)
 	}
+	defer file.Close()
 	
-	// Write process ID to lock file
-	_, err = file.WriteString(strconv.Itoa(os.Getpid()))
+	if err := writePIDToLockFile(file); err != nil {
+		cleanupFailedLockFile()
+		return err
+	}
+	
+	logLockFileCreation()
+	return nil
+}
+
+// Write process ID to lock file
+func writePIDToLockFile(file *os.File) error {
+	_, err := file.WriteString(strconv.Itoa(os.Getpid()))
 	if err != nil {
-		if closeErr := file.Close(); closeErr != nil {
-			printError(fmt.Sprintf("Failed to close lock file: %v", closeErr))
-		}
-		if removeErr := os.Remove(LOCKFILE); removeErr != nil {
-			printError(fmt.Sprintf("Failed to remove lock file: %v", removeErr))
-		}
 		return fmt.Errorf("failed to write to lock file: %v", err)
 	}
-	
-	if err := file.Close(); err != nil {
-		printError(fmt.Sprintf("Failed to close lock file: %v", err))
+	return nil
+}
+
+// Clean up failed lock file creation
+func cleanupFailedLockFile() {
+	if err := os.Remove(LOCKFILE); err != nil {
+		printError(fmt.Sprintf("Failed to remove lock file: %v", err))
 	}
-	
+}
+
+// Log lock file creation in verbose mode
+func logLockFileCreation() {
 	if VERBOSE {
 		printInfo(fmt.Sprintf("Created lock file: %s", LOCKFILE))
 	}
-
-	return nil
 }
 
 // Clean up lock file and resources
 func cleanupLock() {
-	if LOCKFILE != "" {
-		if err := os.Remove(LOCKFILE); err != nil && VERBOSE {
+	if LOCKFILE == "" {
+		return
+	}
+	
+	if err := os.Remove(LOCKFILE); err != nil {
+		if VERBOSE {
 			printWarning(fmt.Sprintf("Failed to remove lock file: %v", err))
-		} else if VERBOSE {
-			printInfo("Removed lock file")
 		}
+	} else if VERBOSE {
+		printInfo("Removed lock file")
 	}
 }
+
+// Command line argument parsing functions
 
 // Parse command line arguments with enhanced error handling
 func parseArgs() (string, error) {
@@ -120,73 +167,118 @@ func parseArgs() (string, error) {
 	folder := ""
 	
 	for i, arg := range args {
-		switch arg {
-		case "-h", "--help":
-			showHelp()
-			os.Exit(0)
-		case "-v", "--version":
-			fmt.Printf("BlendPDFGo v%s\n", VERSION)
-			os.Exit(0)
-		case "-V", "--verbose":
-			VERBOSE = true
-			printSuccess("Verbose mode enabled")
-		case "-D", "--debug":
-			DEBUG = true
-			VERBOSE = true // Debug mode implies verbose
-			initLoggers()
-			printSuccess("Debug mode enabled (includes verbose)")
-		default:
-			// Check if it's a flag we don't recognize
-			if strings.HasPrefix(arg, "-") {
-				return "", fmt.Errorf("unknown flag: %s", arg)
-			}
-			// Assume it's a folder path
-			if folder == "" {
-				folder = arg
-			} else {
-				return "", fmt.Errorf("multiple folder paths specified")
-			}
-		}
-		
-		// Handle combined flags like -V /path/to/folder or -D /path/to/folder
-		if (arg == "-V" || arg == "--verbose" || arg == "-D" || arg == "--debug") {
-			if i+1 < len(args) && !strings.HasPrefix(args[i+1], "-") {
-				folder = args[i+1]
-				break
-			}
+		if err := processArgument(arg, args, i, &folder); err != nil {
+			return "", err
 		}
 	}
 	
-	// Initialize loggers if debug mode is enabled
-	if DEBUG && debugLogger == nil {
-		initLoggers()
+	return resolveFolderPath(folder)
+}
+
+// Process individual command line argument
+func processArgument(arg string, args []string, index int, folder *string) error {
+	switch arg {
+	case "-h", "--help":
+		showHelp()
+		os.Exit(0)
+	case "-v", "--version":
+		showVersion()
+		os.Exit(0)
+	case "-V", "--verbose":
+		enableVerboseMode()
+	case "-D", "--debug":
+		enableDebugMode()
+	default:
+		return handleNonFlagArgument(arg, args, index, folder)
+	}
+	return nil
+}
+
+// Show version information
+func showVersion() {
+	fmt.Printf("BlendPDFGo v%s\n", VERSION)
+}
+
+// Enable verbose mode
+func enableVerboseMode() {
+	VERBOSE = true
+	printSuccess("Verbose mode enabled")
+}
+
+// Enable debug mode
+func enableDebugMode() {
+	DEBUG = true
+	VERBOSE = true // Debug mode implies verbose
+	initLoggers()
+	printSuccess("Debug mode enabled (includes verbose)")
+}
+
+// Handle non-flag arguments (folder paths)
+func handleNonFlagArgument(arg string, args []string, index int, folder *string) error {
+	if strings.HasPrefix(arg, "-") {
+		return fmt.Errorf("unknown flag: %s", arg)
 	}
 	
-	// Use current directory if no folder specified
+	if *folder != "" {
+		return fmt.Errorf("multiple folder paths specified")
+	}
+	
+	*folder = arg
+	return nil
+}
+
+// Resolve folder path to absolute path
+func resolveFolderPath(folder string) (string, error) {
 	if folder == "" {
-		var err error
-		folder, err = os.Getwd()
-		if err != nil {
-			return "", fmt.Errorf("failed to get current directory: %v", err)
-		}
+		return getCurrentDirectory()
 	}
 	
-	// Resolve absolute path
 	absFolder, err := filepath.Abs(folder)
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve absolute path for '%s': %v", folder, err)
 	}
 	
-	if DEBUG {
-		printDebug(fmt.Sprintf("Parsed arguments: folder=%s, verbose=%t, debug=%t", absFolder, VERBOSE, DEBUG))
-	}
-	
+	logParsedArguments(absFolder)
 	return absFolder, nil
 }
 
+// Get current working directory
+func getCurrentDirectory() (string, error) {
+	folder, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current directory: %v", err)
+	}
+	return folder, nil
+}
+
+// Log parsed arguments in debug mode
+func logParsedArguments(absFolder string) {
+	if DEBUG {
+		printDebug(fmt.Sprintf("Parsed arguments: folder=%s, verbose=%t, debug=%t", absFolder, VERBOSE, DEBUG))
+	}
+}
+
+// PDF file validation functions
+
 // Validate PDF file with enhanced error reporting
 func validatePDFFile(file string) error {
-	// Check if file exists
+	if err := checkFileExists(file); err != nil {
+		return err
+	}
+	
+	if err := checkFileProperties(file); err != nil {
+		return err
+	}
+	
+	if err := checkPDFStructure(file); err != nil {
+		return err
+	}
+	
+	return nil
+}
+
+// Check if file exists and is accessible
+func checkFileExists(file string) error {
 	info, err := os.Stat(file)
 	if os.IsNotExist(err) {
 		return fmt.Errorf("file does not exist")
@@ -195,72 +287,106 @@ func validatePDFFile(file string) error {
 		return fmt.Errorf("cannot access file: %v", err)
 	}
 	
-	// Check if it's a regular file
+	// Store file info for further checks
+	return checkFileType(info)
+}
+
+// Check file type and properties
+func checkFileType(info os.FileInfo) error {
 	if !info.Mode().IsRegular() {
 		return fmt.Errorf("not a regular file")
 	}
 	
-	// Check file size
 	if info.Size() == 0 {
 		return fmt.Errorf("file is empty")
-	}
-	
-	// Check file extension
-	if !strings.HasSuffix(strings.ToLower(file), ".pdf") {
-		return fmt.Errorf("file does not have .pdf extension")
-	}
-	
-	// Validate PDF structure using pdfcpu
-	if !validatePDF(file) {
-		return fmt.Errorf("invalid PDF structure")
 	}
 	
 	return nil
 }
 
+// Check file properties (extension, size, etc.)
+func checkFileProperties(file string) error {
+	if !strings.HasSuffix(strings.ToLower(file), ".pdf") {
+		return fmt.Errorf("file does not have .pdf extension")
+	}
+	return nil
+}
+
+// Check PDF structure using pdfcpu
+func checkPDFStructure(file string) error {
+	if !validatePDF(file) {
+		return fmt.Errorf("invalid PDF structure")
+	}
+	return nil
+}
+
+// File operation utilities
+
 // Enhanced file operation with error recovery
 func moveFileWithRecovery(src, dst string) error {
-	// Ensure destination directory exists
+	if err := ensureDestinationDirectory(dst); err != nil {
+		return err
+	}
+	
+	dst = resolveDestinationConflicts(dst)
+	return performFileMove(src, dst)
+}
+
+// Ensure destination directory exists
+func ensureDestinationDirectory(dst string) error {
 	dstDir := filepath.Dir(dst)
 	if err := os.MkdirAll(dstDir, 0750); err != nil {
 		return fmt.Errorf("failed to create destination directory: %v", err)
 	}
+	return nil
+}
+
+// Resolve destination file conflicts by generating unique names
+func resolveDestinationConflicts(dst string) string {
+	if _, err := os.Stat(dst); os.IsNotExist(err) {
+		return dst // No conflict
+	}
 	
-	// Check if destination file already exists
-	if _, err := os.Stat(dst); err == nil {
-		// Generate unique filename
-		base := strings.TrimSuffix(filepath.Base(dst), filepath.Ext(dst))
-		ext := filepath.Ext(dst)
-		counter := 1
-		
-		for {
-			newDst := filepath.Join(dstDir, fmt.Sprintf("%s_%d%s", base, counter, ext))
-			if _, err := os.Stat(newDst); os.IsNotExist(err) {
-				dst = newDst
-				break
+	return generateUniqueFileName(dst)
+}
+
+// Generate unique filename if destination exists
+func generateUniqueFileName(dst string) string {
+	dstDir := filepath.Dir(dst)
+	base := strings.TrimSuffix(filepath.Base(dst), filepath.Ext(dst))
+	ext := filepath.Ext(dst)
+	
+	for counter := 1; counter <= 1000; counter++ {
+		newDst := filepath.Join(dstDir, fmt.Sprintf("%s_%d%s", base, counter, ext))
+		if _, err := os.Stat(newDst); os.IsNotExist(err) {
+			if VERBOSE {
+				printWarning(fmt.Sprintf("Destination exists, using: %s", filepath.Base(newDst)))
 			}
-			counter++
-			if counter > 1000 {
-				return fmt.Errorf("too many duplicate files")
-			}
-		}
-		
-		if VERBOSE {
-			printWarning(fmt.Sprintf("Destination exists, using: %s", filepath.Base(dst)))
+			return newDst
 		}
 	}
 	
-	// Perform the move
+	// If we can't find a unique name after 1000 attempts, use original
+	return dst
+}
+
+// Perform the actual file move operation
+func performFileMove(src, dst string) error {
 	err := os.Rename(src, dst)
 	if err != nil {
-		// Try copy and delete as fallback
-		if copyErr := copyFile(src, dst); copyErr != nil {
-			return fmt.Errorf("move failed: %v, copy fallback failed: %v", err, copyErr)
-		}
-		
-		if deleteErr := os.Remove(src); deleteErr != nil {
-			printWarning(fmt.Sprintf("Original file not deleted: %v", deleteErr))
-		}
+		return attemptCopyAndDelete(src, dst, err)
+	}
+	return nil
+}
+
+// Attempt copy and delete as fallback for move operations
+func attemptCopyAndDelete(src, dst string, originalErr error) error {
+	if copyErr := copyFile(src, dst); copyErr != nil {
+		return fmt.Errorf("move failed: %v, copy fallback failed: %v", originalErr, copyErr)
+	}
+	
+	if deleteErr := os.Remove(src); deleteErr != nil {
+		printWarning(fmt.Sprintf("Original file not deleted: %v", deleteErr))
 	}
 	
 	return nil
@@ -268,22 +394,34 @@ func moveFileWithRecovery(src, dst string) error {
 
 // Copy file as fallback for move operations
 func copyFile(src, dst string) error {
-	// Validate and clean paths to prevent directory traversal
+	if err := validateFilePaths(src, dst); err != nil {
+		return err
+	}
+	
+	return performFileCopy(src, dst)
+}
+
+// Validate file paths to prevent directory traversal
+func validateFilePaths(src, dst string) error {
 	cleanSrc := filepath.Clean(src)
 	cleanDst := filepath.Clean(dst)
 	
-	// Ensure paths don't contain directory traversal attempts
 	if strings.Contains(cleanSrc, "..") || strings.Contains(cleanDst, "..") {
 		return fmt.Errorf("invalid file path: directory traversal not allowed")
 	}
 	
-	sourceFile, err := os.Open(cleanSrc) // #nosec G304 - path validated above
+	return nil
+}
+
+// Perform the actual file copy operation
+func performFileCopy(src, dst string) error {
+	sourceFile, err := os.Open(src) // #nosec G304 - path validated above
 	if err != nil {
 		return err
 	}
 	defer sourceFile.Close()
 	
-	destFile, err := os.Create(cleanDst) // #nosec G304 - path validated above
+	destFile, err := os.Create(dst) // #nosec G304 - path validated above
 	if err != nil {
 		return err
 	}
