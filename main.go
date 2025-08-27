@@ -25,28 +25,40 @@ import (
 	"syscall"
 )
 
-func parseArgs() (string, bool) {
-	args := os.Args[1:]
-	var folder string
-	
-	for i := range args {
-		arg := args[i]
-		switch arg {
-		case "-h", "--help":
-			showHelp()
-			return "", true
-		case "-v", "--version":
-			fmt.Printf("BlendPDF v%s\n", VERSION)
-			return "", true
-		case "-V", "--verbose":
-			VERBOSE = true
-		default:
-			// Assume it's a folder path
-			folder = arg
-		}
+func main() {
+	// Set up signal handling for graceful shutdown
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Printf("\n%sShutting down gracefully...%s\n", YELLOW, NC)
+		cleanup()
+		os.Exit(0)
+	}()
+
+	// Parse command line arguments
+	folder, err := parseArgs()
+	if err != nil {
+		printError(err.Error())
+		os.Exit(1)
 	}
-	
-	return folder, false
+
+	// Setup directories
+	if err := setupDirectories(folder); err != nil {
+		printError(err.Error())
+		os.Exit(1)
+	}
+
+	// Main program loop
+	for CONTINUE {
+		processMenu()
+	}
+
+	cleanup()
+}
+
+func cleanup() {
+	showStatistics()
 }
 
 func showHelp() {
@@ -73,20 +85,23 @@ func showHelp() {
 
 func processMenu() {
 	fmt.Println()
-	fmt.Printf("Options: %s[S]%s single file move, %s[M]%s merge two files, %s[H]%s help, %s[V]%s verbose, %s[Q]%s quit\n", 
+	displayFileCounts()
+	showFilePreview()
+	
+	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[Q]%suit\n", 
 		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
 	
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter choice: ")
+	fmt.Print("Enter choice (S/M/H/V/Q): ")
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		// Handle EOF gracefully (happens when input is piped)
 		if err == io.EOF {
 			fmt.Printf("\n%sEnd of input reached. Exiting...%s\n", YELLOW, NC)
-			cleanup()
+			CONTINUE = false
 			return
 		}
-		fmt.Printf("%sError reading input: %v%s\n", RED, err, NC)
+		printError(fmt.Sprintf("Error reading input: %v", err))
 		return
 	}
 	
@@ -94,59 +109,22 @@ func processMenu() {
 	
 	switch input {
 	case "S":
-		moveSingleFile()
+		processSingleFile()
 	case "M":
-		mergeFiles()
+		processMergeFiles()
 	case "H":
 		showHelp()
 	case "V":
 		VERBOSE = !VERBOSE
 		if VERBOSE {
-			fmt.Printf("%sVerbose mode enabled.%s\n", GREEN, NC)
+			printSuccess("Verbose mode enabled")
 		} else {
-			fmt.Printf("%sVerbose mode disabled.%s\n", YELLOW, NC)
+			printInfo("Verbose mode disabled")
 		}
 	case "Q":
-		cleanup()
-	case "":
-		// Empty input, just continue
-		return
+		fmt.Printf("%sExiting program...%s\n", YELLOW, NC)
+		CONTINUE = false
 	default:
-		fmt.Printf("%sInvalid option '%s'. Please enter S, M, H, V, or Q.%s\n", RED, input, NC)
-	}
-}
-
-func main() {
-	// Parse command line arguments
-	folder, shouldExit := parseArgs()
-	if shouldExit {
-		return
-	}
-
-	// Setup lock file to prevent multiple instances
-	if err := setupLock(); err != nil {
-		return
-	}
-	defer os.Remove(LOCKFILE)
-
-	// Handle Ctrl+C gracefully
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
-	go func() {
-		<-c
-		cleanup()
-	}()
-
-	// Setup directories
-	if err := setupDirectories(folder); err != nil {
-		return
-	}
-
-	// Main program loop
-	fmt.Printf("%sBlendPDF v%s started.%s\n", GREEN, VERSION, NC)
-	fmt.Printf("Press Ctrl+C to exit.\n")
-
-	for CONTINUE {
-		processMenu()
+		printWarning("Invalid choice. Please enter S, M, H, V, or Q.")
 	}
 }

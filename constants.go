@@ -14,6 +14,8 @@
 
 package main
 
+import "time"
+
 const (
 	VERSION = "1.0.0"
 	// ANSI color codes
@@ -25,11 +27,16 @@ const (
 )
 
 var (
-	VERBOSE   = false
-	CONTINUE  = true
-	FOLDER    = ""
-	ARCHIVE   = ""
-	OUTPUT    = ""
-	ERROR_DIR = ""
-	LOCKFILE  = ""
+	VERBOSE      = false
+	CONTINUE     = true
+	FOLDER       = ""
+	ARCHIVE      = ""
+	OUTPUT       = ""
+	ERROR_DIR    = ""
+	LOCKFILE     = ""
+	
+	// Session statistics
+	COUNTER      = 0
+	ERROR_COUNT  = 0
+	START_TIME   = time.Now()
 )

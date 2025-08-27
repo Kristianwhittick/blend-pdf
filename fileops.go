@@ -20,97 +20,249 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
-func moveSingleFile() {
-	// Find PDF files with both upper and lower case extensions
-	lowerFiles, err1 := filepath.Glob(filepath.Join(FOLDER, "*.pdf"))
-	upperFiles, err2 := filepath.Glob(filepath.Join(FOLDER, "*.PDF"))
+// Get file counts for display
+func getFileCounts() (int, int, int, int) {
+	mainCount := countPDFFiles(FOLDER)
+	archiveCount := countPDFFiles(ARCHIVE)
+	outputCount := countPDFFiles(OUTPUT)
+	errorCount := countPDFFiles(ERROR_DIR)
+	return mainCount, archiveCount, outputCount, errorCount
+}
 
-	// Combine the results
-	files := append(lowerFiles, upperFiles...)
+// Count PDF files in a directory
+func countPDFFiles(dir string) int {
+	files, err := filepath.Glob(filepath.Join(dir, "*.pdf"))
+	if err != nil {
+		return 0
+	}
+	return len(files)
+}
 
-	if (err1 != nil && err2 != nil) || len(files) == 0 {
-		fmt.Printf("%sWarning:%s No PDF files found in %s\n", YELLOW, NC, FOLDER)
+// Display file counts before menu
+func displayFileCounts() {
+	main, archive, output, errorCount := getFileCounts()
+	fmt.Printf("Files: Main(%d) Archive(%d) Output(%d) Error(%d)\n", main, archive, output, errorCount)
+}
+
+// Show file preview in verbose mode
+func showFilePreview() {
+	if !VERBOSE {
 		return
 	}
-
+	
+	files, err := filepath.Glob(filepath.Join(FOLDER, "*.pdf"))
+	if err != nil || len(files) == 0 {
+		return
+	}
+	
 	sort.Strings(files)
-	file := files[0]
+	fmt.Printf("%sAvailable PDF files:%s\n", BLUE, NC)
+	
+	maxDisplay := 5
+	displayed := 0
+	
+	for _, file := range files {
+		if displayed >= maxDisplay {
+			break
+		}
+		
+		filename := filepath.Base(file)
+		filesize := getHumanReadableSize(file)
+		fmt.Printf("  %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
+		displayed++
+	}
+	
+	if len(files) > maxDisplay {
+		remaining := len(files) - maxDisplay
+		fmt.Printf("  ... and %d more file(s)\n", remaining)
+	}
+	fmt.Println()
+}
 
-	if validatePDF(file) {
-		fmt.Printf("Moving %s%s%s to output...\n", BLUE, filepath.Base(file), NC)
-		dest := filepath.Join(OUTPUT, filepath.Base(file))
-		err := os.Rename(file, dest)
-		if err != nil {
-			fmt.Printf("%sError:%s Failed to move file: %v\n", RED, NC, err)
+// Get human readable file size
+func getHumanReadableSize(filepath string) string {
+	info, err := os.Stat(filepath)
+	if err != nil {
+		return "unknown"
+	}
+	
+	size := info.Size()
+	if size < 1024 {
+		return fmt.Sprintf("%dB", size)
+	} else if size < 1024*1024 {
+		return fmt.Sprintf("%.1fK", float64(size)/1024)
+	} else if size < 1024*1024*1024 {
+		return fmt.Sprintf("%.1fM", float64(size)/(1024*1024))
+	} else {
+		return fmt.Sprintf("%.1fG", float64(size)/(1024*1024*1024))
+	}
+}
+
+// Show session statistics on exit
+func showStatistics() {
+	elapsed := time.Since(START_TIME)
+	minutes := int(elapsed.Minutes())
+	seconds := int(elapsed.Seconds()) % 60
+	
+	fmt.Printf("\n%sSession Statistics:%s\n", BLUE, NC)
+	fmt.Printf("Successful operations: %s%d%s\n", GREEN, COUNTER, NC)
+	fmt.Printf("Errors encountered: %s%d%s\n", RED, ERROR_COUNT, NC)
+	
+	if minutes > 0 {
+		fmt.Printf("Time elapsed: %dm %ds\n", minutes, seconds)
+	} else {
+		fmt.Printf("Time elapsed: %ds\n", seconds)
+	}
+}
+
+// Colored output helper functions
+func printSuccess(message string) {
+	fmt.Printf("%sSuccess:%s %s\n", GREEN, NC, message)
+}
+
+func printError(message string) {
+	fmt.Printf("%sError:%s %s\n", RED, NC, message)
+	ERROR_COUNT++
+}
+
+func printWarning(message string) {
+	fmt.Printf("%sWarning:%s %s\n", YELLOW, NC, message)
+}
+
+func printInfo(message string) {
+	fmt.Printf("%sInfo:%s %s\n", BLUE, NC, message)
+}
+
+// Setup directories
+func setupDirectories(folder string) error {
+	FOLDER = folder
+	ARCHIVE = filepath.Join(folder, "archive")
+	OUTPUT = filepath.Join(folder, "output")
+	ERROR_DIR = filepath.Join(folder, "error")
+
+	// Create directories if they don't exist
+	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
+	for _, dir := range dirs {
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			return fmt.Errorf("failed to create directory %s: %v", dir, err)
+		}
+	}
+
+	fmt.Printf("Watching folder: %s%s%s\n", BLUE, FOLDER, NC)
+	fmt.Printf("Archive  folder: %s%s%s\n", BLUE, ARCHIVE, NC)
+	fmt.Printf("Output   folder: %s%s%s\n", BLUE, OUTPUT, NC)
+	fmt.Printf("Error    folder: %s%s%s\n", BLUE, ERROR_DIR, NC)
+	fmt.Println()
+
+	return nil
+}
+
+// Find PDF files in the main directory
+func findPDFFiles() ([]string, error) {
+	pattern := filepath.Join(FOLDER, "*.pdf")
+	files, err := filepath.Glob(pattern)
+	if err != nil {
+		return nil, err
+	}
+	
+	sort.Strings(files)
+	return files, nil
+}
+
+// Move processed files to destination directory
+func moveProcessedFiles(destination, message string, files ...string) {
+	for _, file := range files {
+		if file == "" {
+			continue
+		}
+		
+		destFile := filepath.Join(destination, filepath.Base(file))
+		if err := os.Rename(file, destFile); err != nil {
+			printError(fmt.Sprintf("Failed to move %s: %v", filepath.Base(file), err))
 			return
 		}
-		fmt.Printf("%sSuccess:%s File moved successfully.\n", GREEN, NC)
 	}
-}
-
-func moveProcessedFiles(destination, message, file1, file2 string, file3 string) {
-	var err error
-
-	// Move files
-	err = os.Rename(file1, filepath.Join(destination, filepath.Base(file1)))
-	if err == nil {
-		err = os.Rename(file2, filepath.Join(destination, filepath.Base(file2)))
-		if err == nil && file3 != "" {
-			err = os.Rename(file3, filepath.Join(destination, filepath.Base(file3)))
-		}
-	}
-
-	if err != nil {
-		fmt.Printf("%sError:%s Failed to move files: %v\n", RED, NC, err)
-		return
-	}
-
+	
 	if destination == ARCHIVE {
-		fmt.Printf("%sSuccess:%s %s\n", GREEN, NC, message)
+		COUNTER++
+		printSuccess(fmt.Sprintf("%s (%d)", message, COUNTER))
 	} else {
-		fmt.Printf("%sError:%s %s\n", RED, NC, message)
+		printError(message)
 	}
 }
 
-func mergeFiles() {
-	// Find PDF files with both upper and lower case extensions
-	lowerFiles, err1 := filepath.Glob(filepath.Join(FOLDER, "*.pdf"))
-	upperFiles, err2 := filepath.Glob(filepath.Join(FOLDER, "*.PDF"))
-
-	// Combine the results
-	files := append(lowerFiles, upperFiles...)
-
-	if (err1 != nil && err2 != nil) || len(files) < 2 {
-		fmt.Printf("%sWarning:%s Did not find two PDF files in %s\n", YELLOW, NC, FOLDER)
+// Process single file
+func processSingleFile() {
+	files, err := findPDFFiles()
+	if err != nil {
+		printError(fmt.Sprintf("Error finding PDF files: %v", err))
 		return
 	}
 
-	sort.Strings(files)
+	if len(files) == 0 {
+		printWarning("No PDF files found in " + FOLDER)
+		return
+	}
+
+	file := files[0]
+	filename := filepath.Base(file)
+	
+	if VERBOSE {
+		filesize := getHumanReadableSize(file)
+		fmt.Printf("Processing: %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
+	}
+
+	// Move file to output directory
+	destFile := filepath.Join(OUTPUT, filename)
+	if err := os.Rename(file, destFile); err != nil {
+		printError(fmt.Sprintf("Failed to move %s: %v", filename, err))
+		return
+	}
+
+	COUNTER++
+	printSuccess(fmt.Sprintf("File moved. (%d)", COUNTER))
+}
+
+// Process merge files
+func processMergeFiles() {
+	files, err := findPDFFiles()
+	if err != nil {
+		printError(fmt.Sprintf("Error finding PDF files: %v", err))
+		return
+	}
+
+	if len(files) < 2 {
+		printWarning(fmt.Sprintf("Did not find two PDF files in %s", FOLDER))
+		return
+	}
+
 	file1 := files[0]
 	file2 := files[1]
 
-	// Validate both files
-	if !validatePDF(file1) || !validatePDF(file2) {
+	if VERBOSE {
+		size1 := getHumanReadableSize(file1)
+		size2 := getHumanReadableSize(file2)
+		fmt.Printf("File 1 size: %s\n", size1)
+		fmt.Printf("File 2 size: %s\n", size2)
+	}
+
+	// Get page counts
+	pages1, err1 := getPageCount(file1)
+	pages2, err2 := getPageCount(file2)
+
+	if err1 != nil || err2 != nil {
+		printError("Failed to get page counts")
+		moveProcessedFiles(ERROR_DIR, "Page count detection failed. Moving files to error folder...", file1, file2)
 		return
 	}
 
-	// Get page counts for both files
-	pages1 := getPageCount(file1)
-	pages2 := getPageCount(file2)
-	
-	if pages1 == -1 || pages2 == -1 {
-		fmt.Printf("%sError:%s Could not determine page counts\n", RED, NC)
-		moveProcessedFiles(ERROR_DIR, "Page count error. Moving files to error folder...", file1, file2, "")
-		return
-	}
-
-	// Check if page counts match (exact match required)
 	if pages1 != pages2 {
-		fmt.Printf("%sError:%s Page count mismatch - %s has %d pages, %s has %d pages\n", 
-			RED, NC, filepath.Base(file1), pages1, filepath.Base(file2), pages2)
-		moveProcessedFiles(ERROR_DIR, "Page count mismatch. Moving files to error folder...", file1, file2, "")
+		printError(fmt.Sprintf("Page count mismatch - %s has %d pages, %s has %d pages", 
+			filepath.Base(file1), pages1, filepath.Base(file2), pages2))
+		moveProcessedFiles(ERROR_DIR, "Page count mismatch. Moving files to error folder...", file1, file2)
 		return
 	}
 
