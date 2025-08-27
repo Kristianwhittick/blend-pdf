@@ -19,6 +19,7 @@
 - **Working example**: See `tests/test16_final_memory_approach.go`
 - **API tests**: See `tests/test09_memory_context.go` through `test16_final_memory_approach.go`
 - **Research code**: All test files in `/tests/` directory
+- **Page reversal fix**: Individual page extraction instead of comma-separated selections
 
 ### Implementation Guidelines
 - Follow hybrid approach from research

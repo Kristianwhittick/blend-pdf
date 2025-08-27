@@ -15,6 +15,7 @@ Results from testing pdfcpu library for in-memory PDF processing to eliminate te
 ### ⚠️ What Works Partially
 1. **`api.ReadContext()`** - Loads from bytes but often returns 0 pages
 2. **`api.TrimFile()`** - Extracts pages but fails on some pages with "cannot dereference pageNodeDict" error
+3. **Page reordering with TrimFile** - Comma-separated selections don't reorder pages as expected
 
 ### ❌ What Doesn't Exist
 1. **`api.ExtractPages()`** - No direct context-based page extraction

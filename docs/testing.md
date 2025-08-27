@@ -271,6 +271,8 @@ This represents:
 - Doc1_Page2 (A2) + Doc2_Page2 (9)  
 - Doc1_Page3 (A3) + Doc2_Page1 (M)
 
+**Bug Fix Note (2025-08-27)**: Fixed page reversal logic where `api.TrimFile` with comma-separated selections was not reordering pages correctly. Now uses individual page extraction and manual merging for proper reversal.
+
 ### File Movement
 - **Success**: Input files moved to `archive/`, output in `output/`
 - **Error**: Input files moved to `error/` with error message

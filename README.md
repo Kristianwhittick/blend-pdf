@@ -61,6 +61,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **Single File Processing**: Move individual PDF files to output directory
 - **Smart PDF Merging**: Merge two PDFs with automatic page reversal of the second file
 - **Intelligent Page Handling**: Only reverse multi-page PDFs (single-page PDFs merge directly)
+- **Robust Page Reversal**: Individual page extraction and manual merging for correct ordering
 - **File Validation**: Automatic PDF validation with comprehensive error handling
 - **Directory Organization**: Automatic creation and management of archive, output, and error folders
 

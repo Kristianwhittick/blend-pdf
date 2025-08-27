@@ -13,9 +13,9 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 
 ### Smart Page Reversal Logic ✅
 - **Single-page second file**: Direct merge (no reversal needed)
-- **Multi-page second file**: Create temporary reversed copy, then merge
-- Use `pdfcpu collect -p pages,in,reverse,order` for page reversal
-- Clean up temporary reversed files after processing
+- **Multi-page second file**: Extract pages individually in reverse order, then merge
+- **Individual page extraction**: Use separate `api.TrimFile` calls for each page to ensure proper ordering
+- Clean up temporary extracted files after processing
 
 ### Merging Pattern ✅
 - Use interleaved merging pattern: Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, Doc1_Page3, Doc2_Page1

@@ -40,13 +40,14 @@ Testing individual pdfcpu API functions to understand their behavior and require
 - **Output**: test04_multi_pages.pdf
 - **File**: test04_extract_multi.go
 
-### Test 05: Extract Pages in Reverse Order ✅
-- **Status**: ✅ COMPLETED
+### Test 05: Extract Pages in Reverse Order ⚠️
+- **Status**: ⚠️ LIMITATION DISCOVERED
 - **Goal**: Test `api.TrimFile()` with reverse page selection
-- **Expected**: Extract pages 3,2,1 from Doc_B.pdf
-- **Result**: SUCCESS - Reverse order extraction works
-- **Output**: test05_reverse.pdf
+- **Expected**: Extract pages 3,2,1 from Doc_B.pdf in reverse order
+- **Result**: LIMITATION - Comma-separated selections extract pages in document order, not specified order
+- **Output**: test05_reverse.pdf (pages in original order, not reversed)
 - **File**: test05_reverse.go
+- **Workaround**: Extract pages individually and merge manually for proper reordering
 
 ### Test 06: Simple Merge Two Files ✅
 - **Status**: ✅ COMPLETED

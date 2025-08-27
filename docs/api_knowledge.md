@@ -85,6 +85,8 @@ Documentation of pdfcpu API functions based on experimental testing.
   - Works for some pages but may fail with "cannot dereference pageNodeDict" error
   - Requires ParsePageSelection to format page numbers
   - File-based operation only
+  - **LIMITATION**: Comma-separated selections like "3,2,1" extract pages in document order, not specified order
+  - **Workaround**: Extract pages individually and merge manually for reordering
 
 ### `api.ParsePageSelection(pageStr string) ([]string, error)`
 - **Status**: ✅ TESTED & WORKING
@@ -181,3 +183,4 @@ api.MergeCreateFile(pageFiles, outputFile, false, conf)
 5. **Validate contexts** before processing
 6. **Keep original data in memory** as bytes for minimal I/O
 7. **Use hybrid approach** - memory for validation, files for operations
+8. **For page reordering** - extract pages individually and merge manually instead of comma-separated selections
