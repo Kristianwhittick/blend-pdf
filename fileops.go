@@ -242,6 +242,11 @@ func processMergeFiles() {
 	file1 := files[0]
 	file2 := files[1]
 
+	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n", 
+		BLUE, filepath.Base(file1), NC, 
+		BLUE, filepath.Base(file2), NC,
+		GREEN, filepath.Base(file1)+"-"+filepath.Base(file2), NC)
+
 	if VERBOSE {
 		size1 := getHumanReadableSize(file1)
 		size2 := getHumanReadableSize(file2)
@@ -249,33 +254,11 @@ func processMergeFiles() {
 		fmt.Printf("File 2 size: %s\n", size2)
 	}
 
-	// Get page counts
-	pages1, err1 := getPageCount(file1)
-	pages2, err2 := getPageCount(file2)
-
-	if err1 != nil || err2 != nil {
-		printError("Failed to get page counts")
-		moveProcessedFiles(ERROR_DIR, "Page count detection failed. Moving files to error folder...", file1, file2)
-		return
-	}
-
-	if pages1 != pages2 {
-		printError(fmt.Sprintf("Page count mismatch - %s has %d pages, %s has %d pages", 
-			filepath.Base(file1), pages1, filepath.Base(file2), pages2))
-		moveProcessedFiles(ERROR_DIR, "Page count mismatch. Moving files to error folder...", file1, file2)
-		return
-	}
-
-	// Create output filename (combine both names without "_merged")
+	// Create output filename (combine both names with hyphen)
 	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
 	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
-	outputFile := filepath.Join(OUTPUT, name1+"_"+name2+".pdf")
+	outputFile := filepath.Join(OUTPUT, name1+"-"+name2+".pdf")
 
-	fmt.Printf("Found files:  %s%s%s (%d pages)   %s%s%s (%d pages)\n", 
-		BLUE, filepath.Base(file1), NC, pages1, BLUE, filepath.Base(file2), NC, pages2)
-	fmt.Printf("Output file:  %s%s%s\n", GREEN, filepath.Base(outputFile), NC)
-	fmt.Printf("Merging with interleaved pattern (Doc1_Page1, Doc2_Page%d, Doc1_Page2, Doc2_Page%d, ...)\n", pages2, pages2-1)
-
-	// Process and merge the files with interleaved pattern
-	processAndMerge(outputFile, file1, file2, pages1)
+	// Process and merge the files with smart page reversal logic
+	processAndMerge(outputFile, file1, file2, 0) // pages parameter not used in new implementation
 }

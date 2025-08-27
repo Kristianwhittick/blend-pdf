@@ -17,14 +17,18 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
 
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
+// Validate PDF file structure
 func validatePDF(file string) bool {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
-		fmt.Printf("%sError:%s File '%s' does not exist.\n", RED, NC, file)
+		printError(fmt.Sprintf("File '%s' does not exist", file))
 		return false
 	}
 
@@ -34,78 +38,196 @@ func validatePDF(file string) bool {
 
 	validateErr := api.ValidateFile(file, conf)
 	if validateErr != nil {
-		fmt.Printf("%sError:%s '%s' is not a valid PDF file: %v\n", RED, NC, file, validateErr)
+		printError(fmt.Sprintf("'%s' is not a valid PDF file: %v", file, validateErr))
 		return false
 	}
 
 	return true
 }
 
-func getPageCount(file string) int {
+// Get page count using pdfcpu API
+func getPageCount(file string) (int, error) {
 	pageCount, err := api.PageCountFile(file)
 	if err != nil {
-		fmt.Printf("%sError:%s Could not determine page count for '%s': %v\n", RED, NC, file, err)
-		return -1
+		return -1, fmt.Errorf("could not determine page count for '%s': %v", file, err)
 	}
 
-	return pageCount
+	return pageCount, nil
 }
 
+// Create reversed copy of PDF for multi-page files
+func createReversedPDF(inputFile, outputFile string, pageCount int) error {
+	if pageCount <= 1 {
+		return fmt.Errorf("cannot reverse single-page PDF")
+	}
 
+	// Create reverse page sequence: pageCount, pageCount-1, ..., 2, 1
+	var pageSequence []string
+	for i := pageCount; i >= 1; i-- {
+		pageSequence = append(pageSequence, strconv.Itoa(i))
+	}
+	
+	pageSelection := strings.Join(pageSequence, ",")
+	
+	if VERBOSE {
+		fmt.Printf("rev = %s%s%s\n", BLUE, pageSelection, NC)
+	}
 
+	conf := model.NewDefaultConfiguration()
+	parsedSelection, err := api.ParsePageSelection(pageSelection)
+	if err != nil {
+		return fmt.Errorf("failed to parse page selection '%s': %v", pageSelection, err)
+	}
+
+	err = api.TrimFile(inputFile, outputFile, parsedSelection, conf)
+	if err != nil {
+		return fmt.Errorf("failed to create reversed PDF: %v", err)
+	}
+
+	return nil
+}
+
+// Smart merge: direct merge for single-page, reversed merge for multi-page
+func smartMerge(file1, file2, outputFile string, pages1, pages2 int) error {
+	conf := model.NewDefaultConfiguration()
+	
+	if pages2 == 1 {
+		// Single-page second file: direct merge (no reversal)
+		if VERBOSE {
+			printInfo("Single-page second file detected - merging directly without reversal")
+		}
+		
+		inputFiles := []string{file1, file2}
+		return api.MergeCreateFile(inputFiles, outputFile, false, conf)
+		
+	} else {
+		// Multi-page second file: create reversed copy, then merge
+		if VERBOSE {
+			printInfo(fmt.Sprintf("Multi-page second file detected (%d pages) - creating reversed copy", pages2))
+		}
+		
+		// Create temporary reversed file
+		reversedFile := strings.TrimSuffix(file2, filepath.Ext(file2)) + "-reverse.pdf"
+		
+		err := createReversedPDF(file2, reversedFile, pages2)
+		if err != nil {
+			return fmt.Errorf("failed to create reversed PDF: %v", err)
+		}
+		
+		// Ensure cleanup of temporary file
+		defer func() {
+			if err := os.Remove(reversedFile); err != nil && VERBOSE {
+				printWarning(fmt.Sprintf("Failed to clean up temporary file %s: %v", reversedFile, err))
+			}
+		}()
+		
+		// Create interleaved merge
+		return createInterleavedMerge(file1, reversedFile, outputFile, pages1)
+	}
+}
+
+// Create interleaved merge pattern (Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, etc.)
 func createInterleavedMerge(file1, file2, outputFile string, pageCount int) error {
 	conf := model.NewDefaultConfiguration()
 	
 	// Create temporary files for individual pages
 	tempFiles := make([]string, 0, pageCount*2)
 	
-	// Extract pages from first document (in order)
+	// Extract pages in interleaved pattern
 	for i := 1; i <= pageCount; i++ {
+		// Extract page from first document
 		tempFile1 := fmt.Sprintf("temp_A_%d.pdf", i)
-		pageSelection, err := api.ParsePageSelection(fmt.Sprintf("%d", i))
+		pageSelection1, err := api.ParsePageSelection(fmt.Sprintf("%d", i))
 		if err != nil {
 			return fmt.Errorf("failed to parse page selection for file1 page %d: %v", i, err)
 		}
 		
-		err = api.TrimFile(file1, tempFile1, pageSelection, conf)
+		err = api.TrimFile(file1, tempFile1, pageSelection1, conf)
 		if err != nil {
 			return fmt.Errorf("failed to extract page %d from file1: %v", i, err)
 		}
 		
-		// Extract corresponding page from second document (in reverse order)
-		reversePage := pageCount - i + 1
+		// Extract corresponding page from second document (already reversed)
 		tempFile2 := fmt.Sprintf("temp_B_%d.pdf", i)
-		pageSelection2, err := api.ParsePageSelection(fmt.Sprintf("%d", reversePage))
+		pageSelection2, err := api.ParsePageSelection(fmt.Sprintf("%d", i))
 		if err != nil {
-			return fmt.Errorf("failed to parse page selection for file2 page %d: %v", reversePage, err)
+			return fmt.Errorf("failed to parse page selection for file2 page %d: %v", i, err)
 		}
 		
 		err = api.TrimFile(file2, tempFile2, pageSelection2, conf)
 		if err != nil {
-			return fmt.Errorf("failed to extract page %d from file2: %v", reversePage, err)
+			return fmt.Errorf("failed to extract page %d from file2: %v", i, err)
 		}
 		
 		// Add both pages to merge list (interleaved)
 		tempFiles = append(tempFiles, tempFile1, tempFile2)
 	}
 	
-	// Merge all temporary files
+	// Merge all temporary files using zip mode for proper interleaving
 	err := api.MergeCreateFile(tempFiles, outputFile, false, conf)
 	
 	// Clean up temporary files
 	for _, tempFile := range tempFiles {
-		os.Remove(tempFile)
+		if err := os.Remove(tempFile); err != nil && VERBOSE {
+			printWarning(fmt.Sprintf("Failed to clean up temporary file %s: %v", tempFile, err))
+		}
 	}
 	
 	return err
 }
 
+// Enhanced PDF validation before processing
+func validatePDFsForMerge(file1, file2 string) (int, int, error) {
+	// Validate both files exist and are valid PDFs
+	if !validatePDF(file1) {
+		return 0, 0, fmt.Errorf("first PDF validation failed")
+	}
+	
+	if !validatePDF(file2) {
+		return 0, 0, fmt.Errorf("second PDF validation failed")
+	}
+	
+	// Get page counts
+	pages1, err1 := getPageCount(file1)
+	pages2, err2 := getPageCount(file2)
+	
+	if err1 != nil {
+		return 0, 0, fmt.Errorf("failed to get page count for first file: %v", err1)
+	}
+	
+	if err2 != nil {
+		return 0, 0, fmt.Errorf("failed to get page count for second file: %v", err2)
+	}
+	
+	// Check for exact page count match
+	if pages1 != pages2 {
+		return pages1, pages2, fmt.Errorf("page count mismatch - %s has %d pages, %s has %d pages", 
+			filepath.Base(file1), pages1, filepath.Base(file2), pages2)
+	}
+	
+	if VERBOSE {
+		fmt.Printf("pages = %s%d%s\n", BLUE, pages1, NC)
+	}
+	
+	return pages1, pages2, nil
+}
+
+// Process and merge files with smart page reversal
 func processAndMerge(outputFile, file1, file2 string, pages int) {
-	err := createInterleavedMerge(file1, file2, outputFile, pages)
+	// Validate PDFs before processing
+	pages1, pages2, err := validatePDFsForMerge(file1, file2)
 	if err != nil {
-		fmt.Printf("%sError:%s Failed to create interleaved merge: %v\n", RED, NC, err)
-		moveProcessedFiles(ERROR_DIR, "Merge failed. Moving files to error folder...", file1, file2, "")
+		printError(err.Error())
+		moveProcessedFiles(ERROR_DIR, "PDF validation failed. Moving files to error folder...", file1, file2)
+		return
+	}
+	
+	// Use smart merge logic
+	err = smartMerge(file1, file2, outputFile, pages1, pages2)
+	if err != nil {
+		printError(fmt.Sprintf("Failed to merge PDFs: %v", err))
+		moveProcessedFiles(ERROR_DIR, "Merge failed. Moving files to error folder...", file1, file2)
 	} else {
-		moveProcessedFiles(ARCHIVE, "Files merged and moved to archive successfully.", file1, file2, "")
+		moveProcessedFiles(ARCHIVE, "Files merged and moved.", file1, file2)
 	}
 }
