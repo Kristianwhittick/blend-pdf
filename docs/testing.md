@@ -9,7 +9,7 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 - Go 1.19+ installed
 - pdfcpu library available
 - poppler-utils installed (for pdftotext verification)
-- Test PDF files: Doc_A.pdf (A1, A2, A3) and Doc_B.pdf (M, 9, *)
+- Test PDF files: Doc_A.pdf (A1, A2, A3) and Doc_B.pdf (M, 9, f)
 
 ### Test Files Location
 - Unit tests: `*_test.go` files alongside source code
@@ -254,7 +254,7 @@ echo -e "M\nQ" | ./blendpdfgo
 
 # Verify output
 pdftotext output/Doc_A_Doc_B.pdf -
-# Expected: A1, *, A2, 9, A3, M
+# Expected: A1, f, A2, 9, A3, M
 ```
 
 ### Interactive Menu Tests
@@ -462,13 +462,13 @@ pdftotext output/Doc_A_Doc_B.pdf -
 
 ### Input Files
 - **Doc_A.pdf**: A1, A2, A3 (pages 1, 2, 3)
-- **Doc_B.pdf**: M, 9, * (pages 1, 2, 3)
+- **Doc_B.pdf**: M, 9, f (pages 1, 2, 3)
 
 ### Expected Output
-**Interleaved Pattern**: A1, *, A2, 9, A3, M
+**Interleaved Pattern**: A1, f, A2, 9, A3, M
 
 This represents:
-- Doc1_Page1 (A1) + Doc2_Page3 (*)
+- Doc1_Page1 (A1) + Doc2_Page3 (f)
 - Doc1_Page2 (A2) + Doc2_Page2 (9)  
 - Doc1_Page3 (A3) + Doc2_Page1 (M)
 

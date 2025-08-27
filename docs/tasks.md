@@ -88,7 +88,7 @@
 - **Bug Fix (2025-08-27)**: Fixed page reversal logic
   - **Issue**: `api.TrimFile` with comma-separated selection "3,2,1" was not reordering pages
   - **Solution**: Extract pages individually in reverse order and merge manually
-  - **Result**: Correct interleaved pattern: A1, *, A2, 9, A3, M
+  - **Result**: Correct interleaved pattern: A1, f, A2, 9, A3, M
 
 ### Task 4: Update Filename Generation
 - **Status**: ✅ COMPLETED

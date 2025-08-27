@@ -165,6 +165,6 @@ go run experiments/experiment08_interleaved.go  # Test complete interleaved patt
 - **Test 03**: Extract A1 to single page PDF
 - **Test 04**: Extract A1, A2 to two-page PDF
 - **Test 05**: Extract pages in reverse order
-- **Test 06**: Simple concatenation: A1, A2, A3, M, 9, *
-- **Test 07**: Partial interleaved: A1, *, A2, 9
-- **Test 08**: Full interleaved: A1, *, A2, 9, A3, M ✅
+- **Test 06**: Simple concatenation: A1, A2, A3, M, 9, f
+- **Test 07**: Partial interleaved: A1, f, A2, 9
+- **Test 08**: Full interleaved: A1, f, A2, 9, A3, M ✅
