@@ -1,8 +1,6 @@
 run:
   skip-dirs:
     - experiments
-  skip-files:
-    - "experiments/.*\\.go$"
 
 issues:
   exclude-rules:
