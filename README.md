@@ -50,6 +50,14 @@ No more wasted time.
 
 Just scan, run BlendPDFGo, and enjoy perfectly ordered documents every single time.
 
+## ⚠️ Important Disclaimer
+
+**Use at your own risk.** Always keep backup copies of your original PDF files before processing. While BlendPDFGo has been thoroughly tested and includes robust error handling, you should never rely on any software as your only copy of important documents.
+
+**Recommended workflow:**
+1. Create backup copies of your original PDFs
+2. Run BlendPDFGo on the copies
+3. Verify the merged results before deleting originals
 
 ## History
 
