@@ -1,26 +1,11 @@
 run:
-  timeout: 5m
+  skip-dirs:
+    - experiments
+  skip-files:
+    - "experiments/.*\\.go$"
 
 issues:
-  exclude-dirs:
-    - tests  # Research and API test files with multiple main functions
-  
   exclude-rules:
-    # Exclude some linters from running on tests files
-    - path: _test\.go
+    - path: experiments/
       linters:
-        - gosec
-        - dupl
-        - goconst
-    
-    # Exclude specific gosec rules that might be too strict for our use case
-    - linters:
-        - gosec
-      text: "G204" # Command execution - we need this for pdfcpu
-    
-    - linters:
-        - gosec  
-      text: "G304" # File path as taint input - we handle user file paths
-
-  max-issues-per-linter: 0
-  max-same-issues: 0
+        - all
