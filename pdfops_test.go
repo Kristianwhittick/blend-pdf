@@ -372,6 +372,6 @@ func BenchmarkGetPageCount(b *testing.B) {
 	
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		getPageCount(testFile) // Will error, but we're measuring performance
+		_, _ = getPageCount(testFile) // Will error, but we're measuring performance
 	}
 }

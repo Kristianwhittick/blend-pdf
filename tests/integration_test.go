@@ -112,7 +112,9 @@ func (suite *IntegrationTestSuite) TestErrorHandlingWorkflow() {
 		restrictedDir := filepath.Join(suite.tempDir, "restricted")
 		err := os.MkdirAll(restrictedDir, 0000) // No permissions
 		if err == nil {
-			defer os.Chmod(restrictedDir, 0755) // Restore for cleanup
+			defer func() {
+				_ = os.Chmod(restrictedDir, 0755) // Restore for cleanup
+			}()
 			
 			// Try to create file in restricted directory
 			restrictedFile := filepath.Join(restrictedDir, "test.pdf")
