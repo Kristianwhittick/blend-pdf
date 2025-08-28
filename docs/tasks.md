@@ -318,19 +318,124 @@
   - Focus on modern CLI user experience patterns
 
 ### Task 23: GitHub Issue for pdfcpu Library
+- **Status**: ❌ CANCELLED
+- **Priority**: Community Contribution (Low)
+- **Description**: ~~Create GitHub issue/feature request for pdfcpu page extraction ordering~~
+- **Cancellation Reason**: Issue already reported and resolved in pdfcpu issue #950
+- **Resolution**: pdfcpu maintainer confirmed `trim` command sorts pages by design; `collect` command preserves order
+- **Action**: Use `api.CollectFile()` instead of `api.TrimFile()` for order-preserving page extraction
+
+### Task 25: pdfcpu Feature Request for In-Memory Processing
 - **Status**: 📋 PLANNED
 - **Priority**: Community Contribution (Low)
-- **Description**: Create GitHub issue/feature request for pdfcpu page extraction ordering
-- **Issue Details**:
-  - Research appropriate issue type (bug report, feature request, or enhancement)
-  - Explain page extraction ordering problem with api.TrimFile
-  - Include project context and links to BlendPDFGo repository
-  - Reference specific experiment files demonstrating the issue
-  - Provide technical details: code examples, expected vs actual behavior, version info
-  - Include short description of current workaround solution
-- **Deliverables**:
-  - Markdown file for review before submission
-  - Prepared GitHub commands for issue submission
+- **Description**: Create GitHub feature request for in-memory PDF processing capabilities in pdfcpu
+- **Background**: Current pdfcpu API requires file-based operations, limiting true in-memory processing
+
+#### Feature Request Details
+- **Missing Functions**: Context-based page extraction and merging
+- **Proposed APIs**:
+  - `api.ExtractPagesContext(ctx *model.Context, pages []int) ([]*model.Context, error)`
+  - `api.MergeContexts(contexts []*model.Context) (*model.Context, error)`
+  - `api.TrimContext(ctx *model.Context, pages []string) (*model.Context, error)`
+- **Use Case**: Enable zero-temp-file PDF processing for better performance and resource usage
+- **Benefits**: Reduced disk I/O, better memory efficiency, cleaner application architecture
+
+#### Implementation Requirements
+1. **Research existing issues** - Check if similar requests exist
+2. **Prepare technical specification** - Detail proposed API functions with signatures
+3. **Include use case examples** - Show how it would improve applications like BlendPDFGo
+4. **Reference current limitations** - Document file-based workarounds currently needed
+5. **Provide implementation suggestions** - If possible, suggest approach for pdfcpu maintainers
+
+#### Deliverables
+- [ ] GitHub issue research and analysis
+- [ ] Technical specification document
+- [ ] Feature request markdown for review
+- [ ] GitHub issue submission
+- [ ] Follow-up on maintainer feedback
+
+#### Acceptance Criteria
+- [ ] Comprehensive feature request submitted to pdfcpu repository
+- [ ] Technical details clearly explained with examples
+- [ ] Use case demonstrates real-world benefit
+- [ ] Maintainer feedback received and documented
+- [ ] Task status updated based on maintainer response
+
+#### Estimated Effort
+- **Research**: 1 hour
+- **Documentation**: 2-3 hours  
+- **Submission and follow-up**: 1 hour
+
+### Task 24: Implement CollectFile for Order-Preserving Page Extraction
+- **Status**: 📋 READY FOR IMPLEMENTATION
+- **Requirements**: R2.1-R2.4 (smart page reversal), R1.4-R1.5 (interleaved pattern)
+- **Priority**: Code Quality Enhancement (Medium)
+- **Description**: Replace TrimFile with CollectFile for guaranteed page order preservation
+- **Background**: pdfcpu issue #950 confirmed that `trim` command sorts pages by design, while `collect` preserves order
+
+#### Implementation Details
+- **Research Completed**: ✅ (Experiments 17-18 confirm CollectFile availability and strategy)
+- **API Compatibility**: ✅ (Identical function signature to TrimFile)
+- **Drop-in Replacement**: ✅ (No parameter changes required)
+
+#### Technical Requirements
+1. **Replace TrimFile calls** with CollectFile in `createInterleavedMerge()` function
+2. **Maintain existing error handling** - same error patterns expected
+3. **Preserve current functionality** - no behavior changes for users
+4. **Update function comments** to reflect the change from workaround to proper solution
+
+#### Files to Modify
+- `pdfops.go` - Update `createInterleavedMerge()` function
+- `docs/api_knowledge.md` - Update status from workaround to proper solution
+
+#### Benefits
+- **Guaranteed Order**: No more reliance on workaround for page ordering
+- **Cleaner Code**: Removes need for individual page extraction workaround
+- **Future-Proof**: Aligns with pdfcpu library design intentions
+- **Better Maintainability**: Uses intended API functions
+
+#### Implementation Strategy
+```go
+// Current approach (workaround):
+for i := pageCount; i >= 1; i-- {
+    pageSelection, _ := api.ParsePageSelection(fmt.Sprintf("%d", i))
+    err := api.TrimFile(inputFile, pageFile, pageSelection, conf)
+    // Individual extractions to work around sorting
+}
+
+// New approach (proper solution):
+pageSelection, _ := api.ParsePageSelection("3,2,1")
+err := api.CollectFile(inputFile, reversedFile, pageSelection, conf)
+// Then extract individual pages from reversed file for interleaving
+```
+
+#### Important Notes
+- **Temp Files**: This change does NOT reduce temporary file count (still 6 temp files + 1 lock file)
+- **Purpose**: Code quality improvement, not performance optimization
+- **Performance Impact**: Minimal - same number of operations, cleaner implementation
+- **For Temp File Reduction**: See Task 14 (In-Memory Processing) in backlog
+
+#### Acceptance Criteria
+- [ ] All TrimFile calls replaced with CollectFile where order matters
+- [ ] Existing functionality preserved (same interleaved pattern)
+- [ ] Error handling maintains same behavior
+- [ ] Tests pass with new implementation
+- [ ] Documentation updated to reflect proper solution
+
+#### Estimated Effort
+- **Development**: 1-2 hours
+- **Testing**: 1 hour
+- **Documentation**: 30 minutes
+
+#### Suggested Commit Message
+```
+feat: Replace TrimFile with CollectFile for order-preserving extraction
+
+- Use api.CollectFile() instead of api.TrimFile() for page reversal
+- Eliminates workaround for page ordering issues
+- Based on pdfcpu maintainer recommendation from issue #950
+- Maintains identical functionality with cleaner implementation
+```
 
 ### Maintenance Activities
 - Regular dependency updates
@@ -377,6 +482,12 @@
 - See `experiments/experiment16_final_memory_approach.go` for working example
 - See `docs/memory_processing_research.md` for implementation pattern
 - See `docs/api_knowledge.md` for API reference
+
+#### Important Notes
+- **Hybrid Approach**: Not pure in-memory due to pdfcpu API limitations
+- **Temp Files**: Reduces from 7 to 2-3 files (not zero due to API constraints)
+- **API Limitation**: pdfcpu requires file paths for page extraction and merging
+- **For Zero Temp Files**: See Task 25 (pdfcpu feature request) for true in-memory processing
 
 #### Acceptance Criteria
 - [ ] Merging uses minimal temporary files (only during page extraction)

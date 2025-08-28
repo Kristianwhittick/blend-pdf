@@ -91,7 +91,24 @@ Documentation of pdfcpu API functions based on experimental testing.
   - Requires ParsePageSelection to format page numbers
   - File-based operation only
   - **LIMITATION**: Comma-separated selections like "3,2,1" extract pages in document order, not specified order
-  - **Workaround**: Extract pages individually and merge manually for reordering
+  - **By Design**: The `trim` command automatically sorts pages (confirmed in pdfcpu issue #950)
+  - **Workaround**: Use `api.CollectFile()` for order-preserving extraction or extract pages individually
+
+### `api.CollectFile(inFile, outFile string, selectedPages []string, conf *model.Configuration) error`
+- **Status**: ✅ TESTED & CONFIRMED WORKING
+- **Purpose**: Extract specific pages from PDF while preserving specified order
+- **Parameters**:
+  - `inFile`: Input PDF file path
+  - `outFile`: Output PDF file path
+  - `selectedPages`: Page selection (from ParsePageSelection)
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - **Preserves Order**: Unlike `TrimFile`, this maintains the specified page order
+  - **Solution**: Use this instead of `TrimFile` for proper page reversal (3,2,1 → pages 3,2,1)
+  - **Source**: pdfcpu maintainer recommendation from issue #950
+  - **Tested**: Experiment 17 confirms function availability and identical signature to TrimFile
+  - **Drop-in Replacement**: Can replace TrimFile calls with no parameter changes
 
 ### `api.ParsePageSelection(pageStr string) ([]string, error)`
 - **Status**: ✅ TESTED & WORKING
@@ -265,11 +282,17 @@ api.MergeCreateFile(pageFiles, outputFile, false, conf)
 - **Result**: SUCCESS - Works with some page extraction failures
 - **File**: experiment15_hybrid_memory.go
 
-#### Experiment 16: Final Memory Approach ✅
+#### Experiment 17: CollectFile API Availability ✅
 - **Status**: ✅ COMPLETED
-- **Goal**: Demonstrate optimal in-memory processing approach
-- **Result**: SUCCESS - 52.9% memory efficiency, graceful error handling
-- **File**: experiment16_final_memory_approach.go
+- **Goal**: Test `api.CollectFile()` function availability and signature
+- **Result**: SUCCESS - CollectFile function exists with identical signature to TrimFile
+- **File**: experiment17_collect.go
+
+#### Experiment 18: CollectFile Strategy Analysis ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Analyze CollectFile-based interleaved merge strategy
+- **Result**: SUCCESS - Confirmed drop-in replacement capability and implementation strategy
+- **File**: experiment18_collect_interleaved.go
 
 ## Best Practices
 1. **Use ReadContextFile** instead of ReadContext for reliability

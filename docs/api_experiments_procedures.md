@@ -21,6 +21,8 @@ go run experiments/experiment05_reverse.go      # Test reverse page extraction
 go run experiments/experiment06_merge.go        # Test simple merge
 go run experiments/experiment07_page_merge.go   # Test individual page merge
 go run experiments/experiment08_interleaved.go  # Test complete interleaved pattern
+go run experiments/experiment17_collect.go      # Test CollectFile API availability
+go run experiments/experiment18_collect_interleaved.go # Test CollectFile strategy
 ```
 
 ### Expected API Test Results
@@ -32,6 +34,8 @@ go run experiments/experiment08_interleaved.go  # Test complete interleaved patt
 - **Test 06**: Simple concatenation: A1, A2, A3, M, 9, f
 - **Test 07**: Partial interleaved: A1, f, A2, 9
 - **Test 08**: Full interleaved: A1, f, A2, 9, A3, M ✅
+- **Test 17**: CollectFile function availability and signature confirmation ✅
+- **Test 18**: CollectFile strategy analysis and implementation approach ✅
 
 ## Notes
 - Each test creates a standalone Go program
