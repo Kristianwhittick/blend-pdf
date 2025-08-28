@@ -22,7 +22,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func experiment04ExtractMulti() {
+func main() {
 	fmt.Println("=== Experiment 04: Extract Multiple Pages ===")
 	
 	// Create default configuration

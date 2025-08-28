@@ -23,7 +23,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func experiment08Interleaved() {
+func main() {
 	fmt.Println("=== Experiment 08: Complete Interleaved Pattern ===")
 	fmt.Println("Expected: Doc1_Page1, Doc2_Page3, Doc1_Page2, Doc2_Page2, Doc1_Page3, Doc2_Page1")
 	fmt.Println("Which is: A1, B3, A2, B2, A3, B1")

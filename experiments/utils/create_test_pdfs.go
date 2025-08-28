@@ -5,15 +5,18 @@ import (
 	"log"
 	"os"
 
-	"github.com/pdfcpu/pdfcpu/pkg/api"
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
+
+func main() {
+	createTestPDFs()
+}
 
 func createTestPDFs() {
 	fmt.Println("=== Creating Test PDF Files ===")
 	
 	// Create simple test PDFs using pdfcpu's create functionality
-	conf := model.NewDefaultConfiguration()
+	_ = model.NewDefaultConfiguration()
 	
 	// Create Doc_A.pdf with 3 pages containing text A1, A2, A3
 	fmt.Println("Creating Doc_A.pdf...")

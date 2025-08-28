@@ -9,7 +9,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func experiment17Collect() {
+func main() {
 	fmt.Println("=== Experiment 17: Testing api.CollectFile vs api.TrimFile ===")
 	
 	// Create a simple test PDF first using pdfcpu's create functionality

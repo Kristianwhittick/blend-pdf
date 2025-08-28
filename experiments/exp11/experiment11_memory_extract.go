@@ -38,39 +38,36 @@ func main() {
 	// Try to extract page 1 in memory
 	fmt.Println("Attempting to extract page 1 from Doc_A...")
 	
-	// Method 1: Try ExtractPages function
-	fmt.Println("Testing api.ExtractPages...")
-	selectedPages := []string{"1"}
-	ctxExtracted, err := api.ExtractPages(ctxA, selectedPages, conf)
+	// Method 1: Try TrimFile function (file-based extraction)
+	fmt.Println("Testing api.TrimFile...")
+	selectedPages, err := api.ParsePageSelection("1")
 	if err != nil {
-		log.Printf("ExtractPages error: %v", err)
-	} else {
-		fmt.Printf("ExtractPages success! Extracted context has %d pages\n", ctxExtracted.PageCount)
-		
-		// Try to write extracted page to file
-		err = api.WriteContextFile(ctxExtracted, "output/experiment10_extracted_page1.pdf")
-		if err != nil {
-			log.Printf("Error writing extracted page: %v", err)
-		} else {
-			fmt.Println("Successfully wrote extracted page to output/experiment10_extracted_page1.pdf")
-		}
+		log.Printf("ParsePageSelection error: %v", err)
+		return
 	}
 	
-	// Method 2: Try TrimContext function
-	fmt.Println("\nTesting api.TrimContext...")
-	ctxTrimmed, err := api.TrimContext(ctxA, selectedPages, conf)
+	// Write context to temp file first
+	tempFile := "temp_doc_a.pdf"
+	err = api.WriteContextFile(ctxA, tempFile)
 	if err != nil {
-		log.Printf("TrimContext error: %v", err)
+		log.Printf("Error writing temp file: %v", err)
+		return
+	}
+	
+	err = api.TrimFile(tempFile, "output/experiment10_extracted_page1.pdf", selectedPages, conf)
+	if err != nil {
+		log.Printf("TrimFile error: %v", err)
 	} else {
-		fmt.Printf("TrimContext success! Trimmed context has %d pages\n", ctxTrimmed.PageCount)
-		
-		// Try to write trimmed page to file
-		err = api.WriteContextFile(ctxTrimmed, "output/experiment10_trimmed_page1.pdf")
-		if err != nil {
-			log.Printf("Error writing trimmed page: %v", err)
-		} else {
-			fmt.Println("Successfully wrote trimmed page to output/experiment10_trimmed_page1.pdf")
-		}
+		fmt.Println("Successfully extracted page 1 to output/experiment10_extracted_page1.pdf")
+	}
+	
+	// Method 2: Try CollectFile function (order-preserving extraction)
+	fmt.Println("\nTesting api.CollectFile...")
+	err = api.CollectFile(tempFile, "output/experiment10_collected_page1.pdf", selectedPages, conf)
+	if err != nil {
+		log.Printf("CollectFile error: %v", err)
+	} else {
+		fmt.Println("Successfully collected page 1 to output/experiment10_collected_page1.pdf")
 	}
 	
 	fmt.Println("Experiment 10 completed!")

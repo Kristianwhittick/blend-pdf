@@ -21,7 +21,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/api"
 )
 
-func experiment01PageCount() {
+func main() {
 	fmt.Println("=== Experiment 01: Page Count API ===")
 	
 	// Test Doc_A.pdf

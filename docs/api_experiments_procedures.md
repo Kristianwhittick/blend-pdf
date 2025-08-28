@@ -21,8 +21,17 @@ go run experiments/run_experiments.go 05    # Test reverse page extraction
 go run experiments/run_experiments.go 06    # Test simple merge
 go run experiments/run_experiments.go 07    # Test individual page merge
 go run experiments/run_experiments.go 08    # Test complete interleaved pattern
-go run experiments/run_experiments.go 17    # Test CollectFile API availability
-go run experiments/run_experiments.go 18    # Test CollectFile strategy
+go run experiments/run_experiments.go 09    # Test memory context API
+go run experiments/run_experiments.go 10    # Test memory page extraction (simple)
+go run experiments/run_experiments.go 11    # Test memory page extraction
+go run experiments/run_experiments.go 12    # Test memory context merging
+go run experiments/run_experiments.go 13    # Test memory bytes processing
+go run experiments/run_experiments.go 14    # Test API exploration
+go run experiments/run_experiments.go 15    # Test working memory approach
+go run experiments/run_experiments.go 16    # Test hybrid memory approach
+go run experiments/run_experiments.go 17    # Test final memory approach
+go run experiments/run_experiments.go 18    # Test CollectFile API availability
+go run experiments/run_experiments.go 19    # Test CollectFile strategy
 ```
 
 ### Expected API Test Results
@@ -34,11 +43,12 @@ go run experiments/run_experiments.go 18    # Test CollectFile strategy
 - **Test 06**: Simple concatenation: A1, A2, A3, M, 9, f
 - **Test 07**: Partial interleaved: A1, f, A2, 9
 - **Test 08**: Full interleaved: A1, f, A2, 9, A3, M ✅
-- **Test 17**: CollectFile function availability and signature confirmation ✅
-- **Test 18**: CollectFile strategy analysis and implementation approach ✅
+- **Test 18**: CollectFile function availability and signature confirmation ✅
+- **Test 19**: CollectFile strategy analysis and implementation approach ✅
 
 ## Notes
-- Each test creates a standalone Go program
+- Each experiment is in its own subfolder (exp01/, exp02/, etc.)
+- All experiments run through the unified runner: `go run experiments/run_experiments.go <number>`
 - Results verified using pdftotext
 - Detailed experiment results documented in api_knowledge.md
 - Memory processing research documented in memory_processing_research.md

@@ -22,7 +22,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func experiment02Validate() {
+func main() {
 	fmt.Println("=== Experiment 02: PDF Validation API ===")
 	
 	// Create default configuration

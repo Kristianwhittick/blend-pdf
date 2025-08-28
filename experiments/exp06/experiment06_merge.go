@@ -22,38 +22,35 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func experiment03Extract() {
-	fmt.Println("=== Experiment 03: Extract Single Page ===")
+func main() {
+	fmt.Println("=== Experiment 06: Simple Merge Two Files ===")
 	
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
 	
-	// Extract page 1 from Doc_A.pdf
-	fmt.Println("Extracting page 1 from Doc_A.pdf...")
+	// Simple merge: Doc_A.pdf + Doc_B.pdf
+	fmt.Println("Merging Doc_A.pdf + Doc_B.pdf...")
 	
-	pageSelection, err := api.ParsePageSelection("1")
+	inputFiles := []string{"Doc_A.pdf", "Doc_B.pdf"}
+	
+	err := api.MergeCreateFile(inputFiles, "output/experiment06_simple_merge.pdf", false, conf)
 	if err != nil {
-		log.Fatalf("Failed to parse page selection: %v", err)
+		log.Fatalf("Failed to merge files: %v", err)
 	}
 	
-	err = api.TrimFile("Doc_A.pdf", "output/experiment03_single_page.pdf", pageSelection, conf)
-	if err != nil {
-		log.Fatalf("Failed to extract page: %v", err)
-	}
-	
-	fmt.Println("Successfully extracted page 1 to output/experiment03_single_page.pdf")
+	fmt.Println("Successfully merged to output/experiment06_simple_merge.pdf")
 	
 	// Verify the result
-	pageCount, err := api.PageCountFile("output/experiment03_single_page.pdf")
+	pageCount, err := api.PageCountFile("output/experiment06_simple_merge.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}
 	
 	fmt.Printf("Result file has %d page(s)\n", pageCount)
 	
-	if pageCount == 1 {
-		fmt.Println("✅ Test 03 PASSED - Single page extracted successfully!")
+	if pageCount == 6 {
+		fmt.Println("✅ Test 06 PASSED - Files merged successfully!")
 	} else {
-		fmt.Printf("❌ Test 03 FAILED - Expected 1 page, got %d\n", pageCount)
+		fmt.Printf("❌ Test 06 FAILED - Expected 6 pages, got %d\n", pageCount)
 	}
 }
