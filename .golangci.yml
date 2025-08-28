@@ -1,9 +1,0 @@
-run:
-  skip-dirs:
-    - experiments
-
-issues:
-  exclude-rules:
-    - path: experiments/
-      linters:
-        - all
