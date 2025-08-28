@@ -22,7 +22,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func experiment05Reverse() {
 	fmt.Println("=== Experiment 05: Extract Pages in Reverse Order ===")
 	
 	// Create default configuration

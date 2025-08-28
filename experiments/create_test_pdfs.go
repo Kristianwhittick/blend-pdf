@@ -9,7 +9,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func createTestPDFs() {
 	fmt.Println("=== Creating Test PDF Files ===")
 	
 	// Create simple test PDFs using pdfcpu's create functionality

@@ -22,7 +22,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func experiment06Merge() {
 	fmt.Println("=== Experiment 06: Simple Merge Two Files ===")
 	
 	// Create default configuration

@@ -9,7 +9,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func experiment18CollectInterleaved() {
 	fmt.Println("=== Experiment 18: CollectFile-Based Interleaved Merge Strategy ===")
 	
 	// Create output directory

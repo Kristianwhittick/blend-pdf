@@ -23,7 +23,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func experiment07PageMerge() {
 	fmt.Println("=== Experiment 07: Merge Individual Pages ===")
 	
 	// Create default configuration

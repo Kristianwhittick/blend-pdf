@@ -13,16 +13,16 @@ Testing individual pdfcpu API functions to understand their behavior and require
 ### Running Individual API Tests
 ```bash
 cd /home/kris/scan/blendpdfgo
-go run experiments/experiment01_pagecount.go    # Test page counting
-go run experiments/experiment02_validate.go     # Test PDF validation
-go run experiments/experiment03_extract.go      # Test single page extraction
-go run experiments/experiment04_extract_multi.go # Test multiple page extraction
-go run experiments/experiment05_reverse.go      # Test reverse page extraction
-go run experiments/experiment06_merge.go        # Test simple merge
-go run experiments/experiment07_page_merge.go   # Test individual page merge
-go run experiments/experiment08_interleaved.go  # Test complete interleaved pattern
-go run experiments/experiment17_collect.go      # Test CollectFile API availability
-go run experiments/experiment18_collect_interleaved.go # Test CollectFile strategy
+go run experiments/run_experiments.go 01    # Test page counting
+go run experiments/run_experiments.go 02    # Test PDF validation
+go run experiments/run_experiments.go 03    # Test single page extraction
+go run experiments/run_experiments.go 04    # Test multiple page extraction
+go run experiments/run_experiments.go 05    # Test reverse page extraction
+go run experiments/run_experiments.go 06    # Test simple merge
+go run experiments/run_experiments.go 07    # Test individual page merge
+go run experiments/run_experiments.go 08    # Test complete interleaved pattern
+go run experiments/run_experiments.go 17    # Test CollectFile API availability
+go run experiments/run_experiments.go 18    # Test CollectFile strategy
 ```
 
 ### Expected API Test Results

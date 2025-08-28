@@ -22,7 +22,7 @@ import (
 	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
 )
 
-func main() {
+func experiment03Extract() {
 	fmt.Println("=== Experiment 03: Extract Single Page ===")
 	
 	// Create default configuration
