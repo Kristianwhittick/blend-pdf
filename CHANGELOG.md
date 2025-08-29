@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.3] - 2025-08-29
+
+### Fixed
+- Fixed GitHub Actions version handling to use correct version numbers from git tags instead of hardcoded v1.0.0
+- Fixed build system version synchronization between git tags and build artifacts
+- Fixed release asset naming to show correct version-specific binary names
+
+### Added
+- Automatic version sync script (`scripts/sync-version.sh`) for version consistency
+- Enhanced build process with automatic git tag version detection
+- Makefile integration with `sync-version` target
+
+### Technical
+- Updated build system to use `git describe --tags` for version detection
+- Enhanced GitHub Actions workflow for proper version handling
+- Improved cross-platform build consistency
+
 ## [1.0.2] - 2025-08-29
 
 ### Changed
