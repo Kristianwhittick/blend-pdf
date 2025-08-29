@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.5] - 2025-08-29
+
+### Changed
+- **MAJOR**: Replaced complex loop-based PDF interleaving with elegant 2-step zip merge solution
+- Reduced temporary files from 6+ to 1 (reversed document only)
+- Reduced API calls from 7+ to 2 (CollectFile + MergeCreateZipFile)
+- Improved performance and code maintainability significantly
+
+### Technical
+- Implemented `api.CollectFile()` for order-preserving page reversal
+- Implemented `api.MergeCreateZipFile()` for perfect interleaved merging
+- Maintains exact same output pattern (A1, f, A2, 9, A3, M)
+- All existing tests pass with new implementation
+- Task 24 completed with breakthrough zip merge approach
+
 ## [1.0.4] - 2025-08-29
 
 ### Fixed

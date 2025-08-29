@@ -22,7 +22,7 @@ import (
 
 // Application constants
 const (
-	VERSION = "1.0.4"
+	VERSION = "1.0.5"
 )
 
 // ANSI color codes for terminal output
