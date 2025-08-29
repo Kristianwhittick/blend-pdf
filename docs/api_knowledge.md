@@ -134,7 +134,68 @@ Documentation of pdfcpu API functions based on experimental testing.
   - Files are merged in order provided
   - Set divider to false for seamless merge
 
-## In-Memory Processing Approach
+### `api.MergeCreateZipFile(inFile1, inFile2, outFile string, conf *model.Configuration) error`
+- **Status**: ✅ TESTED & WORKING
+- **Purpose**: Merge two PDF files with interleaved (zip) pattern
+- **Parameters**:
+  - `inFile1`: First PDF file path
+  - `inFile2`: Second PDF file path
+  - `outFile`: Output merged PDF file path
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - Creates interleaved pattern: Page1_File1, Page1_File2, Page2_File1, Page2_File2, etc.
+  - Perfect for double-sided scanning workflows
+  - Combines with `CollectFile` for complete interleaved solution
+  - **Breakthrough Discovery**: Eliminates need for individual page extraction loops
+
+### `api.MergeCreateZip(rs1, rs2 io.ReadSeeker, w io.Writer, conf *model.Configuration) error`
+- **Status**: ✅ AVAILABLE (not tested)
+- **Purpose**: Merge two PDF streams with interleaved (zip) pattern
+- **Parameters**:
+  - `rs1`: First PDF as ReadSeeker
+  - `rs2`: Second PDF as ReadSeeker
+  - `w`: Output writer
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - Stream-based version of MergeCreateZipFile
+  - Useful for in-memory processing
+
+## Recommended Zip Merge Approach ✅
+
+### Strategy
+Use the elegant 2-step zip merge solution for perfect interleaved patterns with minimal temporary files.
+
+### Implementation Pattern
+```go
+// 1. Validate page counts match
+ctxA, _ := api.ReadContextFile("doc_a.pdf")
+ctxB, _ := api.ReadContextFile("doc_b.pdf")
+if ctxA.PageCount != ctxB.PageCount {
+    return errors.New("page count mismatch")
+}
+
+// 2. Reverse second document using CollectFile
+pageSelection, _ := api.ParsePageSelection("3,2,1") // For 3-page document
+reversedFile := "temp-reversed.pdf"
+err := api.CollectFile("doc_b.pdf", reversedFile, pageSelection, conf)
+defer os.Remove(reversedFile)
+
+// 3. Zip merge for perfect interleaving
+err = api.MergeCreateZipFile("doc_a.pdf", reversedFile, "output.pdf", conf)
+
+// Result: A1, f, A2, 9, A3, M (perfect interleaved pattern)
+```
+
+### Benefits of Zip Merge Approach ✅
+- **Dramatic Simplification**: 2 API calls instead of 6+ individual page extractions
+- **Reduced Temporary Files**: 1 temp file instead of 6+ temp files
+- **Perfect Interleaving**: Native zip merge provides exact pattern needed
+- **Better Performance**: Fewer I/O operations and API calls
+- **True Solution**: Uses intended pdfcpu APIs, not workarounds
+
+## In-Memory Processing Approach (Legacy)
 
 ### What Works ✅
 1. **Load PDFs into memory contexts** using `ReadContextFile`
@@ -249,6 +310,26 @@ api.MergeCreateFile(pageFiles, outputFile, false, conf)
 - **Goal**: Test full interleaved merge implementation
 - **Result**: SUCCESS - Interleaved pattern works
 - **File**: experiment08_interleaved.go
+
+### Zip Merge Experiments
+
+#### Experiment 20: Basic Zip Merge ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test `api.MergeCreateZipFile()` basic functionality
+- **Result**: SUCCESS - Perfect interleaved pattern: A1, M, A2, 9, A3, f
+- **File**: experiment20_zip_merge_basic.go
+
+#### Experiment 21: CollectFile + Zip Merge ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test complete solution: CollectFile reversal + zip merge
+- **Result**: SUCCESS - Perfect target pattern: A1, f, A2, 9, A3, M
+- **File**: experiment21_collect_zip_merge.go
+
+#### Experiment 22: Complete Zip Flow Validation ✅
+- **Status**: ✅ COMPLETED
+- **Goal**: Test complete workflow with validation and content verification
+- **Result**: SUCCESS - Confirmed 2-step solution works perfectly
+- **File**: experiment22_complete_zip_flow.go
 
 ### Memory Processing Experiments
 

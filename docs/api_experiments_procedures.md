@@ -32,6 +32,9 @@ go run experiments/run_experiments.go 16    # Test hybrid memory approach
 go run experiments/run_experiments.go 17    # Test final memory approach
 go run experiments/run_experiments.go 18    # Test CollectFile API availability
 go run experiments/run_experiments.go 19    # Test CollectFile strategy
+go run experiments/run_experiments.go 20    # Test basic zip merge
+go run experiments/run_experiments.go 21    # Test CollectFile + zip merge
+go run experiments/run_experiments.go 22    # Test complete zip flow validation
 ```
 
 ### Expected API Test Results
@@ -45,6 +48,9 @@ go run experiments/run_experiments.go 19    # Test CollectFile strategy
 - **Test 08**: Full interleaved: A1, f, A2, 9, A3, M ✅
 - **Test 18**: CollectFile function availability and signature confirmation ✅
 - **Test 19**: CollectFile strategy analysis and implementation approach ✅
+- **Test 20**: Basic zip merge functionality - interleaved pattern A1, M, A2, 9, A3, f ✅
+- **Test 21**: Complete solution - CollectFile reversal + zip merge = A1, f, A2, 9, A3, M ✅
+- **Test 22**: Full workflow validation with content verification ✅
 
 ## Notes
 - Each experiment is in its own subfolder (exp01/, exp02/, etc.)

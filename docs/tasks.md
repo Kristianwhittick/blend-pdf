@@ -397,76 +397,102 @@
 - **Common Patterns**: Memory usage concerns, PageCount=0 issues with ReadContext, performance regressions
 - **Opportunity**: No existing feature request for context-based processing APIs
 
-### Task 24: Implement CollectFile for Order-Preserving Page Extraction
+### Task 24: Implement Zip Merge Solution for Interleaved Pattern
 - **Status**: 📋 READY FOR IMPLEMENTATION
 - **Requirements**: R2.1-R2.4 (smart page reversal), R1.4-R1.5 (interleaved pattern)
-- **Priority**: Code Quality Enhancement (Medium)
-- **Description**: Replace TrimFile with CollectFile for guaranteed page order preservation
-- **Background**: pdfcpu issue #950 confirmed that `trim` command sorts pages by design, while `collect` preserves order
+- **Priority**: Code Quality Enhancement (High) - **UPGRADED FROM MEDIUM**
+- **Description**: Replace complex loop-based interleaving with simple 2-step zip merge solution
+- **Background**: Discovered `MergeCreateZipFile` API provides perfect interleaved merging when combined with `CollectFile`
 
 #### Implementation Details
-- **Research Completed**: ✅ (Experiments 17-18 confirm CollectFile availability and strategy)
-- **API Compatibility**: ✅ (Identical function signature to TrimFile)
-- **Drop-in Replacement**: ✅ (No parameter changes required)
+- **Research Completed**: ✅ (Experiments 20-22 confirm zip merge solution)
+- **API Functions**: `CollectFile` + `MergeCreateZipFile` 
+- **Breakthrough**: Eliminates all individual page extraction and complex merging logic
 
 #### Technical Requirements
-1. **Replace TrimFile calls** with CollectFile in `createInterleavedMerge()` function
-2. **Maintain existing error handling** - same error patterns expected
-3. **Preserve current functionality** - no behavior changes for users
-4. **Update function comments** to reflect the change from workaround to proper solution
+1. **Replace `createInterleavedMerge()` function** with 2-step zip merge approach
+2. **Step 1**: Use `CollectFile` to reverse second document pages
+3. **Step 2**: Use `MergeCreateZipFile` to interleave first document with reversed second document
+4. **Maintain existing error handling** and validation
+5. **Update function comments** to reflect the elegant solution
 
 #### Files to Modify
-- `pdfops.go` - Update `createInterleavedMerge()` function
-- `docs/api_knowledge.md` - Update status from workaround to proper solution
+- `pdfops.go` - Replace `createInterleavedMerge()` function completely
+- `docs/api_knowledge.md` - Add zip merge API documentation
+- Tests - Update to reflect new implementation
 
 #### Benefits
-- **Better Workaround**: Uses intended API for order-preserving extraction instead of relying on undocumented behavior
-- **Improved Page Reversal**: One `CollectFile` call instead of individual extractions for reversal step
-- **Future-Proof**: Aligns with pdfcpu library design intentions
-- **Better Maintainability**: Uses documented API functions with guaranteed behavior
+- **Dramatic Simplification**: 2 API calls instead of 6+ individual page extractions
+- **Reduced Temporary Files**: 1 temp file instead of 6+ temp files
+- **Perfect Interleaving**: Native zip merge provides exact pattern needed
+- **Better Performance**: Fewer I/O operations and API calls
+- **Cleaner Code**: Eliminates complex loop-based merging logic
+- **True Solution**: Uses intended pdfcpu APIs, not workarounds
 
 #### Implementation Strategy
 ```go
-// Current approach (workaround):
-for i := pageCount; i >= 1; i-- {
-    pageSelection, _ := api.ParsePageSelection(fmt.Sprintf("%d", i))
-    err := api.TrimFile(inputFile, pageFile, pageSelection, conf)
-    // Individual extractions to work around sorting
+// OLD APPROACH (complex workaround):
+func createInterleavedMerge(file1, file2, output string) error {
+    // Extract pages individually in reverse order (loop)
+    for i := pageCount; i >= 1; i-- {
+        extractSinglePage(file2, i, conf) // 3+ API calls
+    }
+    // Extract pages individually from first file (loop)  
+    for i := 1; i <= pageCount; i++ {
+        extractSinglePage(file1, i, conf) // 3+ API calls
+    }
+    // Manually merge in interleaved pattern
+    api.MergeCreateFile(interleavedFiles, output, false, conf)
+    // Total: 6+ temp files, 7+ API calls
 }
 
-// New approach (proper solution):
-pageSelection, _ := api.ParsePageSelection("3,2,1")
-err := api.CollectFile(inputFile, reversedFile, pageSelection, conf)
-// Then extract individual pages from reversed file for interleaving
+// NEW APPROACH (elegant solution):
+func createInterleavedMerge(file1, file2, output string) error {
+    // Step 1: Reverse second document
+    pageSelection, _ := api.ParsePageSelection("3,2,1")
+    reversedFile := "temp-reversed.pdf"
+    err := api.CollectFile(file2, reversedFile, pageSelection, conf)
+    defer os.Remove(reversedFile)
+    
+    // Step 2: Zip merge for perfect interleaving
+    err = api.MergeCreateZipFile(file1, reversedFile, output, conf)
+    
+    // Total: 1 temp file, 2 API calls
+    // Result: A1, f, A2, 9, A3, M (perfect interleaved pattern)
+}
 ```
 
 #### Important Notes
-- **Temp Files**: This change does NOT reduce temporary file count (still 6 temp files + 1 lock file)
-- **Still a Workaround**: Individual page extraction and temporary files still required until new pdfcpu APIs exist
-- **Purpose**: Improves existing workaround, does not eliminate need for workarounds
-- **Performance Impact**: Minimal - same number of operations, cleaner implementation
-- **True Solution**: Requires Task 25 (pdfcpu feature request) implementation by pdfcpu maintainers
+- **Major Breakthrough**: This is NOT a workaround - it's the proper solution using intended APIs
+- **Temp Files**: Reduces from 6+ files to 1 temporary reversed file
+- **Performance**: Dramatic improvement in speed and resource usage
+- **API Discovery**: `MergeCreateZipFile` was the missing piece for elegant interleaving
+- **Validation**: Experiments 20-22 confirm perfect interleaved output pattern
 
 #### Acceptance Criteria
-- [ ] All TrimFile calls replaced with CollectFile where order matters
-- [ ] Existing functionality preserved (same interleaved pattern)
-- [ ] Error handling maintains same behavior
-- [ ] Tests pass with new implementation
-- [ ] Documentation updated to reflect proper solution
+- [ ] Replace complex `createInterleavedMerge()` with 2-step zip merge
+- [ ] Maintain exact same interleaved pattern output (A1, f, A2, 9, A3, M)
+- [ ] Reduce temporary files from 6+ to 1
+- [ ] Reduce API calls from 7+ to 2
+- [ ] All existing tests pass with new implementation
+- [ ] Performance improvement measurable
+- [ ] Documentation updated to reflect elegant solution
 
 #### Estimated Effort
-- **Development**: 1-2 hours
-- **Testing**: 1 hour
-- **Documentation**: 30 minutes
+- **Development**: 2-3 hours (complete rewrite of merge function)
+- **Testing**: 1-2 hours (verify pattern and performance)
+- **Documentation**: 1 hour
 
 #### Suggested Commit Message
 ```
-feat: Replace TrimFile with CollectFile for order-preserving extraction
+feat: Implement zip merge solution for interleaved PDF pattern
 
-- Use api.CollectFile() instead of api.TrimFile() for page reversal
-- Eliminates workaround for page ordering issues
-- Based on pdfcpu maintainer recommendation from issue #950
-- Maintains identical functionality with cleaner implementation
+- Replace complex loop-based interleaving with elegant 2-step solution
+- Use CollectFile + MergeCreateZipFile for perfect interleaved pattern
+- Reduce from 6+ temp files to 1 temp file
+- Reduce from 7+ API calls to 2 API calls  
+- Maintain exact same output pattern (A1, f, A2, 9, A3, M)
+- Major performance and code quality improvement
 ```
 
 ### Task 27: Full-Screen UI Implementation
