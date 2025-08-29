@@ -398,11 +398,12 @@
 #### Technical Requirements
 1. **Terminal Takeover**: Full-screen interface replacing scrolling menu
 2. **Segmented Layout**: Header, file counts, available PDFs, recent output, actions, status
-3. **Real-Time Updates**: File monitoring without user input
-4. **File Selection Modes**: Toggle between Alpha Order and User Selection
-5. **Visual Indicators**: Arrow keys navigation, selection markers (▶, ✓)
-6. **Progress Visualization**: Progress bars during operations
-7. **Cross-Platform Compatibility**: Graceful fallback for legacy terminals
+3. **Version Display**: Show program version number in top border (breaking the line) or in header section
+4. **Real-Time Updates**: File monitoring without user input
+5. **File Selection Modes**: Toggle between Alpha Order and User Selection
+6. **Visual Indicators**: Arrow keys navigation, selection markers (▶, ✓)
+7. **Progress Visualization**: Progress bars during operations
+8. **Cross-Platform Compatibility**: Graceful fallback for legacy terminals
 
 #### Files to Create/Modify
 - `ui/` - New directory for UI components
