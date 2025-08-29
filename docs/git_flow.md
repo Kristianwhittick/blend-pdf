@@ -198,36 +198,111 @@ Follow Semantic Versioning (SemVer):
 - **MINOR**: New features (backward compatible)
 - **PATCH**: Bug fixes (backward compatible)
 
-### Release Steps
-1. **Prepare Release**
+### Automated Release Process (Current)
+
+#### Prerequisites
+- All changes committed to main branch
+- CHANGELOG.md updated with new version entry
+- All tests passing
+
+#### Release Steps
+1. **Update CHANGELOG.md**
    ```bash
+   # Add new version entry to CHANGELOG.md
+   ## [1.1.0] - 2025-XX-XX
+   
+   ### Added
+   - New feature descriptions
+   
+   ### Fixed
+   - Bug fix descriptions
+   
+   ### Changed
+   - Change descriptions
+   ```
+
+2. **Create and Push Git Tag**
+   ```bash
+   git checkout main
+   git pull origin main
+   git tag -a v1.1.0 -m "Release version 1.1.0"
+   git push origin main --tags
+   ```
+
+3. **Automated GitHub Actions**
+   - GitHub Actions automatically triggers on tag push
+   - Extracts version from git tag (not constants.go)
+   - Builds binaries for all platforms (Windows, Linux, macOS)
+   - Extracts changelog content for the specific version
+   - Creates GitHub release with proper version and changelog
+   - Uploads binaries and checksums
+
+#### Important Notes
+- **Version Source**: Git tags are the single source of truth for versions
+- **Automatic Sync**: `scripts/sync-version.sh` syncs constants.go with git tags
+- **Changelog Extraction**: GitHub Actions automatically extracts version-specific changelog
+- **No Manual GitHub Release**: GitHub releases are created automatically
+
+### Manual Release Process (Legacy - Do Not Use)
+The following process is deprecated and should not be used:
+
+1. ~~**Prepare Release**~~
+   ```bash
+   # DO NOT USE - This is the old process
    git checkout main
    git pull origin main
    git checkout -b release/v1.1.0
    ```
 
-2. **Update Version**
-   - Update version in `constants.go`
-   - Update CHANGELOG.md
-   - Update documentation if needed
+2. ~~**Update Version**~~
+   - ~~Update version in `constants.go`~~ (Now automated)
+   - ~~Update CHANGELOG.md~~ (Still required, but different format)
+   - ~~Update documentation if needed~~
 
-3. **Create Release**
+3. ~~**Create Release**~~
    ```bash
+   # DO NOT USE - This is the old process
    git add .
    git commit -m "chore: prepare release v1.1.0"
    git push origin release/v1.1.0
    ```
 
-4. **Merge and Tag**
+4. ~~**Merge and Tag**~~
    ```bash
+   # DO NOT USE - This is the old process
    git checkout main
    git merge release/v1.1.0
    git tag -a v1.1.0 -m "Release version 1.1.0"
    git push origin main --tags
    ```
 
-5. **Create GitHub Release**
-   - Go to GitHub Releases
+5. ~~**Create GitHub Release**~~
+   - ~~Go to GitHub Releases~~ (Now automated)
+   - ~~Create new release from tag~~ (Now automated)
+   - ~~Add release notes~~ (Now automated from CHANGELOG.md)
+   - ~~Attach binaries if applicable~~ (Now automated)
+
+### Troubleshooting Releases
+
+#### Version Mismatch Issues
+- **Problem**: Build artifacts show wrong version (e.g., v1.0.0 instead of v1.0.3)
+- **Cause**: Version not synced between git tags and constants.go
+- **Solution**: Run `./scripts/sync-version.sh` or `make sync-version`
+
+#### Missing Changelog in Release
+- **Problem**: GitHub release shows "See commit history" instead of actual changes
+- **Cause**: Missing or incorrectly formatted CHANGELOG.md entry
+- **Solution**: Ensure CHANGELOG.md has proper `## [X.Y.Z] - YYYY-MM-DD` format
+
+#### GitHub Actions Not Triggering
+- **Problem**: No automated release created after pushing tag
+- **Cause**: Tag not pushed or GitHub Actions workflow issues
+- **Solution**: Check Actions tab on GitHub, ensure tag format is `vX.Y.Z`
+
+#### Local Build Version Issues
+- **Problem**: Local builds show wrong version
+- **Cause**: Build script not using git tags
+- **Solution**: Use `make build-all` or `./build.sh --all` (includes automatic sync)
    - Create new release from tag
    - Add release notes
    - Attach binaries if applicable
