@@ -124,40 +124,6 @@ git branch -d hotfix/critical-fix
 
 ---
 
-## 🔄 Development Workflow
-
-### 1. Planning Phase
-- Create or update issues in GitHub
-- Define acceptance criteria
-- Estimate effort and priority
-- Assign to milestone if applicable
-
-### 2. Development Phase
-- Create feature branch from main
-- Implement changes following coding standards
-- Write tests for new functionality
-- Update documentation as needed
-
-### 3. Testing Phase
-- Run all existing tests
-- Test new functionality thoroughly
-- Verify no regressions introduced
-- Test on different platforms if applicable
-
-### 4. Review Phase
-- Create Pull Request with detailed description
-- Request review from team members
-- Address feedback and make necessary changes
-- Ensure CI/CD checks pass
-
-### 5. Merge Phase
-- Squash commits if multiple small commits
-- Use descriptive merge commit message
-- Delete feature branch after merge
-- Update local main branch
-
----
-
 ## 📋 Pull Request Guidelines
 
 ### PR Title Format
@@ -251,8 +217,6 @@ Follow Semantic Versioning (SemVer):
 - **GitHub Actions checks out code at the tag commit, not latest main**
 - **If CHANGELOG.md entry is missing at tag commit, release will show generic message**
 - **If constants.go version is wrong at tag commit, build artifacts will show incorrect version**
-- **GitHub Actions checks out code at the tag commit, not latest main**
-- **If CHANGELOG.md entry is missing at tag commit, release will show generic message**
 
 3. **Automated GitHub Actions**
    - GitHub Actions automatically triggers on tag push
@@ -267,45 +231,6 @@ Follow Semantic Versioning (SemVer):
 - **Automatic Sync**: `scripts/sync-version.sh` syncs constants.go with git tags
 - **Changelog Extraction**: GitHub Actions automatically extracts version-specific changelog
 - **No Manual GitHub Release**: GitHub releases are created automatically
-
-### Manual Release Process (Legacy - Do Not Use)
-The following process is deprecated and should not be used:
-
-1. ~~**Prepare Release**~~
-   ```bash
-   # DO NOT USE - This is the old process
-   git checkout main
-   git pull origin main
-   git checkout -b release/v1.1.0
-   ```
-
-2. ~~**Update Version**~~
-   - ~~Update version in `constants.go`~~ (Now automated)
-   - ~~Update CHANGELOG.md~~ (Still required, but different format)
-   - ~~Update documentation if needed~~
-
-3. ~~**Create Release**~~
-   ```bash
-   # DO NOT USE - This is the old process
-   git add .
-   git commit -m "chore: prepare release v1.1.0"
-   git push origin release/v1.1.0
-   ```
-
-4. ~~**Merge and Tag**~~
-   ```bash
-   # DO NOT USE - This is the old process
-   git checkout main
-   git merge release/v1.1.0
-   git tag -a v1.1.0 -m "Release version 1.1.0"
-   git push origin main --tags
-   ```
-
-5. ~~**Create GitHub Release**~~
-   - ~~Go to GitHub Releases~~ (Now automated)
-   - ~~Create new release from tag~~ (Now automated)
-   - ~~Add release notes~~ (Now automated from CHANGELOG.md)
-   - ~~Attach binaries if applicable~~ (Now automated)
 
 ### Troubleshooting Releases
 
@@ -328,9 +253,6 @@ The following process is deprecated and should not be used:
 - **Problem**: Local builds show wrong version
 - **Cause**: Build script not using git tags
 - **Solution**: Use `make build-all` or `./build.sh --all` (includes automatic sync)
-   - Create new release from tag
-   - Add release notes
-   - Attach binaries if applicable
 
 ---
 
