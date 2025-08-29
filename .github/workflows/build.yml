@@ -96,7 +96,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
+          VERSION=$(git describe --tags --exact-match 2>/dev/null || git describe --tags --abbrev=0 2>/dev/null || echo "dev")
+          VERSION=${VERSION#v}  # Remove 'v' prefix if present
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"
 
@@ -149,7 +150,8 @@ jobs:
       - name: Get version
         id: version
         run: |
-          VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
+          VERSION=$(git describe --tags --exact-match 2>/dev/null || git describe --tags --abbrev=0 2>/dev/null || echo "dev")
+          VERSION=${VERSION#v}  # Remove 'v' prefix if present
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "Version: $VERSION"
 
