@@ -420,10 +420,12 @@ func validateBothPDFs(file1, file2 string) error {
 
 // Display merge information
 func displayMergeInfo(file1, file2 string) {
+	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
+	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
 	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n", 
 		BLUE, filepath.Base(file1), NC, 
 		BLUE, filepath.Base(file2), NC,
-		GREEN, filepath.Base(file1)+"-"+filepath.Base(file2), NC)
+		GREEN, name1+"-"+name2+".pdf", NC)
 
 	if VERBOSE {
 		size1 := getHumanReadableSize(file1)
