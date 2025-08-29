@@ -221,13 +221,25 @@ Follow Semantic Versioning (SemVer):
    - Change descriptions
    ```
 
-2. **Create and Push Git Tag**
+2. **Commit CHANGELOG.md Changes**
+   ```bash
+   git add CHANGELOG.md
+   git commit -m "docs: Add v1.1.0 changelog entry"
+   git push origin main
+   ```
+
+3. **Create and Push Git Tag**
    ```bash
    git checkout main
    git pull origin main
    git tag -a v1.1.0 -m "Release version 1.1.0"
    git push origin main --tags
    ```
+
+#### ⚠️ Critical: Tag Must Include CHANGELOG Entry
+- **The git tag must point to a commit that includes the CHANGELOG.md entry for that version**
+- **GitHub Actions checks out code at the tag commit, not latest main**
+- **If CHANGELOG.md entry is missing at tag commit, release will show generic message**
 
 3. **Automated GitHub Actions**
    - GitHub Actions automatically triggers on tag push
