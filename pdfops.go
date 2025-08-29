@@ -137,21 +137,34 @@ func displayPageCount(pages int) {
 
 // PDF reversal operations
 
-// Create reversed copy of PDF for multi-page files
+// Create reversed copy of PDF using CollectFile for order preservation
 func createReversedPDF(inputFile, outputFile string, pageCount int) error {
 	if pageCount <= 1 {
 		return fmt.Errorf("cannot reverse single-page PDF")
 	}
 
-	tempFiles, err := extractPagesInReverseOrder(inputFile, pageCount)
+	// Build reverse page selection: "3,2,1" for 3-page document
+	var pageNums []string
+	for i := pageCount; i >= 1; i-- {
+		pageNums = append(pageNums, fmt.Sprintf("%d", i))
+	}
+	reverseSelection := strings.Join(pageNums, ",")
+	
+	// Parse page selection
+	pageSelection, err := api.ParsePageSelection(reverseSelection)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse reverse page selection '%s': %v", reverseSelection, err)
 	}
 	
-	defer cleanupTempFiles(tempFiles)
+	// Use CollectFile to preserve specified order
+	conf := model.NewDefaultConfiguration()
+	err = api.CollectFile(inputFile, outputFile, pageSelection, conf)
+	if err != nil {
+		return fmt.Errorf("failed to reverse PDF pages: %v", err)
+	}
 	
 	displayReversalInfo(pageCount)
-	return mergeExtractedPages(tempFiles, outputFile)
+	return nil
 }
 
 // Extract pages in reverse order
@@ -265,17 +278,20 @@ func removeReversedFile(reversedFile string) {
 	}
 }
 
-// Create interleaved merge pattern
+// Create interleaved merge pattern using zip merge approach
 func createInterleavedMerge(file1, file2, outputFile string, pageCount int) error {
-	tempFiles, err := extractInterleavedPages(file1, file2, pageCount)
+	conf := model.NewDefaultConfiguration()
+	
+	// Use zip merge for perfect interleaving
+	// file1: original document (A1, A2, A3)
+	// file2: already reversed document (f, 9, M) 
+	// Result: A1, f, A2, 9, A3, M
+	err := api.MergeCreateZipFile(file1, file2, outputFile, conf)
 	if err != nil {
-		return err
+		return fmt.Errorf("zip merge failed: %v", err)
 	}
 	
-	defer cleanupTempFiles(tempFiles)
-	
-	conf := model.NewDefaultConfiguration()
-	return api.MergeCreateFile(tempFiles, outputFile, false, conf)
+	return nil
 }
 
 // Extract pages in interleaved pattern
