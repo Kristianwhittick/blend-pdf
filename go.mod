@@ -1,6 +1,6 @@
 module github.com/kris/blendpdfgo
 
-go 1.24.3
+go 1.24.6
 
 require (
 	github.com/pdfcpu/pdfcpu v0.11.0

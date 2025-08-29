@@ -2,13 +2,13 @@ name: Build and Test
 
 on:
   push:
-    branches: [ main, develop ]
-    tags: [ 'v*' ]
+    branches: [main, develop]
+    tags: ['v*']
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 env:
-  GO_VERSION: '1.21'
+  GO_VERSION: '1.24.6'
   APP_NAME: 'blendpdfgo'
 
 jobs:
@@ -16,53 +16,53 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Download dependencies
-      run: go mod download
+      - name: Download dependencies
+        run: go mod download
 
-    - name: Verify dependencies
-      run: go mod verify
+      - name: Verify dependencies
+        run: go mod verify
 
-    - name: Run tests (exclude experiments)
-      run: |
-        # Get all packages except experiments
-        PACKAGES=$(go list ./... | grep -v /experiments | tr '\n' ' ')
-        echo "Testing packages: $PACKAGES"
-        go test -v -race -coverprofile=coverage.out $PACKAGES
+      - name: Run tests (exclude experiments)
+        run: |
+          # Get all packages except experiments
+          PACKAGES=$(go list ./... | grep -v /experiments | tr '\n' ' ')
+          echo "Testing packages: $PACKAGES"
+          go test -v -race -coverprofile=coverage.out $PACKAGES
 
-    - name: Generate coverage report
-      run: go tool cover -html=coverage.out -o coverage.html
+      - name: Generate coverage report
+        run: go tool cover -html=coverage.out -o coverage.html
 
-    - name: Upload coverage reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: coverage.html
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.html
 
   lint:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Run golangci-lint
-      uses: golangci/golangci-lint-action@v6
-      with:
-        version: latest
-        args: --timeout=5m --exclude-dirs=experiments
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+          args: --timeout=5m --exclude-dirs=experiments
 
   build:
     name: Build
@@ -85,49 +85,49 @@ jobs:
             suffix: ''
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Get version
-      id: version
-      run: |
-        VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Version: $VERSION"
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
-    - name: Build binary
-      env:
-        GOOS: ${{ matrix.goos }}
-        GOARCH: ${{ matrix.goarch }}
-        CGO_ENABLED: 0
-      run: |
-        BINARY_NAME="${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}"
-        echo "Building $BINARY_NAME"
-        go build -ldflags "-s -w -X main.VERSION=${{ steps.version.outputs.version }}" -o "$BINARY_NAME" .
-        
-        # Verify binary was created
-        if [ -f "$BINARY_NAME" ]; then
-          echo "✓ Binary created successfully"
-          ls -la "$BINARY_NAME"
-          
-          # Store binary name for upload
-          echo "binary_name=$BINARY_NAME" >> $GITHUB_ENV
-        else
-          echo "✗ Binary creation failed"
-          exit 1
-        fi
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          BINARY_NAME="${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.suffix }}"
+          echo "Building $BINARY_NAME"
+          go build -ldflags "-s -w -X main.VERSION=${{ steps.version.outputs.version }}" -o "$BINARY_NAME" .
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}
-        path: ${{ env.binary_name }}
-        retention-days: 30
+          # Verify binary was created
+          if [ -f "$BINARY_NAME" ]; then
+            echo "✓ Binary created successfully"
+            ls -la "$BINARY_NAME"
+            
+            # Store binary name for upload
+            echo "binary_name=$BINARY_NAME" >> $GITHUB_ENV
+          else
+            echo "✗ Binary creation failed"
+            exit 1
+          fi
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.APP_NAME }}-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: ${{ env.binary_name }}
+          retention-days: 30
 
   release:
     name: Create Release
@@ -136,78 +136,78 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     permissions:
       contents: write
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: ${{ env.GO_VERSION }}
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
 
-    - name: Get version
-      id: version
-      run: |
-        VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "Version: $VERSION"
+      - name: Get version
+        id: version
+        run: |
+          VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
 
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: ./artifacts
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./artifacts
 
-    - name: Prepare release assets
-      run: |
-        mkdir -p ./release
-        
-        # Move all binaries to release directory
-        find ./artifacts -name "${{ env.APP_NAME }}-*" -type f -exec cp {} ./release/ \;
-        
-        # Generate checksums
-        cd ./release
-        sha256sum ${{ env.APP_NAME }}-* > checksums.sha256
-        
-        echo "Release assets:"
-        ls -la
+      - name: Prepare release assets
+        run: |
+          mkdir -p ./release
 
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      with:
-        name: Release ${{ steps.version.outputs.version }}
-        body: |
-          ## BlendPDFGo ${{ steps.version.outputs.version }}
-          
-          ### Downloads
-          
-          Choose the appropriate binary for your platform:
-          
-          - **Windows (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-windows-amd64.exe`
-          - **Linux (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-amd64`
-          - **Linux (ARM64)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-arm64`
-          - **macOS (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-darwin-amd64`
-          
-          ### Installation
-          
-          1. Download the appropriate binary for your platform
-          2. Make it executable (Linux/macOS): `chmod +x blendpdfgo-*`
-          3. Move to your PATH or run directly
-          
-          ### Verification
-          
-          Verify the integrity of your download using the provided checksums:
-          ```bash
-          sha256sum -c checksums.sha256
-          ```
-          
-          ### Changes
-          
-          See the commit history for detailed changes in this release.
-          
-        files: |
-          ./release/*
-        draft: false
-        prerelease: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Move all binaries to release directory
+          find ./artifacts -name "${{ env.APP_NAME }}-*" -type f -exec cp {} ./release/ \;
+
+          # Generate checksums
+          cd ./release
+          sha256sum ${{ env.APP_NAME }}-* > checksums.sha256
+
+          echo "Release assets:"
+          ls -la
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ steps.version.outputs.version }}
+          body: |
+            ## BlendPDFGo ${{ steps.version.outputs.version }}
+
+            ### Downloads
+
+            Choose the appropriate binary for your platform:
+
+            - **Windows (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-windows-amd64.exe`
+            - **Linux (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-amd64`
+            - **Linux (ARM64)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-linux-arm64`
+            - **macOS (64-bit)**: `${{ env.APP_NAME }}-${{ steps.version.outputs.version }}-darwin-amd64`
+
+            ### Installation
+
+            1. Download the appropriate binary for your platform
+            2. Make it executable (Linux/macOS): `chmod +x blendpdfgo-*`
+            3. Move to your PATH or run directly
+
+            ### Verification
+
+            Verify the integrity of your download using the provided checksums:
+            ```bash
+            sha256sum -c checksums.sha256
+            ```
+
+            ### Changes
+
+            See the commit history for detailed changes in this release.
+
+          files: |
+            ./release/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2025-08-29
+
+### Changed
+- Updated Go version requirement from 1.24 to 1.24.6
+- Updated all dependencies to latest compatible versions
+- Updated build system to use Go 1.24.6
+
+### Technical
+- Verified library compatibility with Go 1.24.6
+- All unit tests and integration tests passing
+- Cross-platform build compatibility maintained
+
 ## [1.0.1] - 2025-08-29
 
 ### Fixed
