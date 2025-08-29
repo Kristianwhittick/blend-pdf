@@ -136,6 +136,35 @@ pdftotext output/Doc_A_Doc_B.pdf -
 4. `./blendpdfgo /path/to/folder` - Watch specific folder
 5. `./blendpdfgo` - Watch current directory
 
+#### Full-Screen UI Tests
+- **Layout Rendering** - Verify proper screen takeover and segmentation
+- **Header Display** - Watch directory and relative paths shown correctly
+- **File Counts** - Real-time updates: Main(X) | Archive(Y) | Output(Z) | Error(W)
+- **Session Timer** - Live timer display and accuracy
+- **Available PDFs Section** - File list with sizes and page counts
+- **Recent Output Section** - Completed operations display
+- **Actions Bar** - Keyboard shortcuts display
+- **Status Line** - Current state and operation counters
+
+#### File Selection Mode Tests
+- **Alpha Order Mode** - Automatic first-two selection (current behavior)
+- **User Selection Mode** - Arrow key navigation and visual indicators
+- **Mode Toggle** - [T] key switches between modes
+- **Visual Indicators** - ▶ for current selection, ✓ for marked files
+- **Mode Display** - `[Mode: Alpha Order ▼]` vs `[Mode: User Select ▼]`
+
+#### Real-Time Update Tests
+- **File Monitoring** - Auto-refresh when files added/removed
+- **Live Counters** - File counts update without user input
+- **Session Statistics** - Real-time operation and error counters
+- **Progress Visualization** - Progress bar replaces status line during operations
+
+#### Cross-Platform UI Tests
+- **Modern Terminals** - Full Bubble Tea interface (Windows Terminal, PowerShell 7+, Linux, macOS)
+- **Legacy Windows** - Graceful fallback to basic interface (PowerShell 5, CMD)
+- **Terminal Capability Detection** - Automatic detection and appropriate interface selection
+- **Responsive Layout** - Proper adaptation to different terminal sizes
+
 #### Menu Options
 - **S** - Move single PDF to output
 - **M** - Merge two PDFs with interleaved pattern

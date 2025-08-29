@@ -37,16 +37,33 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R4.3** Example: `Doc_A.pdf` + `Doc_B.pdf` → `Doc_A-Doc_B.pdf`
 
 ### R5. User Interface Requirements
-- **R5.1** Show real-time file counts before each menu prompt
-- **R5.2** Format: `Files: Main(X) Archive(Y) Output(Z) Error(W)`
-- **R5.3** Update counts dynamically after each operation
-- **R5.4** Interactive menu with S/M/H/V/D/Q options
-- **R5.5** S - Move single PDF to output directory
-- **R5.6** M - Merge two PDFs with smart reversal logic
-- **R5.7** H - Show comprehensive help information
-- **R5.8** V - Toggle verbose mode on/off
-- **R5.9** D - Toggle debug mode on/off
-- **R5.10** Q - Quit program with statistics display
+- **R5.1** Full-screen terminal takeover with segmented layout
+- **R5.2** Header section displaying watch directory and relative paths (archive/, output/, error/)
+- **R5.3** Real-time file counts: `Files: Main(X) | Archive(Y) | Output(Z) | Error(W) | Session Timer`
+- **R5.4** Available PDFs section with file selection mode toggle
+- **R5.5** Separated Recent Output section showing processed files
+- **R5.6** Actions bar with keyboard shortcuts: [S]ingle File [M]erge PDFs [T]oggle Mode [Q]uit
+- **R5.7** Status line showing current state, operation counts, and error counts
+- **R5.8** Progress bar replaces status line during operations
+- **R5.9** Real-time updates without user input (file monitoring)
+- **R5.10** Graceful fallback to basic interface on legacy terminals (PowerShell 5, CMD)
+
+### R5A. File Selection Mode Requirements
+- **R5A.1** Alpha Order Mode: Automatically select first two PDFs alphabetically (current behavior)
+- **R5A.2** User Selection Mode: Arrow key navigation with visual selection indicators
+- **R5A.3** Mode toggle with [T] key between Alpha Order and User Selection
+- **R5A.4** Visual mode indicator: `[Mode: Alpha Order ▼]` or `[Mode: User Select ▼]`
+- **R5A.5** In User Selection: Arrow keys navigate, Space/Enter to select files
+- **R5A.6** Selected files marked with visual indicators (▶ or ✓)
+
+### R5B. Layout Structure Requirements
+- **R5B.1** Header: Application title, version, and directory paths
+- **R5B.2** File counts bar with session timer
+- **R5B.3** Available PDFs section with mode selector and file list
+- **R5B.4** Horizontal separator line
+- **R5B.5** Recent Output section showing completed operations
+- **R5B.6** Actions bar with keyboard shortcuts
+- **R5B.7** Status/Progress line (dynamic based on operation state)
 
 ### R6. Verbose Mode Requirements
 - **R6.1** File Preview: Show up to 5 PDF files with sizes when verbose enabled

@@ -306,16 +306,31 @@
   - ✅ Risk assessment and effort estimates
 
 ### Task 21: UI Interface Recommendations
-- **Status**: 📋 PLANNED
-- **Requirements**: R5.1-R5.10 (user interface), R6.1-R6.5 (verbose mode), R7.1-R7.5 (output formatting)
+- **Status**: ✅ COMPLETED
+- **Requirements**: R5.1-R5B.7 (full-screen UI), R5A.1-R5A.6 (file selection modes), user experience enhancement
 - **Priority**: User Experience Enhancement (Medium)
-- **Description**: Design enhanced UI interface recommendations
-- **Prerequisites**: Complete Task 20 CLI library research
-- **Implementation**:
-  - Suggest new UI patterns and interface improvements
-  - Leverage research from Task 20 to propose enhanced user experience
-  - Provide specific UI mockups or detailed descriptions
-  - Focus on modern CLI user experience patterns
+- **Description**: Design enhanced full-screen UI interface to replace scrolling input
+- **Prerequisites**: Complete Task 20 CLI library research ✅
+- **Implementation Completed**:
+  - Designed full-screen terminal takeover layout with segmented sections
+  - Specified header with watch directory and relative folder paths
+  - Created file selection mode toggle (Alpha Order vs User Selection)
+  - Defined progress bar placement (replaces status line during operations)
+  - Updated specification with detailed UI requirements (R5.1-R5B.7, R5A.1-R5A.6)
+  - Recommended Bubble Tea + Lipgloss implementation with PowerShell 5 fallback
+- **Layout Design**:
+  - Header: Application title, version, directory paths
+  - File counts: Real-time counts with session timer
+  - Available PDFs: Mode toggle and file list with selection indicators
+  - Recent Output: Separated section showing completed operations
+  - Actions: Keyboard shortcuts including new [T]oggle mode
+  - Status/Progress: Dynamic line for status and progress bars
+- **Key Features**:
+  - Real-time file monitoring and updates
+  - Visual file selection with arrow keys
+  - Mode switching between automatic and manual selection
+  - Progress visualization during operations
+  - Cross-platform compatibility with graceful fallback
 
 ### Task 23: GitHub Issue for pdfcpu Library
 - **Status**: ❌ CANCELLED
