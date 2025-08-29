@@ -197,8 +197,77 @@ color.Yellow("Warning: Large file detected")
 2. **Viper** for configuration
 3. Shell completion
 
+## Screen Takeover Analysis
+
+### Full Terminal Control Requirements
+Based on discussion, the goal is to implement **screen takeover** with terminal segmentation to replace the current scrolling input interface.
+
+### Bubble Tea - Full Screen Capabilities
+- **Complete terminal takeover**: Takes control of entire terminal window
+- **Layout segmentation**: Draw borders and divide screen into sections
+- **Real-time updates**: File counts, status, progress without scrolling
+- **Interactive navigation**: Arrow keys, visual selection
+- **Dynamic layouts**: Adapt to terminal size changes
+
+### Example Full-Screen Layout:
+```
+┌─────────────────────────────────────────────────┐
+│ BlendPDFGo v1.0.0                              │
+├─────────────────────────────────────────────────┤
+│ Files: Main(2) Archive(0) Output(0) Error(0)   │
+├─────────────────────────────────────────────────┤
+│ Available Files:                                │
+│ • document1.pdf (2.3M)                         │
+│ • document2.pdf (1.8M)                         │
+├─────────────────────────────────────────────────┤
+│ [S] Single File  [M] Merge  [Q] Quit           │
+├─────────────────────────────────────────────────┤
+│ Status: Ready for operation                     │
+└─────────────────────────────────────────────────┘
+```
+
+## Windows Compatibility Concerns
+
+### PowerShell 5 / Legacy Windows Issues
+- **PowerShell 5**: Limited ANSI support, may show escape codes as text
+- **CMD**: Very limited terminal capabilities, poor TUI rendering
+- **Windows Console Host (legacy)**: No proper full-screen TUI support
+- **Result**: Broken layouts, garbled output for Bubble Tea
+
+### Cross-Platform Support Summary
+- **Windows 10+ with Windows Terminal**: ✅ Full Bubble Tea support
+- **Windows 10+ with PowerShell 7+**: ✅ Full support
+- **Windows with PowerShell 5/CMD**: ❌ Bubble Tea unusable
+- **Linux (all terminals)**: ✅ Full support
+- **macOS (all terminals)**: ✅ Full support
+
+## Updated Recommendations
+
+### Option A: Screen Takeover Priority (Recommended for Goal)
+**Primary**: Bubble Tea + Lipgloss for full terminal control
+- Implement terminal capability detection
+- Fall back to basic Survey interface on legacy Windows
+- Provides desired screen takeover experience on modern terminals
+- **Effort**: 1-2 weeks
+- **Risk**: Medium (compatibility handling required)
+
+### Option B: Universal Compatibility
+**Primary**: Survey + Progressbar + Fatih/Color
+- Works on all platforms including PowerShell 5
+- No screen takeover but improved UX
+- **Effort**: 1-2 days
+- **Risk**: Low
+
+### Option C: Hybrid Approach
+**Implementation**: Detect terminal capabilities at runtime
+- Modern terminals: Use Bubble Tea full-screen interface
+- Legacy terminals: Fall back to Survey-based prompts
+- Best of both worlds but more complex
+- **Effort**: 2-3 weeks
+- **Risk**: Medium-High
+
 ## Conclusion
 
-**Recommended Approach**: Start with **Survey + Progressbar + Fatih/Color** for immediate UX improvements with minimal risk, then consider Bubble Tea for advanced interactive features in future releases.
+**For Screen Takeover Goal**: Implement **Bubble Tea + Lipgloss** with terminal capability detection and graceful fallback to Survey for legacy Windows systems.
 
-This provides a clear upgrade path while maintaining backward compatibility and code stability.
+This achieves the desired full-screen interface while maintaining compatibility across all target platforms.
