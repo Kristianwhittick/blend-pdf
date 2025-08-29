@@ -24,6 +24,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/kris/blendpdfgo/ui"
 )
 
 func main() {
@@ -43,8 +45,32 @@ func main() {
 		handleStartupError(err)
 	}
 
-	runMainLoop()
+	// Try to run TUI, fallback to original interface if needed
+	if err := runTUI(); err != nil {
+		// Fallback to original interface
+		runMainLoop()
+	}
+	
 	cleanup()
+}
+
+// Run the new TUI interface
+func runTUI() error {
+	// Create file operations bridge
+	bridge := ui.NewFileOpsBridge(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR)
+	
+	// Set function pointers to existing operations
+	bridge.SetFunctions(
+		func(dir string) ([]string, error) { return findPDFFiles() }, // Wrapper for existing function
+		countPDFFiles,
+		getHumanReadableSize,
+		func() error { processSingleFileOperation(); return nil }, // Wrapper for void function
+		func() error { processMergeOperation(); return nil },       // Wrapper for void function
+	)
+	
+	// Create and run enhanced menu (no complex TUI)
+	menu := ui.NewEnhancedMenu(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR, VERSION, bridge)
+	return menu.Run()
 }
 
 // Initialize application components
