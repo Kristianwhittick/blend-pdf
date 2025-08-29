@@ -288,6 +288,20 @@
 
 ## 3. Next Stages
 
+### Task 26: Remove User Timeout
+- **Status**: ✅ COMPLETED
+- **Requirements**: R14.1-R14.3 (timeout protection removal)
+- **Priority**: User Experience Enhancement (High)
+- **Description**: Remove the 5-minute user inactivity timeout to allow indefinite operation
+- **Implementation**: Remove timeout logic from main menu loop and signal handling
+- **Files Modified**: main.go
+- **Benefits**: Users can leave application running without forced exit
+- **Changes Made**:
+  - Removed timeout goroutine and channel logic from getUserChoice()
+  - Simplified user input to direct ReadString() call
+  - Eliminated waitForUserInput() and readUserInput() helper functions
+  - Removed 5-minute timeout exit code (7)
+
 ### Task 20: CLI Library Research
 - **Status**: ✅ COMPLETED
 - **Requirements**: R5.4-R5.10 (interactive menu), R9.1-R9.8 (CLI interface), user experience enhancement

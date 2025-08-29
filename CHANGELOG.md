@@ -7,8 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2025-08-29
+
 ### Fixed
 - Fixed merge output filename display format - now shows `file1-file2.pdf` instead of `file1.pdf-file2.pdf` to match actual created filename
+
+### Changed
+- Removed 5-minute user inactivity timeout - application now runs indefinitely until user quits
+- Simplified user input handling by removing timeout goroutines and channels
+
+### Added
+- CHANGELOG.md to track changes between releases
+- Comprehensive CLI library research documentation
+- Full-screen UI specifications and implementation requirements
 
 ## [1.0.0] - 2025-08-27
 

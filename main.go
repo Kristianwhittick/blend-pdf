@@ -131,46 +131,17 @@ func displayMenuOptions() {
 		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
 }
 
-// Get user choice with timeout
+// Get user choice
 func getUserChoice() (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter choice (S/M/H/V/D/Q): ")
 	
-	inputChan := make(chan string, 1)
-	errorChan := make(chan error, 1)
-	
-	go readUserInput(reader, inputChan, errorChan)
-	
-	return waitForUserInput(inputChan, errorChan)
-}
-
-// Read user input in goroutine
-func readUserInput(reader *bufio.Reader, inputChan chan string, errorChan chan error) {
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		errorChan <- err
-	} else {
-		inputChan <- input
-	}
-}
-
-// Wait for user input with timeout
-func waitForUserInput(inputChan chan string, errorChan chan error) (string, error) {
-	select {
-	case input := <-inputChan:
-		return strings.TrimSpace(strings.ToUpper(input)), nil
-		
-	case err := <-errorChan:
 		return "", err
-		
-	case <-time.After(300 * time.Second): // 5 minutes timeout
-		fmt.Printf("\n%sTimeout reached (5 minutes). Exiting...%s\n", YELLOW, NC)
-		CONTINUE = false
-		cleanup()
-		os.Exit(7) // Exit code 7 for timeout
 	}
 	
-	return "", nil
+	return strings.TrimSpace(strings.ToUpper(input)), nil
 }
 
 // Handle input errors
