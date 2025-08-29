@@ -125,7 +125,7 @@ Download the latest release for your platform from the [Releases page](https://g
 ### Build from Source
 
 #### Prerequisites
-- Go 1.21 or higher
+- Go 1.24 or higher
 - Git
 - Make (optional, for using Makefile targets)
 

@@ -6,7 +6,7 @@ This document provides comprehensive testing procedures for BlendPDFGo, a tool f
 ## Test Environment Setup
 
 ### Prerequisites
-- Go 1.19+ installed
+- Go 1.24+ installed
 - pdfcpu library available
 - poppler-utils installed (for pdftotext verification)
 - Test PDF files: Doc_A.pdf (A1, A2, A3) and Doc_B.pdf (M, 9, f)

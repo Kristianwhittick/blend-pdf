@@ -159,7 +159,7 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R16.4** Cross-platform compatibility (Linux, macOS, Windows)
 - **R16.5** Single binary deployment
 - **R16.6** No external dependencies beyond pdfcpu
-- **R16.7** Go 1.19 or higher
+- **R16.7** Go 1.24 or higher
 - **R16.8** pdfcpu library (latest stable version)
 - **R16.9** Standard library dependencies only
 
