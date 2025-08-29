@@ -228,7 +228,17 @@ Follow Semantic Versioning (SemVer):
    git push origin main
    ```
 
-3. **Create and Push Git Tag**
+3. **Sync Version in constants.go**
+   ```bash
+   # Update constants.go to match the version you're about to tag
+   ./scripts/sync-version.sh  # This will sync to latest tag, so run after step 4
+   # OR manually update constants.go VERSION = "1.1.0"
+   git add constants.go
+   git commit -m "chore: Sync constants.go version to v1.1.0"
+   git push origin main
+   ```
+
+4. **Create and Push Git Tag**
    ```bash
    git checkout main
    git pull origin main
@@ -236,8 +246,11 @@ Follow Semantic Versioning (SemVer):
    git push origin main --tags
    ```
 
-#### ⚠️ Critical: Tag Must Include CHANGELOG Entry
-- **The git tag must point to a commit that includes the CHANGELOG.md entry for that version**
+#### ⚠️ Critical: Tag Must Include CHANGELOG Entry and Version Sync
+- **The git tag must point to a commit that includes both the CHANGELOG.md entry AND constants.go version update**
+- **GitHub Actions checks out code at the tag commit, not latest main**
+- **If CHANGELOG.md entry is missing at tag commit, release will show generic message**
+- **If constants.go version is wrong at tag commit, build artifacts will show incorrect version**
 - **GitHub Actions checks out code at the tag commit, not latest main**
 - **If CHANGELOG.md entry is missing at tag commit, release will show generic message**
 
