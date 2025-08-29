@@ -8,7 +8,7 @@ set -e
 
 # Configuration
 APP_NAME="blendpdfgo"
-VERSION=$(grep 'VERSION = ' constants.go | cut -d'"' -f2)
+VERSION=$(git describe --tags --exact-match 2>/dev/null || git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 BUILD_DIR="dist"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

@@ -50,13 +50,18 @@ clean: ## Clean build directory and artifacts
 	@echo "$(GREEN)✓ Clean completed$(NC)"
 
 ## Build for current platform
-build: deps ## Build for current platform
+sync-version: ## Sync version from git tags to constants.go
+	@echo "$(YELLOW)Syncing version from git tags...$(NC)"
+	@./scripts/sync-version.sh
+	@echo "$(GREEN)✓ Version sync completed$(NC)"
+
+build: deps sync-version ## Build for current platform
 	@echo "$(YELLOW)Building $(APP_NAME) for current platform...$(NC)"
 	@go build $(BUILD_FLAGS) -o $(APP_NAME) .
 	@echo "$(GREEN)✓ Build completed: $(APP_NAME)$(NC)"
 
 ## Build for all platforms
-build-all: clean ## Build for all supported platforms
+build-all: clean sync-version ## Build for all supported platforms
 	@echo "$(YELLOW)Building for all platforms...$(NC)"
 	@./build.sh --all --checksums
 	@echo "$(GREEN)✓ Multi-platform build completed$(NC)"
