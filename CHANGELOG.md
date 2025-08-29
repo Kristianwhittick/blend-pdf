@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.4] - 2025-08-29
+
+### Fixed
+- Fixed GitHub Actions to automatically extract and include version-specific changelog content in releases
+- Replaced generic "See commit history" message with actual changelog entries
+
+### Added
+- Automatic changelog extraction from CHANGELOG.md during release process
+- Version-specific changelog content in GitHub release descriptions
+
+### Technical
+- Enhanced GitHub Actions workflow with changelog parsing
+- Improved release automation and documentation
+
 ## [1.0.3] - 2025-08-29
 
 ### Fixed
