@@ -420,10 +420,10 @@
 - `docs/api_knowledge.md` - Update status from workaround to proper solution
 
 #### Benefits
-- **Guaranteed Order**: No more reliance on workaround for page ordering
-- **Cleaner Code**: Removes need for individual page extraction workaround
+- **Better Workaround**: Uses intended API for order-preserving extraction instead of relying on undocumented behavior
+- **Improved Page Reversal**: One `CollectFile` call instead of individual extractions for reversal step
 - **Future-Proof**: Aligns with pdfcpu library design intentions
-- **Better Maintainability**: Uses intended API functions
+- **Better Maintainability**: Uses documented API functions with guaranteed behavior
 
 #### Implementation Strategy
 ```go
@@ -442,9 +442,10 @@ err := api.CollectFile(inputFile, reversedFile, pageSelection, conf)
 
 #### Important Notes
 - **Temp Files**: This change does NOT reduce temporary file count (still 6 temp files + 1 lock file)
-- **Purpose**: Code quality improvement, not performance optimization
+- **Still a Workaround**: Individual page extraction and temporary files still required until new pdfcpu APIs exist
+- **Purpose**: Improves existing workaround, does not eliminate need for workarounds
 - **Performance Impact**: Minimal - same number of operations, cleaner implementation
-- **For Temp File Reduction**: See Task 14 (In-Memory Processing) in backlog
+- **True Solution**: Requires Task 25 (pdfcpu feature request) implementation by pdfcpu maintainers
 
 #### Acceptance Criteria
 - [ ] All TrimFile calls replaced with CollectFile where order matters
