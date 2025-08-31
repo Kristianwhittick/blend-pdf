@@ -284,8 +284,6 @@ func (e *EnhancedMenu) handleSingleFile() bool {
 	}
 
 	e.clearProcessing()
-	fmt.Println("Press Enter to continue...")
-	e.scanner.Scan()
 	return true
 }
 
@@ -308,8 +306,6 @@ func (e *EnhancedMenu) handleMergeFiles() bool {
 	}
 
 	e.clearProcessing()
-	fmt.Println("Press Enter to continue...")
-	e.scanner.Scan()
 	return true
 }
 
