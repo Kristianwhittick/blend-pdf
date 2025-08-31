@@ -239,14 +239,8 @@ func updateCountersBasedOnResults(allMoved bool, destination, message string) {
 
 // Statistics and reporting functions
 
-// Show session statistics on exit
-func showStatistics() {
-	elapsed := time.Since(START_TIME)
-	
-	fmt.Printf("\n%sSession Statistics:%s\n", BLUE, NC)
-	displayOperationCounts()
-	displayElapsedTime(elapsed)
-}
+// Show session statistics on exit - REMOVED: Now handled by UI
+// func showStatistics() - Moved to enhanced menu UI
 
 // Display operation counts
 func displayOperationCounts() {

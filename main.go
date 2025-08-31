@@ -479,6 +479,6 @@ func logDebugOperation(operation, details string) {
 
 // Cleanup resources and show statistics
 func cleanup() {
-	showStatistics()
+	// Statistics now handled by enhanced menu UI
 	cleanupLock()
 }
