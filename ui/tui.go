@@ -28,8 +28,8 @@ type FileOperations interface {
 	FindPDFFiles(dir string) ([]string, error)
 	CountPDFFiles(dir string) int
 	GetHumanReadableSize(filename string) string
-	ProcessSingleFile() error
-	ProcessMergeFiles() error
+	ProcessSingleFile() (string, error) // Returns operation description
+	ProcessMergeFiles() (string, error)  // Returns operation description
 }
 
 // TUI represents the terminal user interface
@@ -193,7 +193,7 @@ func (w *tuiWrapper) handleSingleFile() (tea.Model, tea.Cmd) {
 	w.ProgressMsg = "Processing single file..."
 	
 	return w, func() tea.Msg {
-		err := w.fileOps.ProcessSingleFile()
+		_, err := w.fileOps.ProcessSingleFile()
 		if err != nil {
 			return operationCompleteMsg{
 				success: false,
@@ -218,7 +218,7 @@ func (w *tuiWrapper) handleMergeFiles() (tea.Model, tea.Cmd) {
 	w.ProgressMsg = fmt.Sprintf("Merging %s and %s...", selectedFiles[0].Name, selectedFiles[1].Name)
 	
 	return w, func() tea.Msg {
-		err := w.fileOps.ProcessMergeFiles()
+		_, err := w.fileOps.ProcessMergeFiles()
 		if err != nil {
 			return operationCompleteMsg{
 				success: false,
