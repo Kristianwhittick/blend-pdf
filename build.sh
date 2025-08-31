@@ -30,7 +30,7 @@ declare -A PLATFORMS=(
 # Functions
 print_header() {
     echo -e "${BLUE}================================${NC}"
-    echo -e "${BLUE}  BlendPDFGo Build System v${VERSION}${NC}"
+    echo -e "${BLUE}  BlendPDFGo Build System ${VERSION}${NC}"
     echo -e "${BLUE}================================${NC}"
     echo
 }
@@ -51,7 +51,7 @@ print_usage() {
     done
     echo
     echo "Examples:"
-    echo "  $0 --all                    # Build for all platforms"
+    echo "  $0 --all                   # Build for all platforms"
     echo "  $0 linux-amd64             # Build for Linux x86_64"
     echo "  $0 --clean --all           # Clean and build all"
     echo "  $0 --checksums linux-amd64 # Build with checksums"
