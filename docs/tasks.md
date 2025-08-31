@@ -387,7 +387,7 @@
 - **Implementation Completed**:
   - ✅ Enhanced menu interface with full-screen bordered layout
   - ✅ Version number displayed in top border as requested
-  - ✅ Real-time file counts and available PDF list
+  - ✅ File counts integrated into header alongside directory paths
   - ✅ Professional appearance with clear sections
   - ✅ Cross-platform compatibility without complex TUI dependencies
   - ✅ All existing functionality preserved and enhanced
@@ -395,7 +395,7 @@
   - ✅ Clean screen management and user experience
 - **Files Created**: `ui/enhanced_menu.go`, `ui/bridge.go`, plus TUI research files
 - **Testing**: All tests pass, merge functionality verified (A1, f, A2, 9, A3, M pattern)
-- **Benefits Achieved**: Professional interface, version visibility, real-time updates, universal compatibility
+- **Benefits Achieved**: Professional interface, version visibility, integrated file counts, universal compatibility
 
 ---
 

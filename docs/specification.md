@@ -38,10 +38,10 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 
 ### R5. User Interface Requirements
 - **R5.1** Full-screen terminal takeover with segmented layout
-- **R5.2** Header section displaying watch directory and relative paths (archive/, output/, error/)
-- **R5.3** Real-time file counts: `Files: Main(X) | Archive(Y) | Output(Z) | Error(W) | Session Timer`
+- **R5.2** Header section displaying watch directory and relative paths with integrated file counts
+- **R5.3** File counts integrated into header: Watch directory shows main count, Archive/Output/Error show respective counts on right side
 - **R5.4** Available PDFs section with file selection mode toggle
-- **R5.5** Separated Recent Output section showing processed files
+- **R5.5** Separated Recent Output section showing processed files with detailed operation information
 - **R5.6** Actions bar with keyboard shortcuts: [S]ingle File [M]erge PDFs [T]oggle Mode [Q]uit
 - **R5.7** Status line showing current state, operation counts, and error counts
 - **R5.8** Progress bar replaces status line during operations
@@ -57,13 +57,17 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R5A.6** Selected files marked with visual indicators (▶ or ✓)
 
 ### R5B. Layout Structure Requirements
-- **R5B.1** Header: Application title, version, and directory paths
-- **R5B.2** File counts bar with session timer
-- **R5B.3** Available PDFs section with mode selector and file list
-- **R5B.4** Horizontal separator line
-- **R5B.5** Recent Output section showing completed operations
-- **R5B.6** Actions bar with keyboard shortcuts
-- **R5B.7** Status/Progress line (dynamic based on operation state)
+- **R5B.1** Header: Application title, version, and directory paths with integrated file counts
+- **R5B.2** Available PDFs section with mode selector and file list
+- **R5B.3** Horizontal separator line
+- **R5B.4** Recent Output section showing completed operations with detailed file information
+  - Single file operations: Show filename that was moved (e.g., "Document.pdf moved to output")
+  - Merge operations: Show input files and output result (e.g., "DocA.pdf + DocB.pdf → DocA-DocB.pdf")
+  - Display last 5 operations with timestamps
+  - Show operation status (success/failure)
+- **R5B.5** Actions bar with keyboard shortcuts
+- **R5B.6** Status/Progress line (dynamic based on operation state)
+- **R5B.7** Session timer display only on program exit
 
 ### R6. Verbose Mode Requirements
 - **R6.1** File Preview: Show up to 5 PDF files with sizes when verbose enabled
