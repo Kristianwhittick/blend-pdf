@@ -163,7 +163,7 @@ func (f *FallbackUI) handleSingleFile() bool {
 	fmt.Printf("Processing single file: %s\n", f.model.MainFiles[0].Name)
 	
 	// Call actual file operations
-	if err := f.fileOps.ProcessSingleFile(); err != nil {
+	if _, err := f.fileOps.ProcessSingleFile(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
 		f.model.ErrorCount2++
 	} else {
@@ -184,7 +184,7 @@ func (f *FallbackUI) handleMergeFiles() bool {
 	fmt.Printf("Merging: %s and %s\n", f.model.MainFiles[0].Name, f.model.MainFiles[1].Name)
 	
 	// Call actual merge operations
-	if err := f.fileOps.ProcessMergeFiles(); err != nil {
+	if _, err := f.fileOps.ProcessMergeFiles(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
 		f.model.ErrorCount2++
 	} else {

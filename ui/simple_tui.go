@@ -207,7 +207,7 @@ func (s *SimpleTUI) handleSingleFile() {
 		return
 	}
 	
-	if err := s.fileOps.ProcessSingleFile(); err != nil {
+	if _, err := s.fileOps.ProcessSingleFile(); err != nil {
 		s.errorCount2++
 	} else {
 		s.successCount++
@@ -219,7 +219,7 @@ func (s *SimpleTUI) handleMergeFiles() {
 		return
 	}
 	
-	if err := s.fileOps.ProcessMergeFiles(); err != nil {
+	if _, err := s.fileOps.ProcessMergeFiles(); err != nil {
 		s.errorCount2++
 	} else {
 		s.successCount++
