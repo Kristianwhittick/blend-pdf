@@ -1,6 +1,6 @@
 # BlendPDFGo Tasks
 
-## Task Summary (31 Total)
+## Task Summary (34 Total)
 
 ### ✅ Done (27 Tasks)
 - ✅ Task 1: Fix getPageCount Function
@@ -32,9 +32,12 @@
 ### 🔄 In Progress (0 Tasks)
 *No tasks currently in progress*
 
-### 📋 To Do (2 Tasks)
+### 📋 To Do (5 Tasks)
 - 📋 Task 23: PowerShell 5/CMD Compatibility Implementation - Implement graceful fallback for legacy Windows terminals
 - 📋 Task 28: Undo/Restore Functionality - Ability to reverse last operation (move files back from archive/output)
+- 📋 Task 31: Configuration File Support - Store configuration in blendpdf.json in working directory
+- 📋 Task 32: Archive Single Files - Copy single files to archive before moving to output, with --no-archive toggle
+- 📋 Task 33: Multi Output Folders - Support multiple output destinations with atomic operations and validation
 
 ### 🗂️ Backlog (4 Tasks)
 - 🔄 Task 14: Implement In-Memory Processing Approach (52.9% memory efficiency) - Ready for implementation
@@ -493,6 +496,81 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - [ ] Show appropriate messages when undo is not available
   - [ ] Maintain file integrity during restore operations
 
+### Task 31: Configuration File Support
+- **Status**: 📋 TO DO
+- **Requirements**: User Experience Enhancement
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Store configuration in blendpdf.json in working directory
+- **Implementation Needed**:
+  - Create JSON configuration file structure
+  - Load configuration at startup from blendpdf.json
+  - Command line arguments override configuration file settings
+  - Support archive mode, output folders, and other settings
+  - Create default configuration if file doesn't exist
+- **Configuration Structure**:
+  ```json
+  {
+    "archiveMode": true,
+    "outputFolders": ["output"],
+    "verboseMode": false,
+    "debugMode": false
+  }
+  ```
+- **Acceptance Criteria**:
+  - [ ] Configuration loaded from blendpdf.json in working directory
+  - [ ] Command line args override config file settings
+  - [ ] Default config created if file missing
+  - [ ] Invalid JSON handled gracefully with error messages
+  - [ ] All configurable settings supported
+
+### Task 32: Archive Single Files
+- **Status**: 📋 TO DO
+- **Requirements**: File Management Enhancement
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Copy single files to archive before moving to output, with --no-archive toggle
+- **Implementation Needed**:
+  - Change single file operation to copy to archive first, then move to output
+  - Add --no-archive command line flag to disable archiving
+  - Add archive mode toggle to configuration file
+  - Add archive mode toggle to interactive menu
+  - Ensure both single and merge operations respect archive mode setting
+- **Behaviour Changes**:
+  - **Archive Mode ON (default)**: Single files copied to archive, then moved to output
+  - **Archive Mode OFF**: Single files moved directly to output (current behaviour)
+  - **Merge operations**: Always archive (unchanged behaviour)
+- **Acceptance Criteria**:
+  - [ ] Single file operations copy to archive when archive mode enabled
+  - [ ] --no-archive flag disables archiving for session
+  - [ ] Configuration file controls default archive mode
+  - [ ] Interactive menu shows archive mode toggle option
+  - [ ] Both single and merge operations respect archive mode setting
+
+### Task 33: Multi Output Folders
+- **Status**: 📋 TO DO
+- **Requirements**: File Management Enhancement
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Support multiple output destinations with atomic operations and validation
+- **Implementation Needed**:
+  - Add -o flag for multiple output folders: `-o folder1,folder2,folder3`
+  - Support multiple output folders in configuration file
+  - Validate all output folders exist and are writable at startup
+  - Copy output files to all destinations sequentially (atomic per destination)
+  - Log success/failure for each destination separately
+  - Copy failed outputs to error folder without rolling back successful destinations
+- **Atomic Transaction Behaviour**:
+  - Copy to first destination, then second, then third, etc.
+  - If any destination fails, log failure and copy output to error folder
+  - Do NOT rollback successful destinations
+  - Continue with remaining destinations after failure
+- **Acceptance Criteria**:
+  - [ ] Command line -o flag accepts comma-separated folder list
+  - [ ] Configuration file supports outputFolders array
+  - [ ] All output folders validated at startup
+  - [ ] Output files copied to all destinations sequentially
+  - [ ] Failed destinations logged with specific error messages
+  - [ ] Failed outputs copied to error folder
+  - [ ] Successful destinations not rolled back on partial failure
+
 ### Maintenance Activities
 - Regular dependency updates
 - Bug fixes and improvements as reported
@@ -607,7 +685,6 @@ perf: Add hybrid in-memory PDF processing
   - Background sync processes
 
 ### Future Enhancement Ideas (On Hold)
-- Configuration file support
 - Batch processing capabilities
 - Additional PDF manipulation features
 - Integration with other tools
