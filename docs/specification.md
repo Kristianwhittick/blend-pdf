@@ -60,11 +60,12 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R5B.1** Header: Application title, version, and directory paths with integrated file counts
 - **R5B.2** Available PDFs section with mode selector and file list
 - **R5B.3** Horizontal separator line
-- **R5B.4** Recent Output section showing completed operations with detailed file information
-  - Single file operations: Show filename that was moved (e.g., "Document.pdf moved to output")
-  - Merge operations: Show input files and output result (e.g., "DocA.pdf + DocB.pdf → DocA-DocB.pdf")
-  - Display last 5 operations with timestamps
-  - Show operation status (success/failure)
+- **R5B.4** Recent Output section showing completed operations with single-line format
+  - Single file operations: Show filename (e.g., "✅ [15:04:05] Single file move - Document.pdf")
+  - Merge operations: Show input and output files (e.g., "✅ [15:04:05] Merge - DocA.pdf + DocB.pdf → DocA-DocB.pdf")
+  - Error operations: Show clear warnings (e.g., "❌ [15:04:05] Warning: 2 PDF files required, found 1")
+  - Display last 5 operations with timestamps and status icons
+  - Single line per operation for compact display
 - **R5B.5** Actions bar with keyboard shortcuts (persistent during operations)
 - **R5B.6** Status/Progress section (2 lines: status line + progress line, progress overwrites status during operations)
 - **R5B.7** Session timer display only on program exit

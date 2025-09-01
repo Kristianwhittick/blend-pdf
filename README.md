@@ -74,12 +74,15 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **Directory Organization**: Automatic creation and management of archive, output, and error folders
 
 ### User Interface ✅
-- **File Count Display**: Real-time display of PDF counts in each directory
-- **Verbose Mode**: Detailed output including file sizes and processing information
+- **Full-Screen Layout**: Professional bordered interface with segmented sections
+- **File Count Display**: Real-time display of PDF counts integrated into header
+- **Recent Operations**: Single-line operation history with timestamps and status icons
+- **Progress Bars**: Animated progress indicators during operations
+- **Persistent Actions**: Actions menu remains visible during processing
+- **Real-time Monitoring**: Automatic file count updates without user input
 - **Colored Output**: Color-coded messages for better readability
 - **File Preview**: Show available PDF files with sizes in verbose mode
 - **Session Statistics**: Track successful operations, errors, and elapsed time
-- **Progress Indicators**: Detailed operation progress in verbose mode
 
 ### Advanced Features ✅
 - **Directory-Specific Lock Files**: Prevents multiple instances in same directory, allows multiple instances in different directories
@@ -246,29 +249,49 @@ your-folder/
 
 ## User Interface Examples
 
-### File Count Display
+### Full-Screen Layout
 ```
-Files: Main(2) Archive(0) Output(0) Error(0)
-Enter choice (S/M/H/V/D/Q): 
-```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              BlendPDFGo v1.0.5                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Watch  : /home/user/documents                                            2 │
+│ Archive: /home/user/documents/archive                                    0 │
+│ Output : /home/user/documents/output                                     0 │
+│ Error  : /home/user/documents/error                                      0 │
+└─────────────────────────────────────────────────────────────────────────────┘
 
-### Verbose Mode Output
-```
-Files: Main(6) Archive(0) Output(0) Error(0)
 Available PDF files:
   document1.pdf (2.3M)
   document2.pdf (1.8M)
-  report.pdf (4.1M)
-  scan001.pdf (856K)
-  manual.pdf (12M)
-  ... and 1 more file(s)
+─────────────────────────────────────────────────────────────────────────────
+Recent Operations:
+  ✅ [15:04:05] Single file move - Document.pdf
+  ✅ [15:04:12] Merge - DocA.pdf + DocB.pdf → DocA-DocB.pdf
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                 Actions                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  [S] Single File  - Move a single PDF file to output directory              │
+│  [M] Merge PDFs   - Merge two PDF files with interleaved pattern            │
+│  [H] Help         - Show help information                                   │
+│  [Q] Quit         - Exit the program                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+Status: Operations: 2 | Errors: 0 | Files monitored: 2
 
-Enter choice (S/M/H/V/D/Q): M
-Merging: document1.pdf document2.pdf -> document1-document2.pdf
-File 1 size: 2.3M
-File 2 size: 1.8M
-pages = 5
-Success: Files merged and moved. (3)
+Enter choice (S/M/H/Q): 
+```
+
+### Progress During Operations
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                 Actions                                     │
+├─────────────────────────────────────────────────────────────────────────────┤
+│  [S] Single File  - Move a single PDF file to output directory              │
+│  [M] Merge PDFs   - Merge two PDF files with interleaved pattern            │
+│  [H] Help         - Show help information                                   │
+│  [Q] Quit         - Exit the program                                        │
+└─────────────────────────────────────────────────────────────────────────────┘
+Processing: Merge operation [████████████████████░░░░░░░░░░░░░░░░░░░░] 2/4
+
 ```
 
 ### Session Statistics
