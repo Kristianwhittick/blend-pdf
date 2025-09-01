@@ -14,12 +14,19 @@ This document captures the working processes and methodologies developed during 
 4. **Validation Phase**: Unit tests, integration tests, functional verification
 5. **Documentation Phase**: Update docs, API knowledge, and task status
 6. **Completion**: Move from "Next Stages" to "Completed Tasks" section
+7. **Summary Update**: Update compact task summary at top of tasks.md with new counts and status
 
 ### Task Status Indicators
 - **📋 READY FOR IMPLEMENTATION**: Research complete, ready to code
 - **✅ COMPLETED**: Implementation done, tested, documented
 - **🔄 READY FOR IMPLEMENTATION (ON HOLD)**: Ready but waiting for approval
 - **❌ CANCELLED**: Task cancelled with reason documented
+
+### Task Summary Maintenance
+- **Compact Summary**: Maintain overview at top of `docs/tasks.md` with current counts
+- **Status Categories**: Group tasks by development phase and completion status
+- **Progress Tracking**: Update summary with each task completion
+- **Production Status**: Reflect overall project readiness and available enhancements
 
 ### Priority System
 - **High**: Critical functionality, user-requested features, major improvements
