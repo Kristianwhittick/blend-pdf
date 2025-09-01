@@ -15,6 +15,7 @@
 package ui
 
 import (
+	"fmt"
 	"path/filepath"
 	"sort"
 )
@@ -97,17 +98,19 @@ func (b *FileOpsBridge) GetHumanReadableSize(filename string) string {
 // ProcessSingleFile implements FileOperations interface
 func (b *FileOpsBridge) ProcessSingleFile() (string, error) {
 	if b.processSingleFileFunc != nil {
+		// Get the first PDF file before processing to show what will be processed
+		files, _ := b.FindPDFFiles(b.watchDir)
+		if len(files) == 0 {
+			return "", fmt.Errorf("no PDF files found in directory")
+		}
+		
+		filename := filepath.Base(files[0])
 		err := b.processSingleFileFunc()
 		if err != nil {
 			return "", err
 		}
-		// Get the first PDF file to show what was processed
-		files, _ := b.FindPDFFiles(b.watchDir)
-		if len(files) > 0 {
-			filename := filepath.Base(files[0])
-			return filename + " moved to output", nil
-		}
-		return "Single file processed", nil
+		
+		return filename + " moved to output", nil
 	}
 	return "", nil
 }
@@ -117,23 +120,21 @@ func (b *FileOpsBridge) ProcessMergeFiles() (string, error) {
 	if b.processMergeFilesFunc != nil {
 		// Get files before processing to show what was merged
 		files, _ := b.FindPDFFiles(b.watchDir)
-		var file1, file2 string
-		if len(files) >= 2 {
-			file1 = filepath.Base(files[0])
-			file2 = filepath.Base(files[1])
+		if len(files) < 2 {
+			return "", fmt.Errorf("need at least 2 PDF files for merge operation, found %d", len(files))
 		}
+		
+		file1 := filepath.Base(files[0])
+		file2 := filepath.Base(files[1])
 		
 		err := b.processMergeFilesFunc()
 		if err != nil {
 			return "", err
 		}
 		
-		if file1 != "" && file2 != "" {
-			// Generate output filename using same logic as main program
-			outputName := file1[:len(file1)-4] + "-" + file2[:len(file2)-4] + ".pdf"
-			return file1 + " + " + file2 + " → " + outputName, nil
-		}
-		return "Files merged successfully", nil
+		// Generate output filename using same logic as main program
+		outputName := file1[:len(file1)-4] + "-" + file2[:len(file2)-4] + ".pdf"
+		return file1 + " + " + file2 + " → " + outputName, nil
 	}
 	return "", nil
 }
