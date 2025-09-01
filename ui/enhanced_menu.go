@@ -205,9 +205,6 @@ func (e *EnhancedMenu) showStatus() {
 		fmt.Println("  No operations performed yet")
 	}
 
-	// R5B.3 - Another horizontal separator
-	fmt.Println("─────────────────────────────────────────────────────────────────────────────")
-
 	// R5B.5 - Actions bar (persistent during operations)
 	e.showActionsBar()
 
