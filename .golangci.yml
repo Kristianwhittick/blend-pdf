@@ -18,8 +18,6 @@ linters-settings:
   errcheck:
     check-type-assertions: true
     check-blank: true
-  unused:
-    check-exported: false  # Don't check exported functions
 
 issues:
   exclude-dirs:
