@@ -198,10 +198,7 @@ func (e *EnhancedMenu) showStatus() {
 			if op.Status == "FAILED" {
 				statusIcon = "❌"
 			}
-			fmt.Printf("  %s [%s] %s\n", statusIcon, op.Timestamp.Format("15:04:05"), op.Description)
-			if op.Details != "" {
-				fmt.Printf("    %s\n", op.Details)
-			}
+			fmt.Printf("  %s [%s] %s\n", statusIcon, op.Timestamp.Format("15:04:05"), op.Details)
 		}
 	} else {
 		fmt.Println("Recent Operations:")

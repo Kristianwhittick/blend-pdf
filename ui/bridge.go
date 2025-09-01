@@ -101,7 +101,7 @@ func (b *FileOpsBridge) ProcessSingleFile() (string, error) {
 		// Get the first PDF file before processing to show what will be processed
 		files, _ := b.FindPDFFiles(b.watchDir)
 		if len(files) == 0 {
-			return "", fmt.Errorf("no PDF files found in directory")
+			return "", fmt.Errorf("Warning: PDF file required, found 0")
 		}
 		
 		filename := filepath.Base(files[0])
@@ -110,7 +110,7 @@ func (b *FileOpsBridge) ProcessSingleFile() (string, error) {
 			return "", err
 		}
 		
-		return filename + " moved to output", nil
+		return "Single file move - " + filename, nil
 	}
 	return "", nil
 }
@@ -121,7 +121,7 @@ func (b *FileOpsBridge) ProcessMergeFiles() (string, error) {
 		// Get files before processing to show what was merged
 		files, _ := b.FindPDFFiles(b.watchDir)
 		if len(files) < 2 {
-			return "", fmt.Errorf("need at least 2 PDF files for merge operation, found %d", len(files))
+			return "", fmt.Errorf("Warning: 2 PDF files required, found %d", len(files))
 		}
 		
 		file1 := filepath.Base(files[0])
@@ -134,7 +134,7 @@ func (b *FileOpsBridge) ProcessMergeFiles() (string, error) {
 		
 		// Generate output filename using same logic as main program
 		outputName := file1[:len(file1)-4] + "-" + file2[:len(file2)-4] + ".pdf"
-		return file1 + " + " + file2 + " → " + outputName, nil
+		return "Merge - " + file1 + " + " + file2 + " → " + outputName, nil
 	}
 	return "", nil
 }
