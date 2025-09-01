@@ -371,7 +371,7 @@ api.MergeCreateFile(pageFiles, outputFile, false, conf)
 
 #### Experiment 18: CollectFile Strategy Analysis ✅
 - **Status**: ✅ COMPLETED
-- **Goal**: Analyze CollectFile-based interleaved merge strategy
+- **Goal**: Analyse CollectFile-based interleaved merge strategy
 - **Result**: SUCCESS - Confirmed drop-in replacement capability and implementation strategy
 - **File**: experiment18_collect_interleaved.go
 

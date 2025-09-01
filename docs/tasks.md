@@ -282,7 +282,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Description**: Review all documentation files for overlaps, duplicates, and clarity improvements
 - **Scope**: All files in `/docs/` directory (treat README.md separately)
 - **Analysis Completed**:
-  - Analyzed all 10 documentation files for content overlaps (73,779 bytes total)
+  - Analysed all 10 documentation files for content overlaps (73,779 bytes total)
   - Identified critical overlaps in API documentation across 3 files
   - Found implementation status duplicated in 3 files
   - Discovered testing information scattered across multiple files
@@ -370,7 +370,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Description**: Research Go CLI libraries for enhanced user experience
 - **Implementation Completed**:
   - Researched 6 major Go CLI libraries (Cobra, Bubble Tea, Survey, Termui, Progressbar, Fatih/Color)
-  - Analyzed pros/cons and use cases for each library
+  - Analysed pros/cons and use cases for each library
   - Identified 3 implementation approaches with effort estimates
   - Created comprehensive findings document in `docs/cli_library_research.md`
   - Recommended phased approach: Survey + Progressbar + Fatih/Color for quick wins
