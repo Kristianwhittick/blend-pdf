@@ -148,6 +148,8 @@ func (e *EnhancedMenu) Run() error {
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
 			if !showingError {
+				fmt.Print(choice)
+				fmt.Println()
 				fmt.Println("❌ Invalid choice.")
 				showingError = true
 			}
