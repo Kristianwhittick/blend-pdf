@@ -212,6 +212,22 @@ Follow Semantic Versioning (SemVer):
    git push origin main --tags
    ```
 
+5. **Monitor GitHub Actions** (requires GitHub CLI)
+   ```bash
+   # Check recent workflow runs
+   gh run list --limit 5
+   
+   # View specific run details
+   gh run view <run-id>
+   
+   # Check release status
+   gh release list
+   gh release view <tag>
+   
+   # View workflow logs if needed
+   gh run logs <run-id>
+   ```
+
 #### ⚠️ Critical: Tag Must Include CHANGELOG Entry and Version Sync
 - **The git tag must point to a commit that includes both the CHANGELOG.md entry AND constants.go version update**
 - **GitHub Actions checks out code at the tag commit, not latest main**
@@ -248,6 +264,28 @@ Follow Semantic Versioning (SemVer):
 - **Problem**: No automated release created after pushing tag
 - **Cause**: Tag not pushed or GitHub Actions workflow issues
 - **Solution**: Check Actions tab on GitHub, ensure tag format is `vX.Y.Z`
+- **GitHub CLI**: Use `gh run list` to check recent runs, `gh run view <run-id>` for details
+
+### GitHub Actions Monitoring Commands
+```bash
+# Check recent workflow runs
+gh run list --limit 5
+
+# View specific run details
+gh run view <run-id>
+
+# Check release status
+gh release list
+gh release view <tag>
+
+# View workflow logs if needed
+gh run logs <run-id>
+```
+
+### Critical Release Requirements
+- Git tag must include both CHANGELOG.md entry and VERSION constant update
+- GitHub Actions extracts changelog content from the tagged commit
+- Version sync must happen before tagging, not after
 
 #### Local Build Version Issues
 - **Problem**: Local builds show wrong version
