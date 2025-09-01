@@ -139,13 +139,6 @@ func (e *EnhancedMenu) Run() error {
 	e.showHeader()
 
 	for {
-		// R5.9 - Real-time updates without user input
-		if e.needsRefresh {
-			e.needsRefresh = false
-			e.clearScreen()
-			e.showHeader()
-		}
-		
 		e.showStatus()
 
 		choice := e.getUserChoice()
@@ -282,10 +275,37 @@ func (e *EnhancedMenu) showActionsBar() {
 
 func (e *EnhancedMenu) getUserChoice() string {
 	fmt.Print("Enter choice (S/M/H/Q): ")
-	if e.scanner.Scan() {
-		return strings.TrimSpace(strings.ToUpper(e.scanner.Text()))
+	
+	// Create a channel to receive input
+	inputChan := make(chan string, 1)
+	
+	// Start goroutine to read input
+	go func() {
+		if e.scanner.Scan() {
+			inputChan <- strings.TrimSpace(strings.ToUpper(e.scanner.Text()))
+		} else {
+			inputChan <- "Q"
+		}
+	}()
+	
+	// Check for input or refresh needs every 100ms
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
+	
+	for {
+		select {
+		case input := <-inputChan:
+			return input
+		case <-ticker.C:
+			if e.needsRefresh {
+				e.needsRefresh = false
+				e.clearScreen()
+				e.showHeader()
+				e.showStatus()
+				fmt.Print("Enter choice (S/M/H/Q): ")
+			}
+		}
 	}
-	return "Q"
 }
 
 func (e *EnhancedMenu) handleChoice(choice string) bool {
