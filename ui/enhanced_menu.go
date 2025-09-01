@@ -138,15 +138,15 @@ func (e *EnhancedMenu) Run() error {
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
+	fmt.Print("Enter choice (S/M/H/Q): ")
 
 	for {
 		choice := e.getUserChoice()
 		
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
-			// Clear the previous line and show error
-			fmt.Print("\033[1A\033[2K") // Move up one line and clear it
 			fmt.Println("❌ Invalid choice.")
+			fmt.Print("Enter choice (S/M/H/Q): ")
 			continue
 		}
 		
@@ -158,6 +158,7 @@ func (e *EnhancedMenu) Run() error {
 		e.clearScreen()
 		e.showHeader()
 		e.showStatus()
+		fmt.Print("Enter choice (S/M/H/Q): ")
 	}
 
 	e.showStatistics()
@@ -284,8 +285,6 @@ func (e *EnhancedMenu) showActionsBar() {
 }
 
 func (e *EnhancedMenu) getUserChoice() string {
-	fmt.Print("Enter choice (S/M/H/Q): ")
-	
 	// Create a channel to receive input
 	inputChan := make(chan string, 1)
 	
