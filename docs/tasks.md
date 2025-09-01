@@ -1,6 +1,6 @@
 # BlendPDFGo Tasks
 
-## Task Summary (27 Total)
+## Task Summary (28 Total)
 
 ### ✅ Done (27 Tasks)
 - ✅ Task 1: Fix getPageCount Function
@@ -32,8 +32,8 @@
 ### 🔄 In Progress (0 Tasks)
 *No tasks currently in progress*
 
-### 📋 To Do (0 Tasks)
-*No tasks currently planned*
+### 📋 To Do (1 Task)
+- 📋 Task 23: PowerShell 5/CMD Compatibility Implementation - Implement graceful fallback for legacy Windows terminals
 
 ### 🗂️ Backlog (1 Task)
 - 🔄 Task 14: Implement In-Memory Processing Approach (52.9% memory efficiency) - Ready for implementation
@@ -454,6 +454,23 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## 3. Next Stages
+
+### Task 23: PowerShell 5/CMD Compatibility Implementation
+- **Status**: 📋 TO DO
+- **Requirements**: R5.10 (graceful fallback to basic interface on legacy terminals)
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Implement graceful fallback for legacy Windows terminals that don't support full ANSI escape codes
+- **Current Status**: Basic cross-platform screen clearing implemented, but no terminal capability detection
+- **Implementation Needed**:
+  - Detect terminal capabilities (PowerShell version, CMD vs Windows Terminal)
+  - Implement basic text-based interface for legacy terminals
+  - Maintain full functionality with simplified display
+  - Test on PowerShell 5, CMD, and Windows Console Host
+- **Acceptance Criteria**:
+  - [ ] Application works on PowerShell 5 without garbled output
+  - [ ] Application works on CMD with basic functionality
+  - [ ] Automatic detection and fallback to appropriate interface
+  - [ ] All core operations available in fallback mode
 
 ### Maintenance Activities
 - Regular dependency updates
