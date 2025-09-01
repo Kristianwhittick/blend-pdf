@@ -23,10 +23,11 @@ This document captures the working processes and methodologies developed during 
 - **❌ CANCELLED**: Task cancelled with reason documented
 
 ### Task Summary Maintenance
-- **Compact Summary**: Maintain overview at top of `docs/tasks.md` with current counts
-- **Status Categories**: Group tasks by development phase and completion status
-- **Progress Tracking**: Update summary with each task completion
-- **Production Status**: Reflect overall project readiness and available enhancements
+- **4-List Format**: Maintain Done (✅), In Progress (🔄), To Do (📋), Backlog (🗂️) sections
+- **Status Symbols**: ✅ (completed), 🔄 (in progress/ready), 📋 (planned), ⚠️ (partially done)
+- **Task Counts**: Update total counts in header (e.g., "27 Total")
+- **Progress Tracking**: Move tasks between lists as status changes
+- **Production Status**: Reflect overall project readiness at bottom
 
 ### Priority System
 - **High**: Critical functionality, user-requested features, major improvements
