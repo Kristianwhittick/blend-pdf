@@ -56,7 +56,7 @@ func determineWatchDirectory() string {
 func generateLockFileName(watchDir string) string {
 	normalizedPath := normalizeDirectoryPath(watchDir)
 	hashStr := generateDirectoryHash(normalizedPath)
-	lockFileName := fmt.Sprintf("blendpdfgo-%s.lock", hashStr)
+	lockFileName := fmt.Sprintf("blendpdf-%s.lock", hashStr)
 	
 	return createPlatformSpecificLockPath(watchDir, lockFileName)
 }

@@ -113,7 +113,7 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 
 ### R11. Lock File Protection Requirements
 - **R11.1** Create directory-specific lock file to prevent multiple instances in same folder
-- **R11.2** Location: `/tmp/blendpdfgo-<8-char-hash>.lock` (Unix) or `<watch-folder>/blendpdfgo-<8-char-hash>.lock` (Windows)
+- **R11.2** Location: `/tmp/blendpdf-<8-char-hash>.lock` (Unix) or `<watch-folder>/blendpdf-<8-char-hash>.lock` (Windows)
 - **R11.3** Hash generated from absolute watch directory path using MD5 (8 characters)
 - **R11.4** Clean up lock file on normal exit and signal interruption
 - **R11.5** Show clear error message if already running in same directory
@@ -187,7 +187,7 @@ project/
 ```
 BlendPDFGo v1.0.0 - A tool for merging PDF files
 
-Usage: blendpdfgo [options] [folder]
+Usage: blendpdf [options] [folder]
 
 Command line options:
   -h, --help     Show this help information and exit
@@ -197,13 +197,13 @@ Command line options:
   [folder]       Specify folder to watch (default: current directory)
 
 Examples:
-  blendpdfgo -h                # Show help
-  blendpdfgo -v                # Show version
-  blendpdfgo -V                # Run in verbose mode
-  blendpdfgo -D                # Run in debug mode
-  blendpdfgo /path/to/pdfs     # Watch specific folder
-  blendpdfgo -V /path/to/pdfs  # Verbose mode with specific folder
-  blendpdfgo                   # Watch current directory
+  blendpdf -h                # Show help
+  blendpdf -v                # Show version
+  blendpdf -V                # Run in verbose mode
+  blendpdf -D                # Run in debug mode
+  blendpdf /path/to/pdfs     # Watch specific folder
+  blendpdf -V /path/to/pdfs  # Verbose mode with specific folder
+  blendpdf                   # Watch current directory
 
 Interactive options:
   S - Move a single PDF file to the output directory

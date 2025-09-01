@@ -115,16 +115,16 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 
 Download the latest release for your platform from the [Releases page](https://github.com/Kristianwhittick/blend_pdf/releases):
 
-- **Windows (64-bit)**: `blendpdfgo-{version}-windows-amd64.exe`
-- **Linux (64-bit)**: `blendpdfgo-{version}-linux-amd64`
-- **Linux (ARM64)**: `blendpdfgo-{version}-linux-arm64`
-- **macOS (64-bit)**: `blendpdfgo-{version}-darwin-amd64`
+- **Windows (64-bit)**: `blendpdf-{version}-windows-amd64.exe`
+- **Linux (64-bit)**: `blendpdf-{version}-linux-amd64`
+- **Linux (ARM64)**: `blendpdf-{version}-linux-arm64`
+- **macOS (64-bit)**: `blendpdf-{version}-darwin-amd64`
 
 #### Installation Steps
 1. Download the appropriate binary for your platform
-2. Make it executable (Linux/macOS): `chmod +x blendpdfgo-*`
-3. Move to your PATH: `sudo mv blendpdfgo-* /usr/local/bin/blendpdfgo`
-4. Verify installation: `blendpdfgo --version`
+2. Make it executable (Linux/macOS): `chmod +x blendpdf-*`
+3. Move to your PATH: `sudo mv blendpdf-* /usr/local/bin/blendpdf`
+4. Verify installation: `blendpdf --version`
 
 ### Build from Source
 
@@ -146,7 +146,7 @@ go build
 make build
 
 # Run the application
-./blendpdfgo
+./blendpdf
 ```
 
 #### Multi-Platform Build
@@ -188,22 +188,22 @@ make release        # Create complete release build
 ### Basic Usage
 ```bash
 # Run in current directory
-./blendpdfgo
+./blendpdf
 
 # Show help
-./blendpdfgo -h
+./blendpdf -h
 
 # Run in verbose mode
-./blendpdfgo -V
+./blendpdf -V
 
 # Run in debug mode (includes verbose + structured logging)
-./blendpdfgo -D
+./blendpdf -D
 
 # Watch specific folder
-./blendpdfgo /path/to/pdfs
+./blendpdf /path/to/pdfs
 
 # Combined options
-./blendpdfgo -V /path/to/pdfs
+./blendpdf -V /path/to/pdfs
 ```
 
 ### Interactive Menu Options

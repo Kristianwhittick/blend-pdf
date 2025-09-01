@@ -3,7 +3,7 @@
 # Licensed under the Apache License, Version 2.0
 
 # Configuration
-APP_NAME := blendpdfgo
+APP_NAME := blendpdf
 VERSION := $(shell grep 'VERSION = ' constants.go | cut -d'"' -f2)
 BUILD_DIR := dist
 GO_VERSION := $(shell go version | cut -d' ' -f3)

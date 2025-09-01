@@ -14,10 +14,10 @@ func TestParseArgs(t *testing.T) {
 		name string
 		args []string
 	}{
-		{"No arguments", []string{"blendpdfgo"}},
-		{"Verbose flag", []string{"blendpdfgo", "-V"}},
-		{"Debug flag", []string{"blendpdfgo", "-D"}},
-		{"Folder argument", []string{"blendpdfgo", "/tmp/test"}},
+		{"No arguments", []string{"blendpdf"}},
+		{"Verbose flag", []string{"blendpdf", "-V"}},
+		{"Debug flag", []string{"blendpdf", "-D"}},
+		{"Folder argument", []string{"blendpdf", "/tmp/test"}},
 	}
 
 	for _, tt := range tests {
@@ -110,7 +110,7 @@ func TestSetupLock(t *testing.T) {
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
-	os.Args = []string{"blendpdfgo.test", tempDir}
+	os.Args = []string{"blendpdf.test", tempDir}
 	
 	// Test lock setup
 	err := setupLock()
@@ -139,7 +139,7 @@ func TestSetupLockAlreadyExists(t *testing.T) {
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
-	os.Args = []string{"blendpdfgo.test", tempDir}
+	os.Args = []string{"blendpdf.test", tempDir}
 	
 	// Create first lock
 	err := setupLock()
@@ -175,7 +175,7 @@ func TestCleanupLock(t *testing.T) {
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
-	os.Args = []string{"blendpdfgo.test", tempDir}
+	os.Args = []string{"blendpdf.test", tempDir}
 	
 	// Create lock file
 	err := setupLock()

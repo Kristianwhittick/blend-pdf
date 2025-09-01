@@ -12,7 +12,7 @@ Testing individual pdfcpu API functions to understand their behaviour and requir
 
 ### Running Individual API Tests
 ```bash
-cd /home/kris/scan/blendpdfgo
+cd /home/kris/scan/blendpdf
 go run experiments/run_experiments.go 01    # Test page counting
 go run experiments/run_experiments.go 02    # Test PDF validation
 go run experiments/run_experiments.go 03    # Test single page extraction

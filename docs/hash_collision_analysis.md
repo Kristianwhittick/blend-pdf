@@ -68,11 +68,11 @@ func generateDirectoryHash(watchDir string) string {
 ```
 
 ### Lock File Naming Convention
-- **Format**: `blendpdfgo-<8-char-hash>.lock`
-- **Example**: `blendpdfgo-a1b2c3d4.lock`
+- **Format**: `blendpdf-<8-char-hash>.lock`
+- **Example**: `blendpdf-a1b2c3d4.lock`
 - **Location**: 
-  - Unix: `/tmp/blendpdfgo-a1b2c3d4.lock`
-  - Windows: `<watch-dir>/blendpdfgo-a1b2c3d4.lock`
+  - Unix: `/tmp/blendpdf-a1b2c3d4.lock`
+  - Windows: `<watch-dir>/blendpdf-a1b2c3d4.lock`
 
 ## Risk Mitigation
 
@@ -104,7 +104,7 @@ If a collision occurs (extremely unlikely):
 
 ### If Collision Rate Becomes Problematic
 1. **Increase to 12 characters**: Simple configuration change
-2. **Add timestamp suffix**: `blendpdfgo-<hash>-<timestamp>.lock`
+2. **Add timestamp suffix**: `blendpdf-<hash>-<timestamp>.lock`
 3. **Use different hash algorithm**: SHA256 for better distribution
 
 ### Monitoring Recommendations

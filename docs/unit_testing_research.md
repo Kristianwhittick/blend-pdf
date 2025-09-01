@@ -173,7 +173,7 @@ go get github.com/stretchr/testify/suite
 
 #### 1. Test File Organization
 ```
-blendpdfgo/
+blendpdf/
 ├── main.go
 ├── main_test.go           # Main function tests
 ├── constants.go

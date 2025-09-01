@@ -7,7 +7,7 @@
 set -e
 
 # Configuration
-APP_NAME="blendpdfgo"
+APP_NAME="blendpdf"
 VERSION=$(git describe --tags --exact-match 2>/dev/null || git describe --tags --abbrev=0 2>/dev/null || echo "dev")
 BUILD_DIR="dist"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

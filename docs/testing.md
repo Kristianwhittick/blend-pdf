@@ -120,7 +120,7 @@ go test . ./tests
 go build
 
 # Test merge functionality
-echo -e "M\nQ" | ./blendpdfgo
+echo -e "M\nQ" | ./blendpdf
 
 # Verify output
 pdftotext output/Doc_A_Doc_B.pdf -
@@ -130,11 +130,11 @@ pdftotext output/Doc_A_Doc_B.pdf -
 ### Interactive Menu Tests
 
 #### Command Line Arguments
-1. `./blendpdfgo -h` - Show help
-2. `./blendpdfgo -v` - Show version  
-3. `./blendpdfgo -V` - Enable verbose mode
-4. `./blendpdfgo /path/to/folder` - Watch specific folder
-5. `./blendpdfgo` - Watch current directory
+1. `./blendpdf -h` - Show help
+2. `./blendpdf -v` - Show version  
+3. `./blendpdf -V` - Enable verbose mode
+4. `./blendpdf /path/to/folder` - Watch specific folder
+5. `./blendpdf` - Watch current directory
 
 #### Full-Screen UI Tests
 - **Layout Rendering** - Verify proper screen takeover and segmentation
@@ -405,7 +405,7 @@ pdfinfo output/Doc_A_Doc_B.pdf | grep Pages
 ## Troubleshooting
 
 ### Common Issues
-1. **Lock file error**: Remove `/tmp/blendpdfgo.lock`
+1. **Lock file error**: Remove `/tmp/blendpdf.lock`
 2. **EOF error**: Normal when using piped input
 3. **Invalid PDF**: Check file integrity with `pdfinfo`
 4. **Permission denied**: Check file/directory permissions
@@ -413,7 +413,7 @@ pdfinfo output/Doc_A_Doc_B.pdf | grep Pages
 ### Debug Mode
 Run with verbose flag to see detailed output:
 ```bash
-./blendpdfgo -V
+./blendpdf -V
 ```
 
 ## Test Checklist
