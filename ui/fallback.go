@@ -31,7 +31,7 @@ type FallbackUI struct {
 // NewFallbackUI creates a new fallback UI instance
 func NewFallbackUI(watchDir, archiveDir, outputDir, errorDir, version string, fileOps FileOperations) *FallbackUI {
 	model := NewModel(watchDir, archiveDir, outputDir, errorDir, version)
-	
+
 	return &FallbackUI{
 		model:   model,
 		fileOps: fileOps,
@@ -45,20 +45,20 @@ func (f *FallbackUI) Run() error {
 	fmt.Println("Terminal UI not supported, using basic interface...")
 	fmt.Println("For the full experience, use Windows Terminal, PowerShell 7+, or Linux/macOS terminal.")
 	fmt.Println()
-	
+
 	f.displayDirectories()
-	
+
 	for {
 		f.updateFiles()
 		f.displayStatus()
 		f.displayMenu()
-		
+
 		choice := f.getUserChoice()
 		if !f.handleChoice(choice) {
 			break
 		}
 	}
-	
+
 	f.displayStatistics()
 	return nil
 }
@@ -82,7 +82,7 @@ func (f *FallbackUI) updateFiles() {
 
 func (f *FallbackUI) updateFilesMsg() fileUpdateMsg {
 	var mainFiles []FileInfo
-	
+
 	// Get PDF files from watch directory
 	if files, err := f.fileOps.FindPDFFiles(f.model.WatchDir); err == nil {
 		for _, file := range files {
@@ -93,7 +93,7 @@ func (f *FallbackUI) updateFilesMsg() fileUpdateMsg {
 			})
 		}
 	}
-	
+
 	return fileUpdateMsg{
 		mainFiles:    mainFiles,
 		archiveCount: f.fileOps.CountPDFFiles(f.model.ArchiveDir),
@@ -104,9 +104,9 @@ func (f *FallbackUI) updateFilesMsg() fileUpdateMsg {
 
 func (f *FallbackUI) displayStatus() {
 	fmt.Printf("Files: Main(%d) Archive(%d) Output(%d) Error(%d) | Session: %s\n",
-		len(f.model.MainFiles), f.model.ArchiveCount, f.model.OutputCount, 
+		len(f.model.MainFiles), f.model.ArchiveCount, f.model.OutputCount,
 		f.model.ErrorCount, f.model.ElapsedTime())
-	
+
 	// Show available files if any
 	if len(f.model.MainFiles) > 0 {
 		fmt.Println("Available PDF files:")
@@ -159,9 +159,9 @@ func (f *FallbackUI) handleSingleFile() bool {
 		fmt.Println("❌ No PDF files found")
 		return true
 	}
-	
+
 	fmt.Printf("Processing single file: %s\n", f.model.MainFiles[0].Name)
-	
+
 	// Call actual file operations
 	if _, err := f.fileOps.ProcessSingleFile(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
@@ -170,7 +170,7 @@ func (f *FallbackUI) handleSingleFile() bool {
 		fmt.Println("✅ Single file processed successfully")
 		f.model.SuccessCount++
 	}
-	
+
 	fmt.Println()
 	return true
 }
@@ -180,9 +180,9 @@ func (f *FallbackUI) handleMergeFiles() bool {
 		fmt.Println("❌ Need at least 2 PDF files for merge")
 		return true
 	}
-	
+
 	fmt.Printf("Merging: %s and %s\n", f.model.MainFiles[0].Name, f.model.MainFiles[1].Name)
-	
+
 	// Call actual merge operations
 	if _, err := f.fileOps.ProcessMergeFiles(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
@@ -191,7 +191,7 @@ func (f *FallbackUI) handleMergeFiles() bool {
 		fmt.Printf("✅ Files merged successfully\n")
 		f.model.SuccessCount++
 	}
-	
+
 	fmt.Println()
 	return true
 }

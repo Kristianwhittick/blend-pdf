@@ -26,7 +26,7 @@ type FileOpsBridge struct {
 	archiveDir string
 	outputDir  string
 	errorDir   string
-	
+
 	// Function pointers to existing operations
 	findPDFFilesFunc      func(string) ([]string, error)
 	countPDFFilesFunc     func(string) int
@@ -67,7 +67,7 @@ func (b *FileOpsBridge) FindPDFFiles(dir string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		
+
 		// Sort files alphabetically
 		sort.Strings(files)
 		return files, nil
@@ -99,17 +99,20 @@ func (b *FileOpsBridge) GetHumanReadableSize(filename string) string {
 func (b *FileOpsBridge) ProcessSingleFile() (string, error) {
 	if b.processSingleFileFunc != nil {
 		// Get the first PDF file before processing to show what will be processed
-		files, _ := b.FindPDFFiles(b.watchDir)
+		files, err := b.FindPDFFiles(b.watchDir)
+		if err != nil {
+			return "", fmt.Errorf("Error finding PDF files: %v", err)
+		}
 		if len(files) == 0 {
 			return "", fmt.Errorf("Warning: PDF file required, found 0")
 		}
-		
+
 		filename := filepath.Base(files[0])
-		err := b.processSingleFileFunc()
+		err = b.processSingleFileFunc()
 		if err != nil {
 			return "", err
 		}
-		
+
 		return "Single file move - " + filename, nil
 	}
 	return "", nil
@@ -119,19 +122,22 @@ func (b *FileOpsBridge) ProcessSingleFile() (string, error) {
 func (b *FileOpsBridge) ProcessMergeFiles() (string, error) {
 	if b.processMergeFilesFunc != nil {
 		// Get files before processing to show what was merged
-		files, _ := b.FindPDFFiles(b.watchDir)
+		files, err := b.FindPDFFiles(b.watchDir)
+		if err != nil {
+			return "", fmt.Errorf("Error finding PDF files: %v", err)
+		}
 		if len(files) < 2 {
 			return "", fmt.Errorf("Warning: 2 PDF files required, found %d", len(files))
 		}
-		
+
 		file1 := filepath.Base(files[0])
 		file2 := filepath.Base(files[1])
-		
-		err := b.processMergeFilesFunc()
+
+		err = b.processMergeFilesFunc()
 		if err != nil {
 			return "", err
 		}
-		
+
 		// Generate output filename using same logic as main program
 		outputName := file1[:len(file1)-4] + "-" + file2[:len(file2)-4] + ".pdf"
 		return "Merge - " + file1 + " + " + file2 + " → " + outputName, nil

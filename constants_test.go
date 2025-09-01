@@ -56,7 +56,7 @@ func TestColorConstants(t *testing.T) {
 func TestLoggerInitialization(t *testing.T) {
 	// Initialize loggers first
 	initLoggers()
-	
+
 	// Test that loggers are not nil
 	assert.NotNil(t, debugLogger, "debugLogger should not be nil")
 	assert.NotNil(t, infoLogger, "infoLogger should not be nil")

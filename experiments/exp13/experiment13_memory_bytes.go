@@ -26,10 +26,10 @@ import (
 
 func main() {
 	fmt.Println("=== Experiment 12: Memory Bytes Processing ===")
-	
+
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
-	
+
 	// Load PDF files into memory as bytes
 	fmt.Println("Loading Doc_A.pdf into memory...")
 	bytesA, err := ioutil.ReadFile("Doc_A.pdf")
@@ -37,14 +37,14 @@ func main() {
 		log.Fatalf("Error reading Doc_A.pdf: %v", err)
 	}
 	fmt.Printf("Doc_A loaded: %d bytes\n", len(bytesA))
-	
+
 	fmt.Println("Loading Doc_B.pdf into memory...")
 	bytesB, err := ioutil.ReadFile("Doc_B.pdf")
 	if err != nil {
 		log.Fatalf("Error reading Doc_B.pdf: %v", err)
 	}
 	fmt.Printf("Doc_B loaded: %d bytes\n", len(bytesB))
-	
+
 	// Try to create contexts from byte arrays
 	fmt.Println("Creating context from Doc_A bytes...")
 	readerA := bytes.NewReader(bytesA)
@@ -53,7 +53,7 @@ func main() {
 		log.Fatalf("Error creating context from Doc_A bytes: %v", err)
 	}
 	fmt.Printf("Doc_A context created: %d pages\n", ctxA.PageCount)
-	
+
 	fmt.Println("Creating context from Doc_B bytes...")
 	readerB := bytes.NewReader(bytesB)
 	ctxB, err := api.ReadContext(readerB, conf)
@@ -61,7 +61,7 @@ func main() {
 		log.Fatalf("Error creating context from Doc_B bytes: %v", err)
 	}
 	fmt.Printf("Doc_B context created: %d pages\n", ctxB.PageCount)
-	
+
 	// Try to write context back to bytes
 	fmt.Println("Converting Doc_A context back to bytes...")
 	var bufferA bytes.Buffer
@@ -70,7 +70,7 @@ func main() {
 		log.Fatalf("Error writing Doc_A context to bytes: %v", err)
 	}
 	fmt.Printf("Doc_A context converted: %d bytes\n", bufferA.Len())
-	
+
 	fmt.Println("SUCCESS: Memory bytes processing completed!")
 	fmt.Printf("Original Doc_A: %d bytes, Processed: %d bytes\n", len(bytesA), bufferA.Len())
 	fmt.Printf("Original Doc_B: %d bytes, Context pages: %d\n", len(bytesB), ctxB.PageCount)

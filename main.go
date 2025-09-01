@@ -31,7 +31,7 @@ import (
 func main() {
 	initializeApplication()
 	setupSignalHandling()
-	
+
 	if err := setupLockFile(); err != nil {
 		handleLockFileError(err)
 	}
@@ -50,7 +50,7 @@ func main() {
 		// Fallback to original interface
 		runMainLoop()
 	}
-	
+
 	cleanup()
 }
 
@@ -58,16 +58,16 @@ func main() {
 func runTUI() error {
 	// Create file operations bridge
 	bridge := ui.NewFileOpsBridge(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR)
-	
+
 	// Set function pointers to existing operations
 	bridge.SetFunctions(
 		func(dir string) ([]string, error) { return findPDFFiles() }, // Wrapper for existing function
 		countPDFFiles,
 		getHumanReadableSize,
 		func() error { processSingleFileOperation(); return nil }, // Wrapper for void function
-		func() error { processMergeOperation(); return nil },       // Wrapper for void function
+		func() error { processMergeOperation(); return nil },      // Wrapper for void function
 	)
-	
+
 	// Create and run enhanced menu (no complex TUI)
 	menu := ui.NewEnhancedMenu(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR, VERSION, bridge)
 	return menu.Run()
@@ -134,12 +134,12 @@ func runMainLoop() {
 func processUserMenu() {
 	displayApplicationStatus()
 	choice, err := getUserChoice()
-	
+
 	if err != nil {
 		handleInputError(err)
 		return
 	}
-	
+
 	executeUserChoice(choice)
 }
 
@@ -153,7 +153,7 @@ func displayApplicationStatus() {
 
 // Display menu options
 func displayMenuOptions() {
-	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[D]%sebug, %s[Q]%suit\n", 
+	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[D]%sebug, %s[Q]%suit\n",
 		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
 }
 
@@ -161,12 +161,12 @@ func displayMenuOptions() {
 func getUserChoice() (string, error) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter choice (S/M/H/V/D/Q): ")
-	
+
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		return "", err
 	}
-	
+
 	return strings.TrimSpace(strings.ToUpper(input)), nil
 }
 
@@ -249,7 +249,7 @@ func exitApplication() {
 func showHelp() {
 	fmt.Printf("BlendPDF v%s - A tool for merging PDF files\n\n", VERSION)
 	fmt.Printf("Usage: %s [options] [folder]\n\n", filepath.Base(os.Args[0]))
-	
+
 	showCommandLineOptions()
 	showUsageExamples()
 	showInteractiveOptions()
@@ -292,7 +292,7 @@ func showInteractiveOptions() {
 // Enhanced single file processing with validation
 func processSingleFileWithValidation() {
 	startTime := time.Now()
-	
+
 	files, err := findPDFFiles()
 	if err != nil {
 		printError(fmt.Sprintf("Error finding PDF files: %v", err))
@@ -306,9 +306,9 @@ func processSingleFileWithValidation() {
 
 	file := files[0]
 	filename := filepath.Base(file)
-	
+
 	logDebugOperation("Processing single file", filename)
-	
+
 	if err := validateAndProcessSingleFile(file, filename, startTime); err != nil {
 		handleSingleFileError(file, filename, err)
 	}
@@ -319,7 +319,7 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 	if err := validatePDFFile(file); err != nil {
 		return fmt.Errorf("validation failed: %v", err)
 	}
-	
+
 	if VERBOSE {
 		filesize := getHumanReadableSize(file)
 		fmt.Printf("Processing: %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
@@ -327,7 +327,7 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 
 	fileSize := getFileSize(file)
 	destFile := filepath.Join(OUTPUT, filename)
-	
+
 	if err := moveFileWithRecovery(file, destFile); err != nil {
 		return fmt.Errorf("move failed: %v", err)
 	}
@@ -339,7 +339,7 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 // Handle single file processing errors
 func handleSingleFileError(file, filename string, err error) {
 	printError(fmt.Sprintf("'%s' processing failed: %v", filename, err))
-	
+
 	destFile := filepath.Join(ERROR_DIR, filename)
 	if moveErr := moveFileWithRecovery(file, destFile); moveErr != nil {
 		printError(fmt.Sprintf("Failed to move invalid file to error directory: %v", moveErr))
@@ -355,7 +355,7 @@ func recordSuccessfulOperation(startTime time.Time, filename string, fileSize in
 	duration := time.Since(startTime)
 	COUNTER++
 	printSuccess(fmt.Sprintf("File moved. (%d)", COUNTER))
-	
+
 	logOperation("SINGLE_FILE_MOVE", filename, "", "SUCCESS")
 	logPerformance("SINGLE_FILE_MOVE", duration, fileSize)
 }
@@ -363,7 +363,7 @@ func recordSuccessfulOperation(startTime time.Time, filename string, fileSize in
 // Enhanced merge processing with validation
 func processMergeFilesWithValidation() {
 	startTime := time.Now()
-	
+
 	files, err := findPDFFiles()
 	if err != nil {
 		printError(fmt.Sprintf("Error finding PDF files: %v", err))
@@ -394,11 +394,11 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 	outputFile := createMergeOutputPath(file1, file2)
 
 	processAndMerge(outputFile, file1, file2, 0)
-	
+
 	duration := time.Since(startTime)
 	logOperation("MERGE", filepath.Base(file1), filepath.Base(file2), "COMPLETED")
 	logPerformance("MERGE", duration, totalSize)
-	
+
 	return nil
 }
 
@@ -407,11 +407,11 @@ func validateBothPDFs(file1, file2 string) error {
 	if err := validatePDFFile(file1); err != nil {
 		return fmt.Errorf("first PDF '%s' is invalid: %v", filepath.Base(file1), err)
 	}
-	
+
 	if err := validatePDFFile(file2); err != nil {
 		return fmt.Errorf("second PDF '%s' is invalid: %v", filepath.Base(file2), err)
 	}
-	
+
 	return nil
 }
 
@@ -419,8 +419,8 @@ func validateBothPDFs(file1, file2 string) error {
 func displayMergeInfo(file1, file2 string) {
 	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
 	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
-	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n", 
-		BLUE, filepath.Base(file1), NC, 
+	fmt.Printf("Merging: %s%s%s %s%s%s -> %s%s%s\n",
+		BLUE, filepath.Base(file1), NC,
 		BLUE, filepath.Base(file2), NC,
 		GREEN, name1+"-"+name2+".pdf", NC)
 

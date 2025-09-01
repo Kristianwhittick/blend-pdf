@@ -33,7 +33,7 @@ func main() {
 	}
 
 	experiment := os.Args[1]
-	
+
 	var cmd *exec.Cmd
 	switch experiment {
 	case "01":
@@ -84,7 +84,7 @@ func main() {
 		fmt.Printf("Unknown experiment: %s\n", experiment)
 		return
 	}
-	
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err := cmd.Run()

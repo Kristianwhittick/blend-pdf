@@ -25,10 +25,10 @@ func TestParseArgs(t *testing.T) {
 			// Save original os.Args
 			originalArgs := os.Args
 			defer func() { os.Args = originalArgs }()
-			
+
 			// Set test args
 			os.Args = tt.args
-			
+
 			// Test that parseArgs doesn't panic
 			assert.NotPanics(t, func() {
 				folder, err := parseArgs()
@@ -84,7 +84,7 @@ func TestNormalizeDirectoryPath(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := normalizeDirectoryPath(tt.input)
 			assert.NotEmpty(t, result, "Normalized path should not be empty")
-			
+
 			for _, expected := range tt.contains {
 				assert.Contains(t, result, expected, "Result should contain expected substring")
 			}
@@ -94,7 +94,7 @@ func TestNormalizeDirectoryPath(t *testing.T) {
 
 func TestSetupLock(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
@@ -105,17 +105,17 @@ func TestSetupLock(t *testing.T) {
 		os.Args = originalArgs
 		cleanupLock() // Ensure cleanup
 	}()
-	
+
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
 	os.Args = []string{"blendpdf.test", tempDir}
-	
+
 	// Test lock setup
 	err := setupLock()
 	assert.NoError(t, err, "setupLock should succeed")
-	
+
 	// Verify lock file was created
 	assert.NotEmpty(t, LOCKFILE, "LOCKFILE should be set")
 	assert.FileExists(t, LOCKFILE, "Lock file should exist")
@@ -123,7 +123,7 @@ func TestSetupLock(t *testing.T) {
 
 func TestSetupLockAlreadyExists(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
@@ -134,25 +134,25 @@ func TestSetupLockAlreadyExists(t *testing.T) {
 		os.Args = originalArgs
 		cleanupLock() // Ensure cleanup
 	}()
-	
+
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
 	os.Args = []string{"blendpdf.test", tempDir}
-	
+
 	// Create first lock
 	err := setupLock()
 	assert.NoError(t, err)
-	
+
 	// Save the first lock file path
 	firstLockFile := LOCKFILE
-	
+
 	// Try to create second lock (should fail)
 	err = setupLock()
 	assert.Error(t, err, "Second setupLock should fail")
 	assert.Contains(t, strings.ToLower(err.Error()), "already running", "Error should mention already running")
-	
+
 	// Clean up the first lock
 	LOCKFILE = firstLockFile
 	cleanupLock()
@@ -160,7 +160,7 @@ func TestSetupLockAlreadyExists(t *testing.T) {
 
 func TestCleanupLock(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	// Save original global variables and os.Args
 	originalFolder := FOLDER
 	originalLockfile := LOCKFILE
@@ -170,30 +170,30 @@ func TestCleanupLock(t *testing.T) {
 		LOCKFILE = originalLockfile
 		os.Args = originalArgs
 	}()
-	
+
 	// Set up test environment with unique directory
 	FOLDER = tempDir
 	LOCKFILE = "" // Reset
 	// Set os.Args to use our temp directory
 	os.Args = []string{"blendpdf.test", tempDir}
-	
+
 	// Create lock file
 	err := setupLock()
 	assert.NoError(t, err)
-	
+
 	// Verify it exists
 	assert.FileExists(t, LOCKFILE)
-	
+
 	// Clean up
 	cleanupLock()
-	
+
 	// Verify it's gone
 	assert.NoFileExists(t, LOCKFILE, "Lock file should be removed")
 }
 
 func TestValidatePDFFile(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	tests := []struct {
 		name      string
 		filename  string
@@ -234,7 +234,7 @@ func TestValidatePDFFile(t *testing.T) {
 			} else {
 				filePath = filepath.Join(tempDir, tt.filename)
 			}
-			
+
 			err := validatePDFFile(filePath)
 			if tt.shouldErr {
 				assert.Error(t, err)
@@ -247,29 +247,29 @@ func TestValidatePDFFile(t *testing.T) {
 
 func TestMoveFileWithRecovery(t *testing.T) {
 	tempDir := t.TempDir()
-	
+
 	// Create source file
 	sourceFile := filepath.Join(tempDir, "test.pdf")
 	err := os.WriteFile(sourceFile, []byte("test content"), 0644)
 	assert.NoError(t, err)
-	
+
 	// Create destination directory
 	destDir := filepath.Join(tempDir, "destination")
 	err = os.MkdirAll(destDir, 0755)
 	assert.NoError(t, err)
-	
+
 	destFile := filepath.Join(destDir, "test.pdf")
-	
+
 	// Move file
 	err = moveFileWithRecovery(sourceFile, destFile)
 	assert.NoError(t, err)
-	
+
 	// Verify source file is gone
 	assert.NoFileExists(t, sourceFile, "Source file should be removed")
-	
+
 	// Verify destination file exists
 	assert.FileExists(t, destFile, "Destination file should exist")
-	
+
 	// Verify content
 	content, err := os.ReadFile(destFile)
 	assert.NoError(t, err)
@@ -281,7 +281,7 @@ func TestMoveFileWithRecoveryNonExistentSource(t *testing.T) {
 	destDir := filepath.Join(tempDir, "destination")
 	err := os.MkdirAll(destDir, 0755)
 	assert.NoError(t, err)
-	
+
 	err = moveFileWithRecovery("/non/existent/file.pdf", filepath.Join(destDir, "test.pdf"))
 	assert.Error(t, err)
 }
@@ -290,11 +290,11 @@ func TestEnableDebugMode(t *testing.T) {
 	// Save original state
 	originalDebug := DEBUG
 	originalVerbose := VERBOSE
-	defer func() { 
+	defer func() {
 		DEBUG = originalDebug
 		VERBOSE = originalVerbose
 	}()
-	
+
 	DEBUG = false
 	VERBOSE = false
 	enableDebugMode()

@@ -24,33 +24,33 @@ import (
 
 func main() {
 	fmt.Println("=== Experiment 03: Extract Single Page ===")
-	
+
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
-	
+
 	// Extract page 1 from Doc_A.pdf
 	fmt.Println("Extracting page 1 from Doc_A.pdf...")
-	
+
 	pageSelection, err := api.ParsePageSelection("1")
 	if err != nil {
 		log.Fatalf("Failed to parse page selection: %v", err)
 	}
-	
+
 	err = api.TrimFile("Doc_A.pdf", "output/experiment03_single_page.pdf", pageSelection, conf)
 	if err != nil {
 		log.Fatalf("Failed to extract page: %v", err)
 	}
-	
+
 	fmt.Println("Successfully extracted page 1 to output/experiment03_single_page.pdf")
-	
+
 	// Verify the result
 	pageCount, err := api.PageCountFile("output/experiment03_single_page.pdf")
 	if err != nil {
 		log.Fatalf("Failed to get page count of result: %v", err)
 	}
-	
+
 	fmt.Printf("Result file has %d page(s)\n", pageCount)
-	
+
 	if pageCount == 1 {
 		fmt.Println("✅ Test 03 PASSED - Single page extracted successfully!")
 	} else {

@@ -41,14 +41,14 @@ func setupLock() error {
 // Determine watch directory from command line arguments
 func determineWatchDirectory() string {
 	watchDir := "." // Default to current directory
-	
+
 	if len(os.Args) > 1 {
 		lastArg := os.Args[len(os.Args)-1]
 		if !strings.HasPrefix(lastArg, "-") {
 			watchDir = lastArg
 		}
 	}
-	
+
 	return watchDir
 }
 
@@ -57,7 +57,7 @@ func generateLockFileName(watchDir string) string {
 	normalizedPath := normalizeDirectoryPath(watchDir)
 	hashStr := generateDirectoryHash(normalizedPath)
 	lockFileName := fmt.Sprintf("blendpdf-%s.lock", hashStr)
-	
+
 	return createPlatformSpecificLockPath(watchDir, lockFileName)
 }
 
@@ -67,7 +67,7 @@ func normalizeDirectoryPath(watchDir string) string {
 	if err != nil {
 		absPath = watchDir // Fallback to original path
 	}
-	
+
 	cleanPath := filepath.Clean(absPath)
 	return strings.ToLower(filepath.ToSlash(cleanPath))
 }
@@ -111,12 +111,12 @@ func createLockFile() error {
 		return fmt.Errorf("failed to create lock file: %v", err)
 	}
 	defer file.Close()
-	
+
 	if err := writePIDToLockFile(file); err != nil {
 		cleanupFailedLockFile()
 		return err
 	}
-	
+
 	logLockFileCreation()
 	return nil
 }
@@ -149,7 +149,7 @@ func cleanupLock() {
 	if LOCKFILE == "" {
 		return
 	}
-	
+
 	if err := os.Remove(LOCKFILE); err != nil {
 		if VERBOSE {
 			printWarning(fmt.Sprintf("Failed to remove lock file: %v", err))
@@ -165,13 +165,13 @@ func cleanupLock() {
 func parseArgs() (string, error) {
 	args := os.Args[1:]
 	folder := ""
-	
+
 	for i, arg := range args {
 		if err := processArgument(arg, args, i, &folder); err != nil {
 			return "", err
 		}
 	}
-	
+
 	return resolveFolderPath(folder)
 }
 
@@ -218,11 +218,11 @@ func handleNonFlagArgument(arg string, args []string, index int, folder *string)
 	if strings.HasPrefix(arg, "-") {
 		return fmt.Errorf("unknown flag: %s", arg)
 	}
-	
+
 	if *folder != "" {
 		return fmt.Errorf("multiple folder paths specified")
 	}
-	
+
 	*folder = arg
 	return nil
 }
@@ -232,12 +232,12 @@ func resolveFolderPath(folder string) (string, error) {
 	if folder == "" {
 		return getCurrentDirectory()
 	}
-	
+
 	absFolder, err := filepath.Abs(folder)
 	if err != nil {
 		return "", fmt.Errorf("failed to resolve absolute path for '%s': %v", folder, err)
 	}
-	
+
 	logParsedArguments(absFolder)
 	return absFolder, nil
 }
@@ -265,15 +265,15 @@ func validatePDFFile(file string) error {
 	if err := checkFileExists(file); err != nil {
 		return err
 	}
-	
+
 	if err := checkFileProperties(file); err != nil {
 		return err
 	}
-	
+
 	if err := checkPDFStructure(file); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -286,7 +286,7 @@ func checkFileExists(file string) error {
 	if err != nil {
 		return fmt.Errorf("cannot access file: %v", err)
 	}
-	
+
 	// Store file info for further checks
 	return checkFileType(info)
 }
@@ -296,11 +296,11 @@ func checkFileType(info os.FileInfo) error {
 	if !info.Mode().IsRegular() {
 		return fmt.Errorf("not a regular file")
 	}
-	
+
 	if info.Size() == 0 {
 		return fmt.Errorf("file is empty")
 	}
-	
+
 	return nil
 }
 
@@ -327,7 +327,7 @@ func moveFileWithRecovery(src, dst string) error {
 	if err := ensureDestinationDirectory(dst); err != nil {
 		return err
 	}
-	
+
 	dst = resolveDestinationConflicts(dst)
 	return performFileMove(src, dst)
 }
@@ -346,7 +346,7 @@ func resolveDestinationConflicts(dst string) string {
 	if _, err := os.Stat(dst); os.IsNotExist(err) {
 		return dst // No conflict
 	}
-	
+
 	return generateUniqueFileName(dst)
 }
 
@@ -355,7 +355,7 @@ func generateUniqueFileName(dst string) string {
 	dstDir := filepath.Dir(dst)
 	base := strings.TrimSuffix(filepath.Base(dst), filepath.Ext(dst))
 	ext := filepath.Ext(dst)
-	
+
 	for counter := 1; counter <= 1000; counter++ {
 		newDst := filepath.Join(dstDir, fmt.Sprintf("%s_%d%s", base, counter, ext))
 		if _, err := os.Stat(newDst); os.IsNotExist(err) {
@@ -365,7 +365,7 @@ func generateUniqueFileName(dst string) string {
 			return newDst
 		}
 	}
-	
+
 	// If we can't find a unique name after 1000 attempts, use original
 	return dst
 }
@@ -384,11 +384,11 @@ func attemptCopyAndDelete(src, dst string, originalErr error) error {
 	if copyErr := copyFile(src, dst); copyErr != nil {
 		return fmt.Errorf("move failed: %v, copy fallback failed: %v", originalErr, copyErr)
 	}
-	
+
 	if deleteErr := os.Remove(src); deleteErr != nil {
 		printWarning(fmt.Sprintf("Original file not deleted: %v", deleteErr))
 	}
-	
+
 	return nil
 }
 
@@ -397,7 +397,7 @@ func copyFile(src, dst string) error {
 	if err := validateFilePaths(src, dst); err != nil {
 		return err
 	}
-	
+
 	return performFileCopy(src, dst)
 }
 
@@ -405,11 +405,11 @@ func copyFile(src, dst string) error {
 func validateFilePaths(src, dst string) error {
 	cleanSrc := filepath.Clean(src)
 	cleanDst := filepath.Clean(dst)
-	
+
 	if strings.Contains(cleanSrc, "..") || strings.Contains(cleanDst, "..") {
 		return fmt.Errorf("invalid file path: directory traversal not allowed")
 	}
-	
+
 	return nil
 }
 
@@ -420,13 +420,13 @@ func performFileCopy(src, dst string) error {
 		return err
 	}
 	defer sourceFile.Close()
-	
+
 	destFile, err := os.Create(dst) // #nosec G304 - path validated above
 	if err != nil {
 		return err
 	}
 	defer destFile.Close()
-	
+
 	_, err = destFile.ReadFrom(sourceFile)
 	return err
 }

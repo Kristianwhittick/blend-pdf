@@ -25,10 +25,10 @@ import (
 
 func main() {
 	fmt.Println("=== Experiment 10: Memory Page Extraction (Simple) ===")
-	
+
 	// Create default configuration
 	conf := model.NewDefaultConfiguration()
-	
+
 	// Load Doc_A.pdf into memory context
 	fmt.Println("Loading Doc_A.pdf into memory context...")
 	ctxA, err := api.ReadContextFile("Doc_A.pdf")
@@ -36,7 +36,7 @@ func main() {
 		log.Fatalf("Error loading Doc_A.pdf: %v", err)
 	}
 	fmt.Printf("Doc_A loaded: %d pages\n", ctxA.PageCount)
-	
+
 	// Try to write the context back to a file (this should work)
 	fmt.Println("Testing WriteContextFile...")
 	err = api.WriteContextFile(ctxA, "output/experiment10_context_copy.pdf")
@@ -44,7 +44,7 @@ func main() {
 		log.Printf("WriteContextFile error: %v", err)
 	} else {
 		fmt.Println("Successfully wrote context to output/experiment10_context_copy.pdf")
-		
+
 		// Verify the copy
 		pageCount, err := api.PageCountFile("output/experiment10_context_copy.pdf")
 		if err != nil {
@@ -53,10 +53,10 @@ func main() {
 			fmt.Printf("Copied file has %d pages\n", pageCount)
 		}
 	}
-	
+
 	// Try to use TrimFile with a context-based approach
 	fmt.Println("\nTesting extraction using file operations on context...")
-	
+
 	// First, write context to a temp file
 	tempFile := "temp_doc_a.pdf"
 	err = api.WriteContextFile(ctxA, tempFile)
@@ -64,20 +64,20 @@ func main() {
 		log.Printf("Error writing temp file: %v", err)
 		return
 	}
-	
+
 	// Extract page 1 using TrimFile
 	pageSelection, err := api.ParsePageSelection("1")
 	if err != nil {
 		log.Printf("Error parsing page selection: %v", err)
 		return
 	}
-	
+
 	err = api.TrimFile(tempFile, "output/experiment10_extracted_page1.pdf", pageSelection, conf)
 	if err != nil {
 		log.Printf("TrimFile error: %v", err)
 	} else {
 		fmt.Println("Successfully extracted page 1 to output/experiment10_extracted_page1.pdf")
-		
+
 		// Load the extracted page back into context
 		ctxExtracted, err := api.ReadContextFile("output/experiment10_extracted_page1.pdf")
 		if err != nil {
@@ -86,9 +86,9 @@ func main() {
 			fmt.Printf("Extracted page context has %d pages\n", ctxExtracted.PageCount)
 		}
 	}
-	
+
 	// Clean up temp file
 	os.Remove(tempFile)
-	
+
 	fmt.Println("Experiment 10 completed!")
 }

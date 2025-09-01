@@ -47,7 +47,7 @@ func (m *MinimalTUI) Run() error {
 	if !m.supportsTUI() {
 		return fmt.Errorf("TUI not supported")
 	}
-	
+
 	p := tea.NewProgram(m, tea.WithAltScreen())
 	_, err := p.Run()
 	return err
@@ -65,7 +65,7 @@ func (m *MinimalTUI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.width = msg.Width
 		m.height = msg.Height
 		return m, nil
-		
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q", "Q":
@@ -73,7 +73,7 @@ func (m *MinimalTUI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		}
 	}
-	
+
 	return m, nil
 }
 
@@ -82,24 +82,24 @@ func (m *MinimalTUI) View() string {
 	if m.quitting {
 		return "Goodbye!\n"
 	}
-	
+
 	// Simple bordered interface
 	borderStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("#888888")).
 		Padding(1, 2)
-	
+
 	headerStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#00ADD8")).
 		Bold(true).
 		Align(lipgloss.Center)
-	
+
 	versionStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#0080FF")).
 		Bold(true)
-	
+
 	title := fmt.Sprintf("BlendPDFGo %s", versionStyle.Render("v"+m.version))
-	
+
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		headerStyle.Render(title),
@@ -110,11 +110,11 @@ func (m *MinimalTUI) View() string {
 		"",
 		"Press 'q' or Ctrl+C to quit",
 	)
-	
+
 	if m.width > 0 {
-		return borderStyle.Width(m.width-4).Render(content)
+		return borderStyle.Width(m.width - 4).Render(content)
 	}
-	
+
 	return borderStyle.Render(content)
 }
 
@@ -122,16 +122,16 @@ func (m *MinimalTUI) supportsTUI() bool {
 	if os.Getenv("TERM") == "" {
 		return false
 	}
-	
+
 	if runtime.GOOS == "windows" {
 		if strings.Contains(os.Getenv("PSModulePath"), "WindowsPowerShell") {
 			return false
 		}
 	}
-	
+
 	if os.Getenv("CI") != "" || os.Getenv("GITHUB_ACTIONS") != "" {
 		return false
 	}
-	
+
 	return true
 }

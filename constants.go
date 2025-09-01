@@ -48,7 +48,7 @@ var (
 	VERBOSE  = false
 	DEBUG    = false
 	CONTINUE = true
-	
+
 	// Directory paths
 	FOLDER    = ""
 	ARCHIVE   = ""

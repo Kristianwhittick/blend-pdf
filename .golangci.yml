@@ -1,0 +1,48 @@
+# golangci-lint configuration for BlendPDF
+run:
+  timeout: 5m
+  go: "1.24"
+
+linters:
+  enable:
+    - errcheck
+    - gofmt
+    - goimports
+    - govet
+    - ineffassign
+    - misspell
+    - staticcheck
+    - unused
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: true
+  unused:
+    check-exported: false  # Don't check exported functions
+
+issues:
+  exclude-dirs:
+    - experiments  # Skip experimental code
+  exclude-rules:
+    # Exclude unused functions in main code that are kept for future use
+    - path: "pdfops.go"
+      linters: [unused]
+      text: "func.*is unused"
+    - path: "fileops.go" 
+      linters: [unused]
+      text: "func.*is unused"
+    - path: "ui/"
+      linters: [unused]
+      text: "(var|field|func).*is unused"
+    # Exclude errcheck for test files (they intentionally ignore errors)
+    - path: ".*_test.go"
+      linters: [errcheck]
+    - path: "tests/"
+      linters: [errcheck]
+    # Exclude specific UI error handling (screen clearing can fail)
+    - path: "ui/"
+      linters: [errcheck]
+      text: "Error return value.*cmd.Run.*is not checked"
+  max-issues-per-linter: 0
+  max-same-issues: 0

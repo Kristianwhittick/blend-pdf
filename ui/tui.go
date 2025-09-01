@@ -29,20 +29,20 @@ type FileOperations interface {
 	CountPDFFiles(dir string) int
 	GetHumanReadableSize(filename string) string
 	ProcessSingleFile() (string, error) // Returns operation description
-	ProcessMergeFiles() (string, error)  // Returns operation description
+	ProcessMergeFiles() (string, error) // Returns operation description
 }
 
 // TUI represents the terminal user interface
 type TUI struct {
-	model    Model
-	program  *tea.Program
-	fileOps  FileOperations
+	model   Model
+	program *tea.Program
+	fileOps FileOperations
 }
 
 // NewTUI creates a new TUI instance
 func NewTUI(watchDir, archiveDir, outputDir, errorDir, version string, fileOps FileOperations) *TUI {
 	model := NewModel(watchDir, archiveDir, outputDir, errorDir, version)
-	
+
 	return &TUI{
 		model:   model,
 		fileOps: fileOps,
@@ -55,20 +55,20 @@ func (t *TUI) Run() error {
 	if !t.supportsTUI() {
 		return t.runFallback()
 	}
-	
+
 	// Create a wrapper model that has access to the bridge
 	wrapper := &tuiWrapper{
 		Model:   t.model,
 		fileOps: t.fileOps,
 	}
-	
+
 	// Create Bubble Tea program
 	t.program = tea.NewProgram(
 		wrapper,
 		tea.WithAltScreen(),
 		tea.WithMouseCellMotion(),
 	)
-	
+
 	// Run the program
 	_, err := t.program.Run()
 	return err
@@ -92,21 +92,21 @@ func (w *tuiWrapper) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		w.Width = msg.Width
 		w.Height = msg.Height
 		return w, nil
-		
+
 	case tea.KeyMsg:
 		return w.handleKeyPress(msg)
-		
+
 	case tickMsg:
 		// Update files every second
 		return w, tea.Batch(tickCmd(), w.updateFilesCmd())
-		
+
 	case fileUpdateMsg:
 		w.MainFiles = msg.mainFiles
 		w.ArchiveCount = msg.archiveCount
 		w.OutputCount = msg.outputCount
 		w.ErrorCount = msg.errorCount
 		return w, nil
-		
+
 	case operationCompleteMsg:
 		w.Processing = false
 		if msg.success {
@@ -117,7 +117,7 @@ func (w *tuiWrapper) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		w.AddRecentOp(msg.message)
 		return w, nil
 	}
-	
+
 	return w, nil
 }
 
@@ -125,7 +125,7 @@ func (w *tuiWrapper) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (w *tuiWrapper) updateFilesCmd() tea.Cmd {
 	return func() tea.Msg {
 		var mainFiles []FileInfo
-		
+
 		// Get PDF files from watch directory
 		if files, err := w.fileOps.FindPDFFiles(w.WatchDir); err == nil {
 			for _, file := range files {
@@ -136,7 +136,7 @@ func (w *tuiWrapper) updateFilesCmd() tea.Cmd {
 				})
 			}
 		}
-		
+
 		return fileUpdateMsg{
 			mainFiles:    mainFiles,
 			archiveCount: w.fileOps.CountPDFFiles(w.ArchiveDir),
@@ -151,35 +151,35 @@ func (w *tuiWrapper) handleKeyPress(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "ctrl+c", "q", "Q":
 		w.Quitting = true
 		return w, tea.Quit
-		
+
 	case "s", "S":
 		return w.handleSingleFile()
-		
+
 	case "m", "M":
 		return w.handleMergeFiles()
-		
+
 	case "t", "T":
 		return w.handleToggleMode()
-		
+
 	case "up", "k":
 		if w.SelectionMode == UserSelectMode && w.Cursor > 0 {
 			w.Cursor--
 		}
 		return w, nil
-		
+
 	case "down", "j":
 		if w.SelectionMode == UserSelectMode && w.Cursor < len(w.MainFiles)-1 {
 			w.Cursor++
 		}
 		return w, nil
-		
+
 	case " ":
 		if w.SelectionMode == UserSelectMode && w.Cursor < len(w.MainFiles) {
 			w.MainFiles[w.Cursor].Selected = !w.MainFiles[w.Cursor].Selected
 		}
 		return w, nil
 	}
-	
+
 	return w, nil
 }
 
@@ -188,10 +188,10 @@ func (w *tuiWrapper) handleSingleFile() (tea.Model, tea.Cmd) {
 		w.AddRecentOp("❌ No PDF files found")
 		return w, nil
 	}
-	
+
 	w.Processing = true
 	w.ProgressMsg = "Processing single file..."
-	
+
 	return w, func() tea.Msg {
 		_, err := w.fileOps.ProcessSingleFile()
 		if err != nil {
@@ -213,10 +213,10 @@ func (w *tuiWrapper) handleMergeFiles() (tea.Model, tea.Cmd) {
 		w.AddRecentOp("❌ Need at least 2 files for merge")
 		return w, nil
 	}
-	
+
 	w.Processing = true
 	w.ProgressMsg = fmt.Sprintf("Merging %s and %s...", selectedFiles[0].Name, selectedFiles[1].Name)
-	
+
 	return w, func() tea.Msg {
 		_, err := w.fileOps.ProcessMergeFiles()
 		if err != nil {
@@ -247,7 +247,7 @@ func (w *tuiWrapper) handleToggleMode() (tea.Model, tea.Cmd) {
 			w.MainFiles[i].Selected = false
 		}
 	}
-	
+
 	w.AddRecentOp(fmt.Sprintf("🔄 Switched to %s mode", w.SelectionMode.String()))
 	return w, nil
 }
@@ -258,7 +258,7 @@ func (t *TUI) supportsTUI() bool {
 	if os.Getenv("TERM") == "" {
 		return false
 	}
-	
+
 	// Check for known problematic terminals on Windows
 	if runtime.GOOS == "windows" {
 		// PowerShell 5 and CMD have limited TUI support
@@ -266,12 +266,12 @@ func (t *TUI) supportsTUI() bool {
 			return false
 		}
 	}
-	
+
 	// Check if we're in a CI environment
 	if os.Getenv("CI") != "" || os.Getenv("GITHUB_ACTIONS") != "" {
 		return false
 	}
-	
+
 	return true
 }
 

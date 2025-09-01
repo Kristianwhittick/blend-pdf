@@ -27,25 +27,25 @@ import (
 
 // SimpleTUI provides a basic full-screen interface
 type SimpleTUI struct {
-	watchDir    string
-	archiveDir  string
-	outputDir   string
-	errorDir    string
-	version     string
-	fileOps     FileOperations
-	
+	watchDir   string
+	archiveDir string
+	outputDir  string
+	errorDir   string
+	version    string
+	fileOps    FileOperations
+
 	// State
-	mainFiles   []FileInfo
+	mainFiles    []FileInfo
 	archiveCount int
 	outputCount  int
 	errorCount   int
 	startTime    time.Time
 	successCount int
 	errorCount2  int
-	
+
 	// UI state
-	width  int
-	height int
+	width    int
+	height   int
 	quitting bool
 }
 
@@ -68,7 +68,7 @@ func (s *SimpleTUI) Run() error {
 	if !s.supportsTUI() {
 		return fmt.Errorf("TUI not supported")
 	}
-	
+
 	p := tea.NewProgram(s, tea.WithAltScreen())
 	_, err := p.Run()
 	return err
@@ -87,29 +87,29 @@ func (s *SimpleTUI) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		s.width = msg.Width
 		s.height = msg.Height
 		return s, nil
-		
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q", "Q":
 			s.quitting = true
 			return s, tea.Quit
-			
+
 		case "s", "S":
 			s.handleSingleFile()
 			s.updateFiles()
 			return s, nil
-			
+
 		case "m", "M":
 			s.handleMergeFiles()
 			s.updateFiles()
 			return s, nil
-			
+
 		case "r", "R":
 			s.updateFiles()
 			return s, nil
 		}
 	}
-	
+
 	return s, nil
 }
 
@@ -118,31 +118,31 @@ func (s *SimpleTUI) View() string {
 	if s.quitting {
 		return "Goodbye!\n"
 	}
-	
+
 	// Header with version in border
 	headerStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#00ADD8")).
 		Bold(true).
 		Align(lipgloss.Center)
-	
+
 	versionStyle := lipgloss.NewStyle().
 		Foreground(lipgloss.Color("#0080FF")).
 		Bold(true)
-	
+
 	borderStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("#888888")).
 		Padding(1, 2)
-	
+
 	// Build content
 	title := fmt.Sprintf("BlendPDFGo %s", versionStyle.Render("v"+s.version))
-	
+
 	dirs := fmt.Sprintf("Watch: %s | Archive: %s | Output: %s | Error: %s",
 		s.watchDir, s.archiveDir, s.outputDir, s.errorDir)
-	
+
 	fileCounts := fmt.Sprintf("Files: Main(%d) Archive(%d) Output(%d) Error(%d) | Session: %s",
 		len(s.mainFiles), s.archiveCount, s.outputCount, s.errorCount, s.elapsedTime())
-	
+
 	// Available files
 	filesSection := "Available PDF files:\n"
 	if len(s.mainFiles) == 0 {
@@ -156,14 +156,14 @@ func (s *SimpleTUI) View() string {
 			filesSection += fmt.Sprintf("  %s (%s)\n", file.Name, file.Size)
 		}
 	}
-	
+
 	// Actions
 	actions := "Actions: [S]ingle File  [M]erge PDFs  [R]efresh  [Q]uit"
-	
+
 	// Status
 	status := fmt.Sprintf("Operations: Success(%d) Errors(%d) | Ready for input",
 		s.successCount, s.errorCount2)
-	
+
 	content := lipgloss.JoinVertical(
 		lipgloss.Left,
 		headerStyle.Render(title),
@@ -178,14 +178,14 @@ func (s *SimpleTUI) View() string {
 		"",
 		status,
 	)
-	
-	return borderStyle.Width(s.width-4).Render(content)
+
+	return borderStyle.Width(s.width - 4).Render(content)
 }
 
 // Helper methods
 func (s *SimpleTUI) updateFiles() {
 	var mainFiles []FileInfo
-	
+
 	if files, err := s.fileOps.FindPDFFiles(s.watchDir); err == nil {
 		for _, file := range files {
 			size := s.fileOps.GetHumanReadableSize(file)
@@ -195,7 +195,7 @@ func (s *SimpleTUI) updateFiles() {
 			})
 		}
 	}
-	
+
 	s.mainFiles = mainFiles
 	s.archiveCount = s.fileOps.CountPDFFiles(s.archiveDir)
 	s.outputCount = s.fileOps.CountPDFFiles(s.outputDir)
@@ -206,7 +206,7 @@ func (s *SimpleTUI) handleSingleFile() {
 	if len(s.mainFiles) == 0 {
 		return
 	}
-	
+
 	if _, err := s.fileOps.ProcessSingleFile(); err != nil {
 		s.errorCount2++
 	} else {
@@ -218,7 +218,7 @@ func (s *SimpleTUI) handleMergeFiles() {
 	if len(s.mainFiles) < 2 {
 		return
 	}
-	
+
 	if _, err := s.fileOps.ProcessMergeFiles(); err != nil {
 		s.errorCount2++
 	} else {
@@ -238,16 +238,16 @@ func (s *SimpleTUI) supportsTUI() bool {
 	if os.Getenv("TERM") == "" {
 		return false
 	}
-	
+
 	if runtime.GOOS == "windows" {
 		if strings.Contains(os.Getenv("PSModulePath"), "WindowsPowerShell") {
 			return false
 		}
 	}
-	
+
 	if os.Getenv("CI") != "" || os.Getenv("GITHUB_ACTIONS") != "" {
 		return false
 	}
-	
+
 	return true
 }

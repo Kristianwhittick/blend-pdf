@@ -29,25 +29,25 @@ import (
 
 // EnhancedMenu provides a better-looking menu without complex TUI
 type EnhancedMenu struct {
-	watchDir        string
-	archiveDir      string
-	outputDir       string
-	errorDir        string
-	version         string
-	fileOps         FileOperations
-	scanner         *bufio.Scanner
-	startTime       time.Time
-	successCount    int
-	errorCount      int
-	recentOps       []RecentOperation
-	lastFileCount   int
-	lastUpdateTime  time.Time
-	isProcessing    bool
-	currentOp       string
-	progressStep    int
-	progressTotal   int
-	watcher         *fsnotify.Watcher
-	needsRefresh    bool
+	watchDir       string
+	archiveDir     string
+	outputDir      string
+	errorDir       string
+	version        string
+	fileOps        FileOperations
+	scanner        *bufio.Scanner
+	startTime      time.Time
+	successCount   int
+	errorCount     int
+	recentOps      []RecentOperation
+	lastFileCount  int
+	lastUpdateTime time.Time
+	isProcessing   bool
+	currentOp      string
+	progressStep   int
+	progressTotal  int
+	watcher        *fsnotify.Watcher
+	needsRefresh   bool
 }
 
 // RecentOperation stores detailed operation information
@@ -72,10 +72,10 @@ func NewEnhancedMenu(watchDir, archiveDir, outputDir, errorDir, version string, 
 		recentOps:      make([]RecentOperation, 0, 5),
 		lastUpdateTime: time.Now(),
 	}
-	
+
 	// Initialize file system watcher
 	menu.setupFileWatcher()
-	
+
 	return menu
 }
 
@@ -86,9 +86,9 @@ func (e *EnhancedMenu) setupFileWatcher() {
 		// Fall back to polling if watcher fails
 		return
 	}
-	
+
 	e.watcher = watcher
-	
+
 	// Watch the main directory for PDF file changes
 	err = e.watcher.Add(e.watchDir)
 	if err != nil {
@@ -96,7 +96,7 @@ func (e *EnhancedMenu) setupFileWatcher() {
 		e.watcher = nil
 		return
 	}
-	
+
 	// Start monitoring in background
 	go e.monitorFileChanges()
 }
@@ -106,20 +106,20 @@ func (e *EnhancedMenu) monitorFileChanges() {
 	if e.watcher == nil {
 		return
 	}
-	
+
 	for {
 		select {
 		case event, ok := <-e.watcher.Events:
 			if !ok {
 				return
 			}
-			
+
 			// Only care about PDF files
 			if filepath.Ext(event.Name) == ".pdf" {
 				// Mark that we need to refresh the display
 				e.needsRefresh = true
 			}
-			
+
 		case err, ok := <-e.watcher.Errors:
 			if !ok {
 				return
@@ -134,7 +134,7 @@ func (e *EnhancedMenu) monitorFileChanges() {
 func (e *EnhancedMenu) Run() error {
 	// Ensure watcher is cleaned up on exit
 	defer e.cleanup()
-	
+
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
@@ -142,7 +142,7 @@ func (e *EnhancedMenu) Run() error {
 
 	for {
 		choice := e.getUserChoice()
-		
+
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
 			// Clear and redraw to show only the current invalid choice
@@ -154,7 +154,7 @@ func (e *EnhancedMenu) Run() error {
 			fmt.Print("Enter choice (S/M/H/Q): ")
 			continue
 		}
-		
+
 		if !e.handleChoice(choice) {
 			break
 		}
@@ -292,7 +292,7 @@ func (e *EnhancedMenu) showActionsBar() {
 func (e *EnhancedMenu) getUserChoice() string {
 	// Create a channel to receive input
 	inputChan := make(chan string, 1)
-	
+
 	// Start goroutine to read input
 	go func() {
 		if e.scanner.Scan() {
@@ -301,11 +301,11 @@ func (e *EnhancedMenu) getUserChoice() string {
 			inputChan <- "Q"
 		}
 	}()
-	
+
 	// Check for input or refresh needs every 100ms
 	ticker := time.NewTicker(100 * time.Millisecond)
 	defer ticker.Stop()
-	
+
 	for {
 		select {
 		case input := <-inputChan:
@@ -342,7 +342,7 @@ func (e *EnhancedMenu) handleChoice(choice string) bool {
 func (e *EnhancedMenu) showProgressBar() {
 	// R5.8 - Progress bar replaces status line during operations
 	elapsed := time.Since(e.lastUpdateTime)
-	
+
 	// Create animated progress bar
 	barWidth := 40
 	progress := float64(e.progressStep) / float64(e.progressTotal)
@@ -350,9 +350,9 @@ func (e *EnhancedMenu) showProgressBar() {
 		// Indeterminate progress - use time-based animation
 		progress = float64(int(elapsed.Seconds())%barWidth) / float64(barWidth)
 	}
-	
+
 	filled := int(progress * float64(barWidth))
-	
+
 	fmt.Printf("Processing: %s [", e.currentOp)
 	for i := 0; i < barWidth; i++ {
 		if i < filled {
@@ -364,7 +364,7 @@ func (e *EnhancedMenu) showProgressBar() {
 			fmt.Print("░")
 		}
 	}
-	
+
 	if e.progressTotal > 0 {
 		fmt.Printf("] %d/%d", e.progressStep, e.progressTotal)
 	} else {
@@ -374,7 +374,7 @@ func (e *EnhancedMenu) showProgressBar() {
 
 func (e *EnhancedMenu) showStatusLine(fileCount int) {
 	// R5.7 - Status line with operation counts
-	fmt.Printf("Status: Operations: %d | Errors: %d | Files monitored: %d", 
+	fmt.Printf("Status: Operations: %d | Errors: %d | Files monitored: %d",
 		e.successCount, e.errorCount, fileCount)
 }
 
@@ -403,7 +403,7 @@ func (e *EnhancedMenu) addRecentOperation(description, status, details string) {
 		Status:      status,
 		Details:     details,
 	}
-	
+
 	e.recentOps = append(e.recentOps, operation)
 	if len(e.recentOps) > 5 {
 		e.recentOps = e.recentOps[1:]
@@ -412,21 +412,21 @@ func (e *EnhancedMenu) addRecentOperation(description, status, details string) {
 
 func (e *EnhancedMenu) handleSingleFile() bool {
 	e.setProcessing("Single file processing")
-	
+
 	// Show progress during operation
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
-	
+
 	// Simulate progress steps
 	e.setProgressStep(1, 3)
 	time.Sleep(200 * time.Millisecond) // Brief pause to show progress
-	
+
 	e.clearScreen()
 	e.showHeader()
 	e.setProgressStep(2, 3)
 	e.showStatus()
-	
+
 	if description, err := e.fileOps.ProcessSingleFile(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
 		e.errorCount++
@@ -436,7 +436,7 @@ func (e *EnhancedMenu) handleSingleFile() bool {
 		e.clearScreen()
 		e.showHeader()
 		e.showStatus()
-		
+
 		fmt.Println("✅ Single file processed successfully")
 		e.successCount++
 		e.addRecentOperation("Single file processing", "SUCCESS", description)
@@ -448,22 +448,22 @@ func (e *EnhancedMenu) handleSingleFile() bool {
 
 func (e *EnhancedMenu) handleMergeFiles() bool {
 	e.setProcessing("Merge operation")
-	
+
 	// Show progress during operation
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
-	
+
 	// Simulate progress steps for merge operation
 	e.setProgressStep(1, 4)
 	time.Sleep(200 * time.Millisecond)
-	
+
 	e.clearScreen()
 	e.showHeader()
 	e.setProgressStep(2, 4)
 	e.showStatus()
 	time.Sleep(200 * time.Millisecond)
-	
+
 	e.clearScreen()
 	e.showHeader()
 	e.setProgressStep(3, 4)
@@ -478,7 +478,7 @@ func (e *EnhancedMenu) handleMergeFiles() bool {
 		e.clearScreen()
 		e.showHeader()
 		e.showStatus()
-		
+
 		fmt.Println("✅ Files merged successfully")
 		e.successCount++
 		e.addRecentOperation("Merge operation", "SUCCESS", description)

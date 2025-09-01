@@ -67,7 +67,7 @@ func findPDFFiles() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	sort.Strings(files)
 	return files, nil
 }
@@ -99,22 +99,22 @@ func showFilePreview() {
 	if !VERBOSE {
 		return
 	}
-	
+
 	files, err := findPDFFiles()
 	if err != nil || len(files) == 0 {
 		return
 	}
-	
+
 	displayFileList(files)
 }
 
 // Display list of files with size information
 func displayFileList(files []string) {
 	fmt.Printf("%sAvailable PDF files:%s\n", BLUE, NC)
-	
+
 	maxDisplay := 5
 	displayedCount := displayFiles(files, maxDisplay)
-	
+
 	if len(files) > maxDisplay {
 		remaining := len(files) - displayedCount
 		fmt.Printf("  ... and %d more file(s)\n", remaining)
@@ -129,7 +129,7 @@ func displayFiles(files []string, maxDisplay int) int {
 		if displayed >= maxDisplay {
 			break
 		}
-		
+
 		filename := filepath.Base(file)
 		filesize := getHumanReadableSize(file)
 		fmt.Printf("  %s%s%s (%s)\n", YELLOW, filename, NC, filesize)
@@ -146,7 +146,7 @@ func getHumanReadableSize(filepath string) string {
 	if err != nil {
 		return "unknown"
 	}
-	
+
 	return formatFileSize(info.Size())
 }
 
@@ -157,7 +157,7 @@ func formatFileSize(size int64) string {
 		MB = KB * 1024
 		GB = MB * 1024
 	)
-	
+
 	switch {
 	case size < KB:
 		return fmt.Sprintf("%dB", size)
@@ -181,34 +181,34 @@ func moveProcessedFiles(destination, message string, files ...string) {
 // Process individual move operations
 func processMoveOperations(destination string, files []string) []moveResult {
 	var results []moveResult
-	
+
 	for _, file := range files {
 		if file == "" {
 			continue
 		}
-		
+
 		result := moveResult{
 			filename: filepath.Base(file),
 			success:  false,
 		}
-		
+
 		destFile := filepath.Join(destination, result.filename)
 		if err := moveFileWithRecovery(file, destFile); err != nil {
 			result.error = err
 		} else {
 			result.success = true
 		}
-		
+
 		results = append(results, result)
 	}
-	
+
 	return results
 }
 
 // Handle results of move operations
 func handleMoveResults(results []moveResult, destination, message string) {
 	allMoved := true
-	
+
 	for _, result := range results {
 		if !result.success {
 			printError(fmt.Sprintf("Failed to move %s: %v", result.filename, result.error))
@@ -217,7 +217,7 @@ func handleMoveResults(results []moveResult, destination, message string) {
 			printInfo(fmt.Sprintf("Moved %s to %s", result.filename, filepath.Base(destination)))
 		}
 	}
-	
+
 	updateCountersBasedOnResults(allMoved, destination, message)
 }
 
@@ -252,7 +252,7 @@ func displayOperationCounts() {
 func displayElapsedTime(elapsed time.Duration) {
 	minutes := int(elapsed.Minutes())
 	seconds := int(elapsed.Seconds()) % 60
-	
+
 	if minutes > 0 {
 		fmt.Printf("Time elapsed: %dm %ds\n", minutes, seconds)
 	} else {
@@ -296,7 +296,7 @@ func logOperation(operation, file1, file2, result string) {
 	if !DEBUG {
 		return
 	}
-	
+
 	if file2 != "" {
 		infoLogger.Printf("OPERATION: %s | Files: %s, %s | Result: %s", operation, file1, file2, result)
 	} else {
@@ -307,7 +307,7 @@ func logOperation(operation, file1, file2, result string) {
 func logPerformance(operation string, duration time.Duration, fileSize int64) {
 	if DEBUG && duration.Seconds() > 0 {
 		speed := float64(fileSize) / (1024 * 1024) / duration.Seconds()
-		infoLogger.Printf("PERFORMANCE: %s | Duration: %v | Size: %d bytes | Speed: %.2f MB/s", 
+		infoLogger.Printf("PERFORMANCE: %s | Duration: %v | Size: %d bytes | Speed: %.2f MB/s",
 			operation, duration, fileSize, speed)
 	}
 }

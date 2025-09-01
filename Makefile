@@ -26,7 +26,7 @@ NC := \033[0m
 .DEFAULT_GOAL := help
 
 # Phony targets
-.PHONY: help clean build build-all test lint fmt vet deps check install uninstall release version platforms
+.PHONY: help clean build build-all test lint fmt vet deps check install uninstall release version platforms setup
 
 ## Help target
 help: ## Show this help message
@@ -55,13 +55,13 @@ sync-version: ## Sync version from git tags to constants.go
 	@./scripts/sync-version.sh
 	@echo "$(GREEN)✓ Version sync completed$(NC)"
 
-build: deps sync-version ## Build for current platform
+build: deps sync-version lint ## Build for current platform
 	@echo "$(YELLOW)Building $(APP_NAME) for current platform...$(NC)"
 	@go build $(BUILD_FLAGS) -o $(APP_NAME) .
 	@echo "$(GREEN)✓ Build completed: $(APP_NAME)$(NC)"
 
 ## Build for all platforms
-build-all: clean sync-version ## Build for all supported platforms
+build-all: clean sync-version lint ## Build for all supported platforms
 	@echo "$(YELLOW)Building for all platforms...$(NC)"
 	@./build.sh --all --checksums
 	@echo "$(GREEN)✓ Multi-platform build completed$(NC)"
@@ -100,6 +100,15 @@ deps: ## Download and verify dependencies
 	@go mod download
 	@go mod verify
 	@echo "$(GREEN)✓ Dependencies ready$(NC)"
+
+## Setup development environment
+setup: deps ## Install development tools and git hooks
+	@echo "$(YELLOW)Setting up development environment...$(NC)"
+	@echo "Installing golangci-lint..."
+	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@echo "Installing git hooks..."
+	@./scripts/install-hooks.sh
+	@echo "$(GREEN)✓ Development environment ready$(NC)"
 
 ## Run all checks
 check: fmt vet lint test ## Run all code quality checks

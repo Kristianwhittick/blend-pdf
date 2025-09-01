@@ -50,42 +50,42 @@ type FileInfo struct {
 // Model represents the main TUI model
 type Model struct {
 	// Application state
-	WatchDir     string
-	ArchiveDir   string
-	OutputDir    string
-	ErrorDir     string
-	Version      string
-	
+	WatchDir   string
+	ArchiveDir string
+	OutputDir  string
+	ErrorDir   string
+	Version    string
+
 	// File state
 	MainFiles    []FileInfo
 	ArchiveCount int
 	OutputCount  int
 	ErrorCount   int
-	
+
 	// UI state
 	SelectionMode FileSelectionMode
 	Cursor        int
 	VerboseMode   bool
 	DebugMode     bool
-	
+
 	// Session state
-	SuccessCount  int
-	ErrorCount2   int // Renamed to avoid conflict
-	StartTime     time.Time
-	
+	SuccessCount int
+	ErrorCount2  int // Renamed to avoid conflict
+	StartTime    time.Time
+
 	// Recent operations
-	RecentOps     []string
-	
+	RecentOps []string
+
 	// Terminal dimensions
 	Width  int
 	Height int
-	
+
 	// Operation state
-	Processing    bool
-	ProgressMsg   string
-	
+	Processing  bool
+	ProgressMsg string
+
 	// Quit flag
-	Quitting      bool
+	Quitting bool
 }
 
 // NewModel creates a new TUI model
@@ -165,7 +165,7 @@ func (m Model) SelectedFiles() []FileInfo {
 		}
 		return m.MainFiles
 	}
-	
+
 	// Return selected files for user select mode
 	var selected []FileInfo
 	for _, file := range m.MainFiles {
