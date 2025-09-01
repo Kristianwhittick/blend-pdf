@@ -402,6 +402,7 @@
   - ✅ Removed "Press Enter to continue" prompts for smoother workflow
   - ✅ Removed extra dividing line for cleaner visual flow
   - ✅ True real-time folder monitoring with fsnotify (event-driven vs polling)
+  - ✅ Perfect invalid choice handling with interface redraw (no stacking)
 - **Files Created**: `ui/enhanced_menu.go`, `ui/bridge.go`, plus TUI research files
 - **Dependencies Added**: `github.com/fsnotify/fsnotify v1.9.0` for real-time file system monitoring
 - **Testing**: All tests pass, merge functionality verified (A1, f, A2, 9, A3, M pattern)

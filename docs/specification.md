@@ -47,6 +47,7 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R5.8** Progress bar replaces status line during operations
 - **R5.9** Real-time updates without user input (file monitoring)
 - **R5.10** Graceful fallback to basic interface on legacy terminals (PowerShell 5, CMD)
+- **R5.11** Invalid choice handling with interface redraw to prevent stacking of error messages
 
 ### R5A. File Selection Mode Requirements
 - **R5A.1** Alpha Order Mode: Automatically select first two PDFs alphabetically (current behavior)

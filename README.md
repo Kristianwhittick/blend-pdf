@@ -83,6 +83,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **Colored Output**: Color-coded messages for better readability
 - **File Preview**: Show available PDF files with sizes in verbose mode
 - **Session Statistics**: Track successful operations, errors, and elapsed time
+- **Invalid Choice Handling**: Clean error display with interface redraw (no stacking)
 
 ### Advanced Features ✅
 - **Directory-Specific Lock Files**: Prevents multiple instances in same directory, allows multiple instances in different directories
@@ -292,6 +293,15 @@ Enter choice (S/M/H/Q):
 └─────────────────────────────────────────────────────────────────────────────┘
 Processing: Merge operation [████████████████████░░░░░░░░░░░░░░░░░░░░] 2/4
 
+```
+
+### Invalid Choice Handling
+```
+Status: Operations: 0 | Errors: 0 | Files monitored: 0
+
+Enter choice (S/M/H/Q): xyz
+❌ Invalid choice.
+Enter choice (S/M/H/Q): 
 ```
 
 ### Session Statistics
