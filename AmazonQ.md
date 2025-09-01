@@ -142,7 +142,25 @@ This document captures the working processes and methodologies developed during 
 4. **Commit version sync**
 5. **Create git tag** with version and changelog
 6. **Push all changes** and tags
-7. **Verify automated release** via GitHub Actions
+7. **Monitor GitHub Actions** with `gh run list` and `gh run view <run-id>`
+8. **Verify release creation** with `gh release view <tag>`
+9. **Confirm artifacts** are available and checksums generated
+
+### GitHub Actions Monitoring Commands
+```bash
+# Check recent workflow runs
+gh run list --limit 5
+
+# View specific run details
+gh run view <run-id>
+
+# Check release status
+gh release list
+gh release view <tag>
+
+# View workflow logs if needed
+gh run logs <run-id>
+```
 
 ### Critical Release Requirements
 - Git tag must include both CHANGELOG.md entry and VERSION constant update
@@ -206,6 +224,15 @@ This document captures the working processes and methodologies developed during 
 - **Progress Updates**: Regular updates on task completion
 - **Blocker Identification**: Clearly identify what's preventing progress
 - **Success Metrics**: Quantify improvements and achievements
+- **GitHub Actions Monitoring**: Real-time build and release status checking
+
+### GitHub CLI Integration
+- **Installation**: GitHub CLI (gh) installed and authenticated for repository access
+- **Build Monitoring**: `gh run list --limit 5` to check recent workflow runs
+- **Detailed Analysis**: `gh run view <run-id>` for specific run details and logs
+- **Release Verification**: `gh release list` and `gh release view <tag>` for release status
+- **Troubleshooting**: Direct access to workflow logs and error details
+- **Real-time Feedback**: Immediate visibility into CI/CD pipeline status
 
 ### Knowledge Sharing
 - **Document Everything**: Capture decisions, rationale, and lessons learned
@@ -291,7 +318,40 @@ This document captures the working processes and methodologies developed during 
 
 ---
 
-## 12. Future Process Improvements
+## 12. Development Environment Setup
+
+### Required Tools
+- **Go 1.24+**: Primary development language
+- **Git**: Version control with semantic commits
+- **golangci-lint**: Code quality and linting
+- **GitHub CLI (gh)**: Repository and CI/CD monitoring
+
+### Environment Setup Commands
+```bash
+# Install development environment
+make setup                    # Installs golangci-lint and git hooks
+
+# Manual GitHub CLI setup (if needed)
+# Ubuntu/Debian: apt install gh
+# macOS: brew install gh
+# Windows: winget install GitHub.CLI
+gh auth login                 # Authenticate with GitHub
+
+# Verify installation
+gh --version
+golangci-lint --version
+go version
+```
+
+### Development Workflow Integration
+- **Pre-commit Hooks**: Automatic linting and testing before commits
+- **Build Process**: `make build` includes linting validation
+- **Release Monitoring**: Real-time GitHub Actions status checking
+- **Quality Gates**: All checks must pass before code integration
+
+---
+
+## 13. Future Process Improvements
 
 ### Potential Enhancements
 - **Automated Task Status Updates**: Sync task completion with git commits
