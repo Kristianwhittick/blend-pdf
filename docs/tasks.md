@@ -1,6 +1,6 @@
 # BlendPDFGo Tasks
 
-## Task Summary (34 Total)
+## Task Summary (35 Total)
 
 ### ✅ Done (27 Tasks)
 - ✅ Task 1: Fix getPageCount Function
@@ -32,17 +32,24 @@
 ### 🔄 In Progress (0 Tasks)
 *No tasks currently in progress*
 
-### 📋 To Do (5 Tasks)
+### 📋 To Do (6 Tasks)
 - 📋 Task 23: PowerShell 5/CMD Compatibility Implementation - Implement graceful fallback for legacy Windows terminals
 - 📋 Task 28: Undo/Restore Functionality - Ability to reverse last operation (move files back from archive/output)
 - 📋 Task 31: Configuration File Support - Store configuration in blendpdf.json in working directory
 - 📋 Task 32: Archive Single Files - Copy single files to archive before moving to output, with --no-archive toggle
 - 📋 Task 33: Multi Output Folders - Support multiple output destinations with atomic operations and validation
+- 📋 Task 34: Keyboard Shortcuts Enhancement - Add more keyboard shortcuts for faster navigation
 
-### 🗂️ Backlog (4 Tasks)
+### 🗂️ Backlog (10 Tasks)
 - 🔄 Task 14: Implement In-Memory Processing Approach (52.9% memory efficiency) - Ready for implementation
 - 📋 Task 29: Web Interface - Browser-based UI for remote operation
 - 📋 Task 30: Cloud Storage Integration - Direct integration with Google Drive, Dropbox, OneDrive
+- 📋 Task 35: API Endpoints - REST API for programmatic access
+- 📋 Task 36: Email/Notification Support - Send completion notifications (depends on Tasks 29, 35)
+- 📋 Task 37: Error Recovery Enhancement - Auto-retry failed operations with exponential backoff
+- 📋 Task 38: Audit Logging - Detailed operation logs for compliance
+- 📋 Task 39: Plugin System - Allow custom processing plugins
+- 📋 Task 40: Docker Container - Containerised deployment option
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -571,6 +578,24 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - [ ] Failed outputs copied to error folder
   - [ ] Successful destinations not rolled back on partial failure
 
+### Task 34: Keyboard Shortcuts Enhancement
+- **Status**: 📋 TO DO
+- **Requirements**: User Experience Enhancement
+- **Priority**: User Experience Enhancement (Low)
+- **Description**: Add more keyboard shortcuts for faster navigation
+- **Implementation Needed**:
+  - Add F1 key for help display
+  - Add Ctrl+Q for quit
+  - Add Space key for refresh/file monitoring update
+  - Enhanced key handling in UI system
+  - Update help text to show new shortcuts
+- **Acceptance Criteria**:
+  - [ ] F1 key displays help information
+  - [ ] Ctrl+Q exits the program gracefully
+  - [ ] Space key refreshes file counts and display
+  - [ ] All existing shortcuts continue to work
+  - [ ] Help text updated with new shortcuts
+
 ### Maintenance Activities
 - Regular dependency updates
 - Bug fixes and improvements as reported
@@ -683,6 +708,121 @@ perf: Add hybrid in-memory PDF processing
   - OneDrive API integration
   - OAuth 2.0 authentication flow
   - Background sync processes
+
+### Task 35: API Endpoints
+- **Status**: 📋 BACKLOG
+- **Requirements**: Integration & Automation Enhancement
+- **Priority**: Integration Enhancement (Medium)
+- **Description**: REST API for programmatic access
+- **Benefits**: Integration with other tools and workflows
+- **Implementation Needed**:
+  - HTTP API with JSON responses
+  - Authentication and authorisation
+  - File upload/download endpoints
+  - Operation status tracking
+  - API documentation
+- **Technical Requirements**:
+  - Go HTTP server with REST endpoints
+  - JSON request/response handling
+  - File handling for uploads/downloads
+  - Session management
+  - Error handling and status codes
+
+### Task 36: Email/Notification Support
+- **Status**: 📋 BACKLOG
+- **Requirements**: Integration & Automation Enhancement
+- **Priority**: Integration Enhancement (Low)
+- **Description**: Send completion notifications or email merged PDFs
+- **Dependencies**: Tasks 29 (Web Interface), 35 (API Endpoints)
+- **Benefits**: Automated delivery of processed documents
+- **Implementation Needed**:
+  - SMTP integration for email notifications
+  - Template system for notification messages
+  - Attachment handling for PDF delivery
+  - Configuration for email settings
+  - Notification preferences management
+- **Technical Requirements**:
+  - SMTP client implementation
+  - Email template engine
+  - File attachment handling
+  - Configuration management
+  - Error handling for delivery failures
+
+### Task 37: Error Recovery Enhancement
+- **Status**: 📋 BACKLOG
+- **Requirements**: Performance & Reliability Enhancement
+- **Priority**: Performance Enhancement (Low)
+- **Description**: Auto-retry failed operations with exponential backoff
+- **Benefits**: Handle temporary file locks, network issues
+- **Implementation Needed**:
+  - Retry logic with configurable attempts
+  - Exponential backoff algorithm
+  - Error classification (retryable vs permanent)
+  - Retry state tracking
+  - Configuration for retry parameters
+- **Technical Requirements**:
+  - Retry mechanism with backoff
+  - Error type classification
+  - State persistence for retries
+  - Configurable retry policies
+  - Logging for retry attempts
+
+### Task 38: Audit Logging
+- **Status**: 📋 BACKLOG
+- **Requirements**: Security & Compliance Enhancement
+- **Priority**: Security Enhancement (Medium)
+- **Description**: Detailed operation logs for compliance
+- **Benefits**: Track all file operations for security/compliance
+- **Implementation Needed**:
+  - Structured logging with rotation
+  - Audit trail for all operations
+  - Log retention policies
+  - Secure log storage
+  - Log analysis and reporting
+- **Technical Requirements**:
+  - Structured logging framework
+  - Log rotation and archival
+  - Secure log file handling
+  - Compliance reporting features
+  - Log integrity verification
+
+### Task 39: Plugin System
+- **Status**: 📋 BACKLOG
+- **Requirements**: Developer Experience Enhancement
+- **Priority**: Extensibility Enhancement (Low)
+- **Description**: Allow custom processing plugins
+- **Benefits**: Extensibility for specific workflows
+- **Implementation Needed**:
+  - Go plugin architecture
+  - Plugin interface definition
+  - Plugin discovery and loading
+  - Plugin configuration management
+  - Plugin lifecycle management
+- **Technical Requirements**:
+  - Plugin interface specification
+  - Dynamic plugin loading
+  - Plugin sandboxing and security
+  - Plugin configuration system
+  - Plugin documentation framework
+
+### Task 40: Docker Container
+- **Status**: 📋 BACKLOG
+- **Requirements**: Deployment Enhancement
+- **Priority**: Deployment Enhancement (Medium)
+- **Description**: Containerised deployment option
+- **Benefits**: Easy deployment and scaling
+- **Implementation Needed**:
+  - Multi-stage Docker build
+  - Container optimisation
+  - Docker Compose configuration
+  - Container registry publishing
+  - Documentation for container deployment
+- **Technical Requirements**:
+  - Dockerfile with multi-stage build
+  - Container image optimisation
+  - Volume mounting for file operations
+  - Environment variable configuration
+  - Container health checks
 
 ### Future Enhancement Ideas (On Hold)
 - Batch processing capabilities
