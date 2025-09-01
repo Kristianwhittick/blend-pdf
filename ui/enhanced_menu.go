@@ -137,20 +137,25 @@ func (e *EnhancedMenu) Run() error {
 	
 	e.clearScreen()
 	e.showHeader()
+	e.showStatus()
 
 	for {
-		e.showStatus()
-
 		choice := e.getUserChoice()
+		
+		// Handle invalid choices by continuing the loop
+		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
+			fmt.Println("❌ Invalid choice.")
+			continue
+		}
+		
 		if !e.handleChoice(choice) {
 			break
 		}
 
-		// Only clear screen for valid operations, not invalid choices
-		if choice == "S" || choice == "M" || choice == "H" {
-			e.clearScreen()
-			e.showHeader()
-		}
+		// Refresh full interface for valid operations
+		e.clearScreen()
+		e.showHeader()
+		e.showStatus()
 	}
 
 	e.showStatistics()
@@ -324,10 +329,8 @@ func (e *EnhancedMenu) handleChoice(choice string) bool {
 		return true
 	case "Q":
 		return false
-	default:
-		fmt.Println("❌ Invalid choice.")
-		return true
 	}
+	return true
 }
 
 func (e *EnhancedMenu) showProgressBar() {
