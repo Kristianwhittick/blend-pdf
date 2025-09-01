@@ -146,8 +146,11 @@ func (e *EnhancedMenu) Run() error {
 			break
 		}
 
-		e.clearScreen()
-		e.showHeader()
+		// Only clear screen for valid operations, not invalid choices
+		if choice == "S" || choice == "M" || choice == "H" {
+			e.clearScreen()
+			e.showHeader()
+		}
 	}
 
 	e.showStatistics()
@@ -322,9 +325,7 @@ func (e *EnhancedMenu) handleChoice(choice string) bool {
 	case "Q":
 		return false
 	default:
-		fmt.Println("❌ Invalid choice. Please enter S, M, H, or Q.")
-		fmt.Println("Press Enter to continue...")
-		e.scanner.Scan()
+		fmt.Println("❌ Invalid choice.")
 		return true
 	}
 }
