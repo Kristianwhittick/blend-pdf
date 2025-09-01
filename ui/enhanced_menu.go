@@ -140,24 +140,20 @@ func (e *EnhancedMenu) Run() error {
 	e.showStatus()
 	fmt.Print("Enter choice (S/M/H/Q): ")
 
-	showingError := false
-	
 	for {
 		choice := e.getUserChoice()
 		
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
-			if !showingError {
-				fmt.Print(choice)
-				fmt.Println()
-				fmt.Println("❌ Invalid choice.")
-				showingError = true
-			}
+			// Clear and redraw to show only the current invalid choice
+			e.clearScreen()
+			e.showHeader()
+			e.showStatus()
+			fmt.Printf("Enter choice (S/M/H/Q): %s\n", choice)
+			fmt.Println("❌ Invalid choice.")
 			fmt.Print("Enter choice (S/M/H/Q): ")
 			continue
 		}
-		
-		showingError = false
 		
 		if !e.handleChoice(choice) {
 			break
