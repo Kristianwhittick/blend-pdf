@@ -316,3 +316,6 @@ BlendPDFGo is designed to solve the specific problem of non-duplex scanner workf
 
 #### Digital Signature Preservation
 **Rejected**: Out of scope, as this is not possible with non-duplex scanned documents.
+
+#### Health Monitoring/System Metrics
+**Rejected**: Not appropriate for interactive CLI tool. BlendPDFGo processes individual files with immediate user feedback. Health monitoring is designed for long-running services, batch processing systems, or unattended operations. Current session statistics already provide sufficient visibility for this application's scope.
