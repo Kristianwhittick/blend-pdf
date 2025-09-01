@@ -144,6 +144,8 @@ func (e *EnhancedMenu) Run() error {
 		
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
+			// Clear the previous line and show error
+			fmt.Print("\033[1A\033[2K") // Move up one line and clear it
 			fmt.Println("❌ Invalid choice.")
 			continue
 		}
