@@ -1,4 +1,4 @@
-# BlendPDFGo Specification
+# BlendPDF Specification
 
 ## Overview
 A tool for merging PDF files with special handling for double-sided scanning workflows.
@@ -277,7 +277,7 @@ All requirements R1.1 through R16.9 have been successfully implemented and teste
 ## Section 5: Design Decisions and Rejected Features
 
 ### Core Design Philosophy
-BlendPDFGo is designed to solve the specific problem of non-duplex scanner workflows with minimal changes to PDF files. This focused approach drives many design decisions.
+BlendPDF is designed to solve the specific problem of non-duplex scanner workflows with minimal changes to PDF files. This focused approach drives many design decisions.
 
 ### Rejected Features and Rationale
 
@@ -318,4 +318,4 @@ BlendPDFGo is designed to solve the specific problem of non-duplex scanner workf
 **Rejected**: Out of scope, as this is not possible with non-duplex scanned documents.
 
 #### Health Monitoring/System Metrics
-**Rejected**: Not appropriate for interactive CLI tool. BlendPDFGo processes individual files with immediate user feedback. Health monitoring is designed for long-running services, batch processing systems, or unattended operations. Current session statistics already provide sufficient visibility for this application's scope.
+**Rejected**: Not appropriate for interactive CLI tool. BlendPDF processes individual files with immediate user feedback. Health monitoring is designed for long-running services, batch processing systems, or unattended operations. Current session statistics already provide sufficient visibility for this application's scope.
