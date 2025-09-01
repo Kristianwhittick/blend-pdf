@@ -1,6 +1,6 @@
 # BlendPDFGo Tasks
 
-## Task Summary (28 Total)
+## Task Summary (31 Total)
 
 ### ✅ Done (27 Tasks)
 - ✅ Task 1: Fix getPageCount Function
@@ -32,11 +32,14 @@
 ### 🔄 In Progress (0 Tasks)
 *No tasks currently in progress*
 
-### 📋 To Do (1 Task)
+### 📋 To Do (2 Tasks)
 - 📋 Task 23: PowerShell 5/CMD Compatibility Implementation - Implement graceful fallback for legacy Windows terminals
+- 📋 Task 28: Undo/Restore Functionality - Ability to reverse last operation (move files back from archive/output)
 
-### 🗂️ Backlog (1 Task)
+### 🗂️ Backlog (4 Tasks)
 - 🔄 Task 14: Implement In-Memory Processing Approach (52.9% memory efficiency) - Ready for implementation
+- 📋 Task 29: Web Interface - Browser-based UI for remote operation
+- 📋 Task 30: Cloud Storage Integration - Direct integration with Google Drive, Dropbox, OneDrive
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -472,6 +475,24 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - [ ] Automatic detection and fallback to appropriate interface
   - [ ] All core operations available in fallback mode
 
+### Task 28: Undo/Restore Functionality
+- **Status**: 📋 TO DO
+- **Requirements**: User Experience Enhancement
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Ability to reverse last operation (move files back from archive/output)
+- **Implementation Needed**:
+  - Track last operation details (source files, destination, operation type)
+  - Implement restore commands for single file moves and merge operations
+  - Add [U]ndo option to main menu
+  - Validate files still exist before restore attempt
+  - Update session statistics after restore operations
+- **Acceptance Criteria**:
+  - [ ] Can undo last single file move (move from output back to main)
+  - [ ] Can undo last merge operation (move files from archive back to main, remove merged output)
+  - [ ] Clear undo history after successful undo operation
+  - [ ] Show appropriate messages when undo is not available
+  - [ ] Maintain file integrity during restore operations
+
 ### Maintenance Activities
 - Regular dependency updates
 - Bug fixes and improvements as reported
@@ -546,6 +567,44 @@ perf: Add hybrid in-memory PDF processing
 - Implement graceful handling of extraction failures
 - Achieve ~50% memory efficiency vs original approach
 ```
+
+### Task 29: Web Interface
+- **Status**: 📋 BACKLOG
+- **Requirements**: Integration & Automation Enhancement
+- **Priority**: User Experience Enhancement (Medium)
+- **Description**: Browser-based UI for remote operation
+- **Benefits**: Access from any device, team collaboration
+- **Implementation Needed**:
+  - HTTP server with file upload/download capability
+  - Web-based file management interface
+  - Real-time operation status updates
+  - Session management for multiple users
+  - Responsive design for mobile/tablet access
+- **Technical Requirements**:
+  - Go HTTP server with static file serving
+  - WebSocket for real-time updates
+  - File upload handling with progress bars
+  - Authentication and session management
+  - Cross-platform deployment
+
+### Task 30: Cloud Storage Integration
+- **Status**: 📋 BACKLOG
+- **Requirements**: Integration & Automation Enhancement
+- **Priority**: Integration Enhancement (Low)
+- **Description**: Direct integration with Google Drive, Dropbox, OneDrive
+- **Benefits**: Seamless cloud workflow, automatic backup
+- **Implementation Needed**:
+  - OAuth integration for cloud providers
+  - Direct file upload/download from cloud storage
+  - Automatic sync of processed files
+  - Cloud folder monitoring
+  - Conflict resolution for duplicate files
+- **Technical Requirements**:
+  - Google Drive API integration
+  - Dropbox API integration
+  - OneDrive API integration
+  - OAuth 2.0 authentication flow
+  - Background sync processes
 
 ### Future Enhancement Ideas (On Hold)
 - Configuration file support
