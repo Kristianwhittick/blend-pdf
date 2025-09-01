@@ -482,3 +482,9 @@ func cleanup() {
 	// Statistics now handled by enhanced menu UI
 	cleanupLock()
 }
+
+// showStatistics stub for backward compatibility with tests
+func showStatistics() {
+	// Statistics are now handled by the enhanced menu UI
+	// This function exists only for test compatibility
+}

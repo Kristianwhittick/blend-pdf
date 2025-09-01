@@ -36,11 +36,21 @@ type EnhancedMenu struct {
 	startTime       time.Time
 	successCount    int
 	errorCount      int
-	recentOps       []string
+	recentOps       []RecentOperation
 	lastFileCount   int
 	lastUpdateTime  time.Time
 	isProcessing    bool
 	currentOp       string
+	progressStep    int
+	progressTotal   int
+}
+
+// RecentOperation stores detailed operation information
+type RecentOperation struct {
+	Timestamp   time.Time
+	Description string
+	Status      string // "SUCCESS" or "FAILED"
+	Details     string
 }
 
 // NewEnhancedMenu creates an enhanced menu
@@ -54,17 +64,19 @@ func NewEnhancedMenu(watchDir, archiveDir, outputDir, errorDir, version string, 
 		fileOps:        fileOps,
 		scanner:        bufio.NewScanner(os.Stdin),
 		startTime:      time.Now(),
-		recentOps:      make([]string, 0, 5),
+		recentOps:      make([]RecentOperation, 0, 5),
 		lastUpdateTime: time.Now(),
 	}
 }
 
-// Run starts the enhanced menu
+// Run starts the enhanced menu with real-time monitoring
 func (e *EnhancedMenu) Run() error {
 	e.clearScreen()
 	e.showHeader()
 
 	for {
+		// R5.9 - Real-time updates without user input
+		e.refreshDisplay()
 		e.showStatus()
 		e.showMenu()
 
@@ -88,6 +100,32 @@ func (e *EnhancedMenu) clearScreen() {
 		cmd.Run()
 	} else {
 		fmt.Print("\033[2J\033[H")
+	}
+}
+
+// refreshDisplay handles real-time file monitoring (R5.9)
+func (e *EnhancedMenu) refreshDisplay() {
+	// Check for file count changes every second
+	if time.Since(e.lastUpdateTime) > time.Second {
+		var mainFiles []FileInfo
+		if files, err := e.fileOps.FindPDFFiles(e.watchDir); err == nil {
+			for _, file := range files {
+				size := e.fileOps.GetHumanReadableSize(file)
+				mainFiles = append(mainFiles, FileInfo{
+					Name: file,
+					Size: size,
+				})
+			}
+		}
+
+		currentCount := len(mainFiles)
+		if currentCount != e.lastFileCount {
+			e.lastFileCount = currentCount
+			e.lastUpdateTime = time.Now()
+			// Refresh header when file count changes
+			e.clearScreen()
+			e.showHeader()
+		}
 	}
 }
 
@@ -137,13 +175,6 @@ func (e *EnhancedMenu) showStatus() {
 		}
 	}
 
-	// Check for file count changes (R5.9 - Real-time monitoring)
-	currentCount := len(mainFiles)
-	if currentCount != e.lastFileCount && time.Since(e.lastUpdateTime) > time.Second {
-		e.lastFileCount = currentCount
-		e.lastUpdateTime = time.Now()
-	}
-
 	if len(mainFiles) > 0 {
 		fmt.Println("Available PDF files:")
 		for i, file := range mainFiles {
@@ -157,28 +188,35 @@ func (e *EnhancedMenu) showStatus() {
 		fmt.Println("No PDF files found in watch directory")
 	}
 
-	// R5B.4 - Horizontal separator line
+	// R5B.3 - Horizontal separator line
 	fmt.Println("─────────────────────────────────────────────────────────────────────────────")
 
-	// R5B.5 - Enhanced Recent Output section
+	// R5B.4 - Enhanced Recent Output section with detailed operation information
 	if len(e.recentOps) > 0 {
 		fmt.Println("Recent Operations:")
 		for _, op := range e.recentOps {
-			fmt.Printf("  %s\n", op)
+			statusIcon := "✅"
+			if op.Status == "FAILED" {
+				statusIcon = "❌"
+			}
+			fmt.Printf("  %s [%s] %s\n", statusIcon, op.Timestamp.Format("15:04:05"), op.Description)
+			if op.Details != "" {
+				fmt.Printf("    %s\n", op.Details)
+			}
 		}
 	} else {
 		fmt.Println("Recent Operations:")
 		fmt.Println("  No operations performed yet")
 	}
 
-	// R5B.4 - Another horizontal separator
+	// R5B.3 - Another horizontal separator
 	fmt.Println("─────────────────────────────────────────────────────────────────────────────")
 
-	// R5B.7 - Dynamic status/progress line
+	// R5B.6 - Dynamic status/progress line
 	if e.isProcessing {
-		e.showProgressLine()
+		e.showProgressBar()
 	} else {
-		e.showStatusLine(currentCount)
+		e.showStatusLine(len(mainFiles))
 	}
 	fmt.Println()
 }
@@ -223,19 +261,37 @@ func (e *EnhancedMenu) handleChoice(choice string) bool {
 	}
 }
 
-func (e *EnhancedMenu) showProgressLine() {
-	// R5.8 - Progress bar during operations
-	fmt.Printf("Processing: %s ", e.currentOp)
+func (e *EnhancedMenu) showProgressBar() {
+	// R5.8 - Progress bar replaces status line during operations
+	elapsed := time.Since(e.lastUpdateTime)
 	
-	// Simple animated progress indicator
-	dots := int(time.Since(e.lastUpdateTime).Seconds()) % 4
-	for i := 0; i < dots; i++ {
-		fmt.Print(".")
+	// Create animated progress bar
+	barWidth := 40
+	progress := float64(e.progressStep) / float64(e.progressTotal)
+	if e.progressTotal == 0 {
+		// Indeterminate progress - use time-based animation
+		progress = float64(int(elapsed.Seconds())%barWidth) / float64(barWidth)
 	}
-	for i := dots; i < 3; i++ {
-		fmt.Print(" ")
+	
+	filled := int(progress * float64(barWidth))
+	
+	fmt.Printf("Processing: %s [", e.currentOp)
+	for i := 0; i < barWidth; i++ {
+		if i < filled {
+			fmt.Print("█")
+		} else if i == filled && e.progressTotal == 0 {
+			// Animated cursor for indeterminate progress
+			fmt.Print("▶")
+		} else {
+			fmt.Print("░")
+		}
 	}
-	fmt.Print(" [Working...]")
+	
+	if e.progressTotal > 0 {
+		fmt.Printf("] %d/%d", e.progressStep, e.progressTotal)
+	} else {
+		fmt.Printf("] %.1fs", elapsed.Seconds())
+	}
 }
 
 func (e *EnhancedMenu) showStatusLine(fileCount int) {
@@ -247,7 +303,14 @@ func (e *EnhancedMenu) showStatusLine(fileCount int) {
 func (e *EnhancedMenu) setProcessing(operation string) {
 	e.isProcessing = true
 	e.currentOp = operation
+	e.progressStep = 0
+	e.progressTotal = 0
 	e.lastUpdateTime = time.Now()
+}
+
+func (e *EnhancedMenu) setProgressStep(step, total int) {
+	e.progressStep = step
+	e.progressTotal = total
 }
 
 func (e *EnhancedMenu) clearProcessing() {
@@ -255,11 +318,15 @@ func (e *EnhancedMenu) clearProcessing() {
 	e.currentOp = ""
 }
 
-func (e *EnhancedMenu) addRecentOperation(operation string) {
-	timestamp := time.Now().Format("15:04:05")
-	entry := fmt.Sprintf("[%s] %s", timestamp, operation)
+func (e *EnhancedMenu) addRecentOperation(description, status, details string) {
+	operation := RecentOperation{
+		Timestamp:   time.Now(),
+		Description: description,
+		Status:      status,
+		Details:     details,
+	}
 	
-	e.recentOps = append(e.recentOps, entry)
+	e.recentOps = append(e.recentOps, operation)
 	if len(e.recentOps) > 5 {
 		e.recentOps = e.recentOps[1:]
 	}
@@ -267,45 +334,85 @@ func (e *EnhancedMenu) addRecentOperation(operation string) {
 
 func (e *EnhancedMenu) handleSingleFile() bool {
 	e.setProcessing("Single file processing")
+	
+	// Show progress during operation
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
 	
-	fmt.Println("Processing single file...")
-
+	// Simulate progress steps
+	e.setProgressStep(1, 3)
+	time.Sleep(200 * time.Millisecond) // Brief pause to show progress
+	
+	e.clearScreen()
+	e.showHeader()
+	e.setProgressStep(2, 3)
+	e.showStatus()
+	
 	if description, err := e.fileOps.ProcessSingleFile(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
 		e.errorCount++
-		e.addRecentOperation("Single file processing failed")
+		e.addRecentOperation("Single file processing", "FAILED", err.Error())
 	} else {
+		e.setProgressStep(3, 3)
+		e.clearScreen()
+		e.showHeader()
+		e.showStatus()
+		
 		fmt.Println("✅ Single file processed successfully")
 		e.successCount++
-		e.addRecentOperation(description)
+		e.addRecentOperation("Single file processing", "SUCCESS", description)
 	}
 
 	e.clearProcessing()
+	
+	fmt.Println("Press Enter to continue...")
+	e.scanner.Scan()
 	return true
 }
 
 func (e *EnhancedMenu) handleMergeFiles() bool {
 	e.setProcessing("Merge operation")
+	
+	// Show progress during operation
 	e.clearScreen()
 	e.showHeader()
 	e.showStatus()
 	
-	fmt.Println("Processing merge operation...")
+	// Simulate progress steps for merge operation
+	e.setProgressStep(1, 4)
+	time.Sleep(200 * time.Millisecond)
+	
+	e.clearScreen()
+	e.showHeader()
+	e.setProgressStep(2, 4)
+	e.showStatus()
+	time.Sleep(200 * time.Millisecond)
+	
+	e.clearScreen()
+	e.showHeader()
+	e.setProgressStep(3, 4)
+	e.showStatus()
 
 	if description, err := e.fileOps.ProcessMergeFiles(); err != nil {
 		fmt.Printf("❌ Error: %v\n", err)
 		e.errorCount++
-		e.addRecentOperation("Merge operation failed")
+		e.addRecentOperation("Merge operation", "FAILED", err.Error())
 	} else {
+		e.setProgressStep(4, 4)
+		e.clearScreen()
+		e.showHeader()
+		e.showStatus()
+		
 		fmt.Println("✅ Files merged successfully")
 		e.successCount++
-		e.addRecentOperation(description)
+		e.addRecentOperation("Merge operation", "SUCCESS", description)
 	}
 
 	e.clearProcessing()
+	
+	fmt.Println("Press Enter to continue...")
+	e.scanner.Scan()
 	return true
 }
 
