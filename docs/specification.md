@@ -65,8 +65,8 @@ A tool for merging PDF files with special handling for double-sided scanning wor
   - Merge operations: Show input files and output result (e.g., "DocA.pdf + DocB.pdf → DocA-DocB.pdf")
   - Display last 5 operations with timestamps
   - Show operation status (success/failure)
-- **R5B.5** Actions bar with keyboard shortcuts
-- **R5B.6** Status/Progress line (dynamic based on operation state)
+- **R5B.5** Actions bar with keyboard shortcuts (persistent during operations)
+- **R5B.6** Status/Progress section (2 lines: status line + progress line, progress overwrites status during operations)
 - **R5B.7** Session timer display only on program exit
 
 ### R6. Verbose Mode Requirements

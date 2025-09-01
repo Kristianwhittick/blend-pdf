@@ -78,7 +78,6 @@ func (e *EnhancedMenu) Run() error {
 		// R5.9 - Real-time updates without user input
 		e.refreshDisplay()
 		e.showStatus()
-		e.showMenu()
 
 		choice := e.getUserChoice()
 		if !e.handleChoice(choice) {
@@ -212,16 +211,21 @@ func (e *EnhancedMenu) showStatus() {
 	// R5B.3 - Another horizontal separator
 	fmt.Println("─────────────────────────────────────────────────────────────────────────────")
 
-	// R5B.6 - Dynamic status/progress line
+	// R5B.5 - Actions bar (persistent during operations)
+	e.showActionsBar()
+
+	// R5B.6 - Status/Progress section (2 lines: status + progress, progress overwrites status during operations)
 	if e.isProcessing {
 		e.showProgressBar()
+		fmt.Println() // Second line for progress section
 	} else {
 		e.showStatusLine(len(mainFiles))
+		fmt.Println() // Second line for status section (empty when not processing)
 	}
 	fmt.Println()
 }
 
-func (e *EnhancedMenu) showMenu() {
+func (e *EnhancedMenu) showActionsBar() {
 	fmt.Println("┌─────────────────────────────────────────────────────────────────────────────┐")
 	fmt.Println("│                                 Actions                                     │")
 	fmt.Println("├─────────────────────────────────────────────────────────────────────────────┤")
@@ -230,10 +234,10 @@ func (e *EnhancedMenu) showMenu() {
 	fmt.Println("│  [H] Help         - Show help information                                   │")
 	fmt.Println("│  [Q] Quit         - Exit the program                                        │")
 	fmt.Println("└─────────────────────────────────────────────────────────────────────────────┘")
-	fmt.Print("Enter choice (S/M/H/Q): ")
 }
 
 func (e *EnhancedMenu) getUserChoice() string {
+	fmt.Print("Enter choice (S/M/H/Q): ")
 	if e.scanner.Scan() {
 		return strings.TrimSpace(strings.ToUpper(e.scanner.Text()))
 	}
@@ -365,9 +369,6 @@ func (e *EnhancedMenu) handleSingleFile() bool {
 	}
 
 	e.clearProcessing()
-	
-	fmt.Println("Press Enter to continue...")
-	e.scanner.Scan()
 	return true
 }
 
@@ -410,9 +411,6 @@ func (e *EnhancedMenu) handleMergeFiles() bool {
 	}
 
 	e.clearProcessing()
-	
-	fmt.Println("Press Enter to continue...")
-	e.scanner.Scan()
 	return true
 }
 
@@ -431,8 +429,6 @@ func (e *EnhancedMenu) showHelp() {
 	fmt.Println("  - Error:   Files moved to error/ directory")
 	fmt.Println("  - Output:  Merged files placed in output/ directory")
 	fmt.Println()
-	fmt.Println("Press Enter to continue...")
-	e.scanner.Scan()
 }
 
 func (e *EnhancedMenu) showStatistics() {
