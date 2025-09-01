@@ -147,13 +147,11 @@ func (e *EnhancedMenu) Run() error {
 		
 		// Handle invalid choices by continuing the loop
 		if choice != "S" && choice != "M" && choice != "H" && choice != "Q" {
-			if showingError {
-				// Move cursor up to overwrite previous error
-				fmt.Print("\033[A\033[K")
+			if !showingError {
+				fmt.Println("❌ Invalid choice.")
+				showingError = true
 			}
-			fmt.Println("❌ Invalid choice.")
 			fmt.Print("Enter choice (S/M/H/Q): ")
-			showingError = true
 			continue
 		}
 		
