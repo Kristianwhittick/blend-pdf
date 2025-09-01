@@ -19,9 +19,12 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
 )
 
 // EnhancedMenu provides a better-looking menu without complex TUI
@@ -43,6 +46,8 @@ type EnhancedMenu struct {
 	currentOp       string
 	progressStep    int
 	progressTotal   int
+	watcher         *fsnotify.Watcher
+	needsRefresh    bool
 }
 
 // RecentOperation stores detailed operation information
@@ -55,7 +60,7 @@ type RecentOperation struct {
 
 // NewEnhancedMenu creates an enhanced menu
 func NewEnhancedMenu(watchDir, archiveDir, outputDir, errorDir, version string, fileOps FileOperations) *EnhancedMenu {
-	return &EnhancedMenu{
+	menu := &EnhancedMenu{
 		watchDir:       watchDir,
 		archiveDir:     archiveDir,
 		outputDir:      outputDir,
@@ -67,16 +72,80 @@ func NewEnhancedMenu(watchDir, archiveDir, outputDir, errorDir, version string, 
 		recentOps:      make([]RecentOperation, 0, 5),
 		lastUpdateTime: time.Now(),
 	}
+	
+	// Initialize file system watcher
+	menu.setupFileWatcher()
+	
+	return menu
+}
+
+// setupFileWatcher initializes real-time file system monitoring
+func (e *EnhancedMenu) setupFileWatcher() {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		// Fall back to polling if watcher fails
+		return
+	}
+	
+	e.watcher = watcher
+	
+	// Watch the main directory for PDF file changes
+	err = e.watcher.Add(e.watchDir)
+	if err != nil {
+		e.watcher.Close()
+		e.watcher = nil
+		return
+	}
+	
+	// Start monitoring in background
+	go e.monitorFileChanges()
+}
+
+// monitorFileChanges handles file system events in background
+func (e *EnhancedMenu) monitorFileChanges() {
+	if e.watcher == nil {
+		return
+	}
+	
+	for {
+		select {
+		case event, ok := <-e.watcher.Events:
+			if !ok {
+				return
+			}
+			
+			// Only care about PDF files
+			if filepath.Ext(event.Name) == ".pdf" {
+				// Mark that we need to refresh the display
+				e.needsRefresh = true
+			}
+			
+		case err, ok := <-e.watcher.Errors:
+			if !ok {
+				return
+			}
+			// Ignore watcher errors, fall back to polling
+			_ = err
+		}
+	}
 }
 
 // Run starts the enhanced menu with real-time monitoring
 func (e *EnhancedMenu) Run() error {
+	// Ensure watcher is cleaned up on exit
+	defer e.cleanup()
+	
 	e.clearScreen()
 	e.showHeader()
 
 	for {
 		// R5.9 - Real-time updates without user input
-		e.refreshDisplay()
+		if e.needsRefresh {
+			e.needsRefresh = false
+			e.clearScreen()
+			e.showHeader()
+		}
+		
 		e.showStatus()
 
 		choice := e.getUserChoice()
@@ -92,6 +161,13 @@ func (e *EnhancedMenu) Run() error {
 	return nil
 }
 
+// cleanup closes the file watcher
+func (e *EnhancedMenu) cleanup() {
+	if e.watcher != nil {
+		e.watcher.Close()
+	}
+}
+
 func (e *EnhancedMenu) clearScreen() {
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/c", "cls")
@@ -99,32 +175,6 @@ func (e *EnhancedMenu) clearScreen() {
 		cmd.Run()
 	} else {
 		fmt.Print("\033[2J\033[H")
-	}
-}
-
-// refreshDisplay handles real-time file monitoring (R5.9)
-func (e *EnhancedMenu) refreshDisplay() {
-	// Check for file count changes every second
-	if time.Since(e.lastUpdateTime) > time.Second {
-		var mainFiles []FileInfo
-		if files, err := e.fileOps.FindPDFFiles(e.watchDir); err == nil {
-			for _, file := range files {
-				size := e.fileOps.GetHumanReadableSize(file)
-				mainFiles = append(mainFiles, FileInfo{
-					Name: file,
-					Size: size,
-				})
-			}
-		}
-
-		currentCount := len(mainFiles)
-		if currentCount != e.lastFileCount {
-			e.lastFileCount = currentCount
-			e.lastUpdateTime = time.Now()
-			// Refresh header when file count changes
-			e.clearScreen()
-			e.showHeader()
-		}
 	}
 }
 
