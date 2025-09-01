@@ -80,7 +80,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **Progress Bars**: Animated progress indicators during operations
 - **Persistent Actions**: Actions menu remains visible during processing
 - **Real-time Monitoring**: Automatic file count updates without user input
-- **Colored Output**: Color-coded messages for better readability
+- **Coloured Output**: Colour-coded messages for better readability
 - **File Preview**: Show available PDF files with sizes in verbose mode
 - **Session Statistics**: Track successful operations, errors, and elapsed time
 - **Invalid Choice Handling**: Clean error display with interface redraw (no stacking)
@@ -343,7 +343,7 @@ blend_pdf/
 **All Phases Complete** except optional performance enhancement:
 
 1. **Phase 1**: ✅ Core Functionality Parity
-   - Enhanced UI with file counts and colors
+   - Enhanced UI with file counts and colours
    - Smart page reversal logic
    - Comprehensive error handling
 
@@ -379,7 +379,7 @@ This Go implementation provides **complete feature parity** with the original ba
 
 ### Advantages of Go Version
 - **Better Performance**: Compiled binary vs interpreted script
-- **Enhanced UI**: File counts, colors, verbose mode, debug mode
+- **Enhanced UI**: File counts, colours, verbose mode, debug mode
 - **Cross-Platform**: Single binary deployment
 - **Better Error Handling**: Structured error management with recovery
 - **Maintainability**: Strongly typed, well-structured code
@@ -390,7 +390,7 @@ This Go implementation provides **complete feature parity** with the original ba
 - Smart page reversal logic
 - Comprehensive file validation
 - Session statistics and tracking
-- Colored output and verbose mode
+- Coloured output and verbose mode
 - Directory-specific lock file protection
 - Graceful shutdown handling
 - Timeout protection

@@ -73,7 +73,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ### ✅ Completed Features Summary
 - **File Count Display**: Real-time PDF counts in each directory
-- **Colored Output**: Red/Green/Yellow/Blue message types
+- **Coloured Output**: Red/Green/Yellow/Blue message types
 - **File Preview**: Shows up to 5 PDF files with sizes in verbose mode
 - **Session Statistics**: Tracks operations, errors, and elapsed time
 - **Smart Page Reversal**: Only reverses multi-page PDFs
@@ -88,7 +88,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Feature Parity**: ✅ Complete with bash version
 - **User Interface**: ✅ Professional with comprehensive feedback
 - **Error Handling**: ✅ Robust with detailed logging
-- **Performance**: ✅ Monitoring and optimization ready
+- **Performance**: ✅ Monitoring and optimisation ready
 - **Documentation**: ✅ Comprehensive with testing procedures
 - **Testing**: ✅ API function testing (tests 01-16), core functionality validation
 - **Build System**: ✅ Multi-platform builds with automated releases
@@ -151,11 +151,11 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ### Task 6: Enhanced User Interface and Display
 - **Status**: ✅ COMPLETED - Commit: 61eb72c
-- **Requirements**: R5.1-R5.3 (file count display), R6.1-R6.2 (verbose mode), R7.1-R7.5 (colored output), R8.1-R8.4 (session statistics)
+- **Requirements**: R5.1-R5.3 (file count display), R6.1-R6.2 (verbose mode), R7.1-R7.5 (coloured output), R8.1-R8.4 (session statistics)
 - **Features Implemented**:
   - File count display: "Files: Main(X) Archive(Y) Output(Z) Error(W)"
   - File preview in verbose mode showing up to 5 files with sizes
-  - Colored output with Red/Green/Yellow/Blue message types
+  - Coloured output with Red/Green/Yellow/Blue message types
   - Session statistics tracking operations, errors, and elapsed time
   - Human-readable file size display functions
   - Progress indicators in verbose mode
@@ -308,7 +308,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - 55.9% code coverage achieved as foundation (updated after test fixes)
   - Comprehensive testing documentation and procedures
 - **Coverage Achieved**:
-  - Constants Tests: Exit codes, colors, logger initialization ✅
+  - Constants Tests: Exit codes, colours, logger initialisation ✅
   - Setup Tests: CLI parsing, lock file management, directory hashing ✅
   - File Operations Tests: Directory setup, file discovery, display functions ✅
   - PDF Operations Tests: Validation, page counting, merge operations ✅
@@ -323,7 +323,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Prerequisites**: Complete Task 18 and review recommendations
 - **Implementation**: Applied approved changes from documentation review analysis
 - **Deliverables**:
-  - Reorganized API documentation structure
+  - Reorganised API documentation structure
   - Moved experiment summaries to api_knowledge.md
   - Streamlined api_experiments_procedures.md for testing procedures only
   - Updated all cross-references and file links
@@ -614,7 +614,7 @@ perf: Add hybrid in-memory PDF processing
 - Web interface for remote processing
 - API endpoint for programmatic access
 - Plugin system for custom processing
-- Advanced PDF optimization features
+- Advanced PDF optimisation features
 
 ---
 

@@ -147,7 +147,7 @@ pdftotext output/Doc_A_Doc_B.pdf -
 - **Status Line** - Current state and operation counters
 
 #### File Selection Mode Tests
-- **Alpha Order Mode** - Automatic first-two selection (current behavior)
+- **Alpha Order Mode** - Automatic first-two selection (current behaviour)
 - **User Selection Mode** - Arrow key navigation and visual indicators
 - **Mode Toggle** - [T] key switches between modes
 - **Visual Indicators** - ▶ for current selection, ✓ for marked files

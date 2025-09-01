@@ -64,7 +64,7 @@ func TestValidatePDF(t *testing.T) {
 - Slightly more complex setup
 - Learning curve for advanced features
 
-**Best For**: Enhanced assertions, mocking, organized test suites
+**Best For**: Enhanced assertions, mocking, organised test suites
 
 **Installation**: `go get github.com/stretchr/testify`
 

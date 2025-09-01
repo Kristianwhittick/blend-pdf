@@ -1,7 +1,7 @@
 # PDFcpu API Experiments
 
 ## Overview
-Testing individual pdfcpu API functions to understand their behavior and requirements.
+Testing individual pdfcpu API functions to understand their behaviour and requirements.
 
 ## Test Files
 - **Input**: Doc_A.pdf (3 pages: A1, A2, A3)

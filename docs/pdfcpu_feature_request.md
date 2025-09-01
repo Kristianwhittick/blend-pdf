@@ -192,7 +192,7 @@ func createInterleavedMerge(file1, file2, output string) error {
 
 ### Related Issues
 - Memory usage concerns in various issues
-- Performance optimization requests
+- Performance optimisation requests
 - Temporary file management complexity
 
 ### Similar Libraries

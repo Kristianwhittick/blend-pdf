@@ -103,6 +103,7 @@ This document captures the working processes and methodologies developed during 
 - **Examples**: Include code examples and use cases
 - **Status Tracking**: Mark completion status clearly
 - **Version History**: Document what changed and when
+- **UK Spelling**: Use British English spelling where possible (colour, optimise, realise, etc.)
 
 ### Documentation Review Process
 1. **Content Analysis**: Identify overlaps and gaps

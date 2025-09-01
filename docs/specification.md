@@ -50,7 +50,7 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R5.11** Invalid choice handling with interface redraw to prevent stacking of error messages
 
 ### R5A. File Selection Mode Requirements
-- **R5A.1** Alpha Order Mode: Automatically select first two PDFs alphabetically (current behavior)
+- **R5A.1** Alpha Order Mode: Automatically select first two PDFs alphabetically (current behaviour)
 - **R5A.2** User Selection Mode: Arrow key navigation with visual selection indicators
 - **R5A.3** Mode toggle with [T] key between Alpha Order and User Selection
 - **R5A.4** Visual mode indicator: `[Mode: Alpha Order ▼]` or `[Mode: User Select ▼]`
@@ -83,7 +83,7 @@ A tool for merging PDF files with special handling for double-sided scanning wor
 - **R7.2** Green: Success messages and confirmations
 - **R7.3** Yellow: Warnings and informational messages
 - **R7.4** Blue: File names, paths, and data values
-- **R7.5** No Color: Default text and prompts
+- **R7.5** No Colour: Default text and prompts
 
 ### R8. Session Statistics Requirements
 - **R8.1** Track successful operations during session
@@ -248,7 +248,7 @@ All requirements R1.1 through R16.9 have been successfully implemented and teste
 ### Optional Enhancement Available
 - **Phase 4: In-Memory Processing** - 52.9% memory efficiency improvement
 - **Status**: Ready for implementation with complete research and test code
-- **Priority**: Performance optimization (optional)
+- **Priority**: Performance optimisation (optional)
 
 ---
 
@@ -257,7 +257,7 @@ All requirements R1.1 through R16.9 have been successfully implemented and teste
 ### Maintenance
 - Regular dependency updates
 - Bug fixes and improvements
-- Performance optimizations
+- Performance optimisations
 - Security updates
 
 ### Potential Enhancements
