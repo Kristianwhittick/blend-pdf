@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2025-09-01
+
+### Added
+- **NEW UI**: Enhanced full-screen terminal interface with professional bordered layout
+- Version number displayed in top border for better visibility
+- File counts integrated into header alongside directory paths
+- Real-time file monitoring with fsnotify for instant updates
+- Enhanced Recent Output section with detailed operation information
+- Persistent actions bar during operations for better user experience
+- 2-line status/progress section with animated progress bars
+- Single-line recent operations format with timestamps and status icons
+- Invalid choice handling with clean interface redraw (no stacking)
+- True event-driven file system monitoring (no polling)
+
+### Changed
+- **Application renamed**: "blendpdfgo" → "blendpdf" for shorter, cleaner name
+- Updated all build scripts, documentation, and examples
+- Lock file naming updated to use "blendpdf" prefix
+- Cross-platform compatibility maintained with universal screen clearing
+
+### Added - Documentation & Planning
+- Added comprehensive design decisions documentation (Section 5 in specification)
+- Added 3 new tasks: Configuration File Support, Archive Single Files, Multi Output Folders
+- Added 6 new backlog items: API Endpoints, Email/Notifications, Error Recovery, Audit Logging, Plugin System, Docker
+- Added Keyboard Shortcuts Enhancement task
+- Documented rejected features with clear rationale
+
+### Technical
+- Added fsnotify dependency for real-time file system monitoring
+- Enhanced UI system with bridge pattern for better separation
+- Improved error handling and user feedback
+- Maintained backward compatibility and all existing functionality
+
 ## [1.0.5] - 2025-08-29
 
 ### Changed
