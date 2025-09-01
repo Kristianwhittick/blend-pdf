@@ -47,15 +47,15 @@ func TestMoreValidationFunctions(t *testing.T) {
 	
 	// Test validation functions (they should handle errors gracefully)
 	assert.NotPanics(t, func() {
-		validatePDF(invalidPDF)
-		validatePDFStructure(invalidPDF)
-		getPageCount(invalidPDF)
+		_ = validatePDF(invalidPDF)
+		_ = validatePDFStructure(invalidPDF)
+		_, _ = getPageCount(invalidPDF)
 	})
 	
 	// Test with non-existent file
 	assert.NotPanics(t, func() {
-		validatePDF("nonexistent.pdf")
-		getPageCount("nonexistent.pdf")
+		_ = validatePDF("nonexistent.pdf")
+		_, _ = getPageCount("nonexistent.pdf")
 	})
 }
 

@@ -61,7 +61,7 @@ func TestFileOperations(t *testing.T) {
 	testFile := filepath.Join(tempDir, "test.txt")
 	assert.False(t, fileExists(testFile))
 	
-	os.WriteFile(testFile, []byte("test content"), 0644)
+	_ = os.WriteFile(testFile, []byte("test content"), 0644)
 	assert.True(t, fileExists(testFile))
 	
 	// Test file size
@@ -77,12 +77,12 @@ func TestBasicValidation(t *testing.T) {
 	
 	// Test with invalid PDF
 	invalidPDF := filepath.Join(tempDir, "invalid.pdf")
-	os.WriteFile(invalidPDF, []byte("not a pdf"), 0644)
+	_ = os.WriteFile(invalidPDF, []byte("not a pdf"), 0644)
 	
 	// These should return errors but test the code paths
 	assert.NotPanics(t, func() {
-		validatePDF(invalidPDF)
-		getPageCount(invalidPDF)
+		_ = validatePDF(invalidPDF)
+		_, _ = getPageCount(invalidPDF)
 	})
 	
 	config := createValidationConfig()
@@ -95,8 +95,8 @@ func TestCleanupOperations(t *testing.T) {
 	// Create test files
 	file1 := filepath.Join(tempDir, "temp1.pdf")
 	file2 := filepath.Join(tempDir, "temp2.pdf")
-	os.WriteFile(file1, []byte("test1"), 0644)
-	os.WriteFile(file2, []byte("test2"), 0644)
+	_ = os.WriteFile(file1, []byte("test1"), 0644)
+	_ = os.WriteFile(file2, []byte("test2"), 0644)
 	
 	// Test cleanup
 	cleanupTempFiles([]string{file1, file2})
@@ -132,9 +132,9 @@ func TestProcessOperations(t *testing.T) {
 	FOLDER = tempDir
 	
 	// Create directories
-	os.MkdirAll(filepath.Join(tempDir, "archive"), 0755)
-	os.MkdirAll(filepath.Join(tempDir, "output"), 0755)
-	os.MkdirAll(filepath.Join(tempDir, "error"), 0755)
+	_ = os.MkdirAll(filepath.Join(tempDir, "archive"), 0755)
+	_ = os.MkdirAll(filepath.Join(tempDir, "output"), 0755)
+	_ = os.MkdirAll(filepath.Join(tempDir, "error"), 0755)
 	
 	assert.NotPanics(t, func() {
 		processSingleFileOperation()

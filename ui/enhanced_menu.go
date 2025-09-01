@@ -181,7 +181,7 @@ func (e *EnhancedMenu) clearScreen() {
 	if runtime.GOOS == "windows" {
 		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
-		cmd.Run()
+		_ = cmd.Run() // Ignore error for screen clearing
 	} else {
 		fmt.Print("\033[2J\033[H")
 	}
