@@ -47,3 +47,4 @@ When creating or modifying code, Q Developer should:
 - Maintain documentation as part of the development process
 - Review documentation during code reviews
 - Ensure documentation is accessible to new team members
+- **UK Spelling**: Use British English spelling where possible (colour, optimise, realise, behaviour, etc.)

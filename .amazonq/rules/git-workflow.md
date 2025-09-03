@@ -48,6 +48,7 @@ git merge --ff-only feature/my-feature
 
 ## Best Practices & Automation Guidelines
 - Always run tests before committing
+- **Run linting before committing** - Use pre-commit hooks where possible
 - Pull latest changes before pushing to remote
 - Check for merge conflicts before suggesting merges
 - Validate branch naming when creating new branches
@@ -56,3 +57,9 @@ git merge --ff-only feature/my-feature
 - Each commit should leave the codebase in a working state
 - Never rewrite public history - only rebase branches that haven't been shared
 - Make atomic commits and commit early and often
+
+## Development Environment Setup
+- **Install linting tools** appropriate for the technology stack
+- **Set up pre-commit hooks** to run linting and tests automatically
+- **Configure quality gates** to ensure code standards are maintained
+- **Use automated tools** like golangci-lint, ESLint, pylint, etc.
