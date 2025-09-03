@@ -1,370 +1,285 @@
-# Amazon Q Development Processes
+# Amazon Q Development Methodology
 
 ## Overview
-This document captures the working processes and methodologies developed during the BlendPDFGo project collaboration with Amazon Q. These processes have proven effective for software development, research, and project management.
+This document defines the standardized approach to development using Amazon Q Developer. Choose between Light and Full methodologies based on your project needs.
 
 ---
 
-## 1. Task Management Process
+## Quick Start
+
+When starting a new project, run the setup process:
+1. Navigate to your project directory
+2. Request "spec-driven development setup"
+3. Choose Light or Full methodology
+4. Answer setup questions
+5. Begin development with generated structure
+
+---
+
+## Methodology Selection
+
+### Light Methodology
+**Best for**: Scripts, prototypes, personal projects, quick experiments
+- **Setup time**: 5-10 minutes
+- **Files created**: 6-7 core files
+- **Focus**: Get started quickly with minimal overhead
+
+### Full Methodology  
+**Best for**: Applications, libraries, team projects, production systems
+- **Setup time**: 15-30 minutes
+- **Files created**: 8-12 comprehensive files
+- **Focus**: Comprehensive planning and documentation
+
+---
+
+## Core Agile Concepts
+
+### Essential Terms
+- **Epic**: Large feature or capability (collection of related user stories)
+- **User Story**: Specific user requirement ("As a [user], I want [goal] so that [benefit]")
+- **Definition of Done**: Clear acceptance criteria for completion
+- **Task**: Implementation work item with specific deliverables
+- **Backlog**: Prioritized list of work items (Epics, Stories, Tasks)
+
+### Kanban Board Structure
+- **📋 To Do**: Ready for work, prioritized
+- **🔄 In Progress**: Currently being worked on
+- **✅ Done**: Completed and validated
+- **🗂️ Backlog**: Future work, not yet prioritized
+
+---
+
+## File Structure Standards
+
+### Light Methodology Structure
+```
+project-name/
+├── README.md
+├── AmazonQ.md
+├── summary.txt                 # Daily progress summary
+├── .amazonq/
+│   └── rules/
+│       ├── git-workflow.md
+│       └── documentation-standards.md
+├── docs/
+│   ├── requirements.md         # Initial ideas and needs
+│   ├── overview.md            # Project vision and goals
+│   ├── stories.md             # User stories
+│   ├── tasks.md               # Kanban task board
+│   └── testing.md             # Basic test checklist
+├── src/                       # Source code
+└── tests/                     # Test files
+```
+
+### Full Methodology Structure
+```
+project-name/
+├── README.md
+├── AmazonQ.md
+├── summary.txt                 # Daily progress summary
+├── .amazonq/
+│   └── rules/
+│       ├── git-workflow.md
+│       └── documentation-standards.md
+├── docs/
+│   ├── requirements.md         # Initial ideas and needs
+│   ├── overview.md            # Project vision and goals
+│   ├── features.md            # Epics and major features
+│   ├── stories.md             # User stories
+│   ├── tasks.md               # Kanban task board
+│   ├── design.md              # Technical architecture
+│   ├── testing.md             # Test strategy and procedures
+│   └── standards/
+│       ├── coding.md
+│       ├── workflow.md
+│       └── quality.md
+├── completion-summaries/       # Excluded from git
+│   ├── T-XXX-COMPLETION-SUMMARY.md
+│   └── EPIC-X-COMPLETION-SUMMARY.md
+├── src/                       # Source code (varies by project type)
+└── tests/                     # Test files (varies by project type)
+```
+
+---
+
+## Setup Process
+
+### Interactive Questions
+
+#### Initial Questions (Both Versions)
+1. **Methodology Type**: Light or Full?
+2. **Project Name**: What should we call this project?
+3. **Technology Stack**: Primary languages/frameworks?
+4. **Team Size**: Solo developer or team project?
+
+#### Light Version Questions
+5. **Primary Goal**: Main purpose of this project?
+6. **Timeline**: Quick prototype or ongoing development?
+7. **Documentation Level**: Minimal or standard?
+
+#### Full Version Questions  
+5. **Project Category**: Web app, mobile app, library, API, etc.?
+6. **Development Approach**: Agile sprints or continuous development?
+7. **Quality Requirements**: Standard or high-compliance?
+8. **Team Standards**: Need coding standards and review processes?
+9. **Testing Strategy**: Unit tests only or comprehensive testing?
+10. **Documentation Depth**: Standard or comprehensive?
+
+---
+
+## Development Workflow
+
+### Phase 0: Project Setup
+1. **Run interactive setup** to create project structure
+2. **Initialize version control** with proper .gitignore
+3. **Create initial documentation** from templates
+4. **Set up development environment** and tools
+
+### Phase 1: Requirements and Planning
+1. **Capture initial requirements** in requirements.md
+2. **Define project overview** with vision and goals
+3. **Break down into Epics** (Full methodology) or go directly to stories (Light)
+4. **Write user stories** with acceptance criteria
+5. **Create initial task backlog** with priorities
+
+### Phase 2: Development Cycles
+1. **Select tasks** from backlog for current work
+2. **Move tasks** through Kanban board (To Do → In Progress → Done)
+3. **Implement and test** each task completely
+4. **Update documentation** as you learn and evolve
+5. **Review and retrospect** regularly to improve process
+
+### Phase 3: Completion and Handoff
+1. **Validate all Definition of Done** criteria met
+2. **Complete final testing** and quality checks
+3. **Update all documentation** to reflect final state
+4. **Create completion summaries** for future reference
+5. **Archive or deploy** as appropriate
+
+---
+
+## Quality Standards
+
+### Definition of Done (Minimum)
+- [ ] Functionality works as specified in user story
+- [ ] Code follows project coding standards
+- [ ] Basic tests written and passing
+- [ ] Documentation updated to reflect changes
+- [ ] Code reviewed (team projects)
+
+### Definition of Done (Comprehensive - Full Methodology)
+- [ ] All acceptance criteria met
+- [ ] Unit tests written with good coverage
+- [ ] Integration tests passing
+- [ ] Performance requirements met
+- [ ] Security considerations addressed
+- [ ] Accessibility requirements met (if applicable)
+- [ ] Documentation comprehensive and current
+- [ ] Code review completed and approved
+
+---
+
+## Task Management
 
 ### Task Lifecycle
-1. **Task Creation**: Document in `docs/tasks.md` with status, requirements, priority, and acceptance criteria
-2. **Research Phase**: Conduct experiments, document findings, create proof-of-concepts
-3. **Implementation Phase**: Code changes with comprehensive testing
-4. **Validation Phase**: Unit tests, integration tests, functional verification
-5. **Documentation Phase**: Update docs, API knowledge, and task status
-6. **Completion**: Move from "Next Stages" to "Completed Tasks" section
-7. **Summary Update**: Update compact task summary at top of tasks.md with new counts and status
+1. **Creation**: Document in tasks.md with Epic/Story reference
+2. **Planning**: Add acceptance criteria and estimates
+3. **Implementation**: Move to In Progress, implement solution
+4. **Testing**: Validate against Definition of Done
+5. **Review**: Code review and quality checks (team projects)
+6. **Completion**: Move to Done, update documentation
 
-### Task Status Indicators
-- **📋 READY FOR IMPLEMENTATION**: Research complete, ready to code
-- **✅ COMPLETED**: Implementation done, tested, documented
-- **🔄 READY FOR IMPLEMENTATION (ON HOLD)**: Ready but waiting for approval
-- **❌ CANCELLED**: Task cancelled with reason documented
-
-### Task Summary Maintenance
-- **4-List Format**: Maintain Done (✅), In Progress (🔄), To Do (📋), Backlog (🗂️) sections
-- **Status Symbols**: ✅ (completed), 🔄 (in progress/ready), 📋 (planned), ⚠️ (partially done)
-- **Task Counts**: Update total counts in header (e.g., "27 Total")
-- **Progress Tracking**: Move tasks between lists as status changes
-- **Production Status**: Reflect overall project readiness at bottom
-
-### Priority System
-- **High**: Critical functionality, user-requested features, major improvements
-- **Medium**: Code quality, performance optimizations, nice-to-have features
-- **Low**: Community contributions, documentation improvements, future enhancements
-
----
-
-## 2. Research and Experimentation Process
-
-### API Research Methodology
-1. **Create Experiment Directory**: `experiments/expXX/` for each test
-2. **Unified Runner**: Use `experiments/run_experiments.go` for consistent execution
-3. **Document Results**: Update `docs/api_knowledge.md` with findings
-4. **Test Procedures**: Document in `docs/api_experiments_procedures.md`
-
-### Experiment Naming Convention
-- **Format**: `experimentXX_description.go`
-- **Examples**: 
-  - `experiment01_pagecount.go` - Basic API testing
-  - `experiment20_zip_merge_basic.go` - New feature discovery
-  - `experiment22_complete_zip_flow.go` - Full workflow validation
-
-### Research Documentation Pattern
+### Task Format
 ```markdown
-#### Experiment XX: Description ✅
-- **Status**: ✅ COMPLETED
-- **Goal**: What we're testing
-- **Result**: SUCCESS/FAILURE - What happened
-- **File**: experiment_filename.go
+### T-XXX: Task Title [Status]
+**Epic**: E-XX | **Story**: US-XX
+**Estimate**: X hours/days
+**Priority**: High/Medium/Low
+**Dependencies**: T-YYY, T-ZZZ
+
+**Description**: What needs to be done
+
+**Acceptance Criteria**:
+- [ ] Specific measurable outcome 1
+- [ ] Specific measurable outcome 2
+- [ ] Specific measurable outcome 3
+
+**Definition of Done**:
+- [ ] Functionality implemented and tested
+- [ ] Documentation updated
+- [ ] Code reviewed (if team project)
 ```
 
 ---
 
-## 3. Implementation Process
+## Daily Progress Management
 
-### Pre-Implementation Checklist
-- [ ] Research completed and documented
-- [ ] Acceptance criteria defined
-- [ ] Test strategy planned
-- [ ] Breaking changes identified
-- [ ] Documentation plan ready
+### Summary.txt File
+- **Auto-update**: Created/updated with "Perfect!" responses
+- **Content**: Current status, achievements, next steps, constraints
+- **Format**: Structured sections for quick project overview
 
-### Implementation Steps
-1. **Code Changes**: Implement minimal viable solution
-2. **Unit Testing**: Ensure all existing tests pass
-3. **Integration Testing**: Verify end-to-end functionality
-4. **Functional Testing**: Manual verification of expected behavior
-5. **Performance Testing**: Measure improvements/regressions
-6. **Documentation Updates**: API docs, user guides, task status
-
-### Testing Strategy
-- **Unit Tests**: Test individual functions and components
-- **Integration Tests**: Test complete workflows
-- **Functional Tests**: Manual verification with real data
-- **Regression Tests**: Ensure no existing functionality breaks
-- **Performance Tests**: Measure and compare metrics
+### Progress Tracking
+- **Task Board Updates**: Move tasks between Kanban columns
+- **Completion Summaries**: Detailed task completion documentation
+- **Regular Reviews**: Weekly retrospectives to improve process
 
 ---
 
-## 4. Documentation Process
+## Suggestions and Improvements
 
-### Documentation Types
-1. **API Knowledge**: `docs/api_knowledge.md` - Technical API reference
-2. **Task Management**: `docs/tasks.md` - Project roadmap and status
-3. **Testing Procedures**: `docs/testing.md` - Comprehensive test plans
-4. **User Documentation**: `README.md` - User-facing information
-5. **Process Documentation**: `AmazonQ.md` - Working processes (this file)
+### New Working Practices
+When you discover effective new practices during project work:
 
-### Documentation Standards
-- **Keep Current**: Update docs with every change
-- **Cross-Reference**: Link related documents
-- **Examples**: Include code examples and use cases
-- **Status Tracking**: Mark completion status clearly
-- **Version History**: Document what changed and when
-- **UK Spelling**: Use British English spelling where possible (colour, optimise, realise, etc.)
+1. **Document the practice** in your project's AmazonQ.md
+2. **Test effectiveness** over multiple uses
+3. **Evaluate applicability** to other project types
+4. **Suggest addition** to main methodology if valuable
 
-### Documentation Review Process
-1. **Content Analysis**: Identify overlaps and gaps
-2. **Consolidation**: Merge duplicate information
-3. **Reorganization**: Improve structure and navigation
-4. **Cleanup**: Remove outdated or redundant content
-5. **Validation**: Ensure accuracy and completeness
+### Suggestion Categories
+- **Process Improvements**: Better task management or workflow approaches
+- **Tool Recommendations**: Useful development tools and configurations  
+- **Quality Practices**: Testing, documentation, and code quality methods
+- **Collaboration Techniques**: Team communication and coordination methods
+
+### Current Suggestions for Evaluation
+*This section will be populated as new practices are discovered and tested*
 
 ---
 
-## 5. Git Workflow Process
+## Migration Guide
 
-### Commit Message Standards
-```
-<type>: <short description>
+### For Existing Projects
+1. **Backup current structure** before making changes
+2. **Choose appropriate methodology** (Light vs Full)
+3. **Map existing files** to new naming convention
+4. **Convert requirements to user stories** format
+5. **Restructure tasks** into Kanban format
+6. **Update AmazonQ.md** to new template
+7. **Test new structure** with a few development cycles
 
-<detailed description>
-- Bullet point 1
-- Bullet point 2
-- Bullet point 3
-```
-
-### Commit Types
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `perf:` - Performance improvements
-- `refactor:` - Code refactoring
-- `test:` - Adding or updating tests
-- `chore:` - Maintenance tasks
-
-### Release Process
-1. **Update CHANGELOG.md** with version entry
-2. **Commit changelog** changes
-3. **Update VERSION constant** in constants.go
-4. **Commit version sync**
-5. **Create git tag** with version and changelog
-6. **Push all changes** and tags
-7. **Monitor GitHub Actions** with `gh run list` and `gh run view <run-id>`
-8. **Verify release creation** with `gh release view <tag>`
-9. **Confirm artifacts** are available and checksums generated
-
-### GitHub Actions Monitoring Commands
-```bash
-# Check recent workflow runs
-gh run list --limit 5
-
-# View specific run details
-gh run view <run-id>
-
-# Check release status
-gh release list
-gh release view <tag>
-
-# View workflow logs if needed
-gh run logs <run-id>
-```
-
-### Critical Release Requirements
-- Git tag must include both CHANGELOG.md entry and VERSION constant update
-- GitHub Actions extracts changelog content from the tagged commit
-- Version sync must happen before tagging, not after
+### File Mapping Examples
+- `requirements.md` → Keep as initial requirements, create new `stories.md`
+- `tasks.md` → Restructure into Kanban format with Epic/Story references
+- `technical-architecture.md` → Rename to `design.md`
+- `user-stories.md` → Rename to `stories.md`
 
 ---
 
-## 6. Problem-Solving Methodology
+## Success Metrics
 
-### Discovery Process
-1. **Problem Identification**: Clearly define what needs to be solved
-2. **Research Phase**: Investigate existing solutions and APIs
-3. **Experimentation**: Create proof-of-concepts and test approaches
-4. **Analysis**: Compare options and identify best solution
-5. **Implementation**: Build and test the solution
-6. **Validation**: Verify it solves the original problem
+### Process Effectiveness
+- **Setup Speed**: Light ≤ 10 min, Full ≤ 30 min
+- **Clarity**: Easy to understand what to do next
+- **Consistency**: Same approach across all projects
+- **Adaptability**: Works for different project types and sizes
 
-### Breakthrough Pattern Recognition
-- **API Discovery**: Look for native functions that eliminate workarounds
-- **Simplification**: Prefer fewer API calls and temporary files
-- **Performance**: Measure before/after improvements
-- **Maintainability**: Choose solutions that are easier to understand and modify
-
-### Example: Zip Merge Breakthrough
-1. **Problem**: Complex loop-based PDF interleaving (6+ temp files, 7+ API calls)
-2. **Discovery**: Found `MergeCreateZipFile` API for interleaved merging
-3. **Research**: Experiments 20-22 validated the approach
-4. **Solution**: 2-step process (CollectFile + MergeCreateZipFile)
-5. **Result**: 1 temp file, 2 API calls, same output pattern
+### Quality Outcomes
+- **Documentation Coverage**: All key decisions and designs documented
+- **Task Completion**: Clear progress tracking and completion criteria
+- **Knowledge Retention**: Easy to resume work after breaks
+- **Team Coordination**: Effective collaboration (team projects)
 
 ---
 
-## 7. Quality Assurance Process
-
-### Testing Hierarchy
-1. **Unit Tests**: Individual function testing
-2. **Integration Tests**: Component interaction testing
-3. **Functional Tests**: End-to-end workflow testing
-4. **Performance Tests**: Speed and resource usage testing
-5. **Regression Tests**: Ensure no functionality breaks
-
-### Test Coverage Goals
-- **Overall Coverage**: 90%+ code coverage
-- **Critical Functions**: 100% coverage for core functionality
-- **Error Paths**: All error conditions tested
-- **Edge Cases**: Boundary conditions and unusual inputs
-
-### Quality Gates
-- All tests must pass before release
-- No regressions in existing functionality
-- Performance improvements measured and documented
-- Documentation updated to reflect changes
-
----
-
-## 8. Communication and Collaboration
-
-### Status Communication
-- **Clear Status Indicators**: Use consistent symbols (✅, 📋, 🔄, ❌)
-- **Progress Updates**: Regular updates on task completion
-- **Blocker Identification**: Clearly identify what's preventing progress
-- **Success Metrics**: Quantify improvements and achievements
-- **GitHub Actions Monitoring**: Real-time build and release status checking
-
-### GitHub CLI Integration
-- **Installation**: GitHub CLI (gh) installed and authenticated for repository access
-- **Build Monitoring**: `gh run list --limit 5` to check recent workflow runs
-- **Detailed Analysis**: `gh run view <run-id>` for specific run details and logs
-- **Release Verification**: `gh release list` and `gh release view <tag>` for release status
-- **Troubleshooting**: Direct access to workflow logs and error details
-- **Real-time Feedback**: Immediate visibility into CI/CD pipeline status
-
-### Knowledge Sharing
-- **Document Everything**: Capture decisions, rationale, and lessons learned
-- **Share Discoveries**: Highlight breakthrough moments and key insights
-- **Provide Context**: Explain why decisions were made
-- **Enable Handoffs**: Document enough detail for others to continue work
-
-### Feedback Integration
-- **Listen Actively**: Pay attention to user needs and pain points
-- **Iterate Quickly**: Make small improvements based on feedback
-- **Validate Assumptions**: Test ideas before full implementation
-- **Adapt Processes**: Improve workflows based on what works
-
----
-
-## 9. Project Management Principles
-
-### Scope Management
-- **Clear Requirements**: Define what success looks like
-- **Incremental Delivery**: Break large tasks into smaller pieces
-- **Priority Focus**: Work on highest-impact items first
-- **Scope Creep Control**: Evaluate new requests against current priorities
-
-### Risk Management
-- **Early Testing**: Test assumptions as soon as possible
-- **Backup Plans**: Have alternatives ready for high-risk approaches
-- **Dependency Tracking**: Identify what blocks progress
-- **Rollback Strategy**: Know how to undo changes if needed
-
-### Success Metrics
-- **Functional**: Does it work as expected?
-- **Performance**: Is it faster/better than before?
-- **Maintainability**: Is the code easier to understand and modify?
-- **User Experience**: Does it solve the user's problem?
-
----
-
-## 10. Lessons Learned
-
-### Key Insights
-1. **Research First**: Thorough research prevents complex workarounds
-2. **Test Everything**: Comprehensive testing catches issues early
-3. **Document Decisions**: Future you will thank present you
-4. **Measure Impact**: Quantify improvements to show value
-5. **Stay Flexible**: Be ready to change approach when better solutions emerge
-
-### Common Pitfalls
-- **Assuming API Limitations**: Always check for newer/better APIs
-- **Over-Engineering**: Simple solutions are often better
-- **Skipping Documentation**: Undocumented code is technical debt
-- **Ignoring Performance**: Measure before and after changes
-- **Poor Testing**: Inadequate testing leads to production issues
-
-### Success Patterns
-- **Experiment-Driven Development**: Test ideas before committing
-- **Incremental Improvement**: Small, frequent improvements compound
-- **User-Focused Design**: Solve real problems for real users
-- **Quality First**: Do it right the first time
-- **Continuous Learning**: Always look for better ways to do things
-
----
-
-## 11. Tool and Technology Preferences
-
-### Development Tools
-- **Go**: Primary language for performance and simplicity
-- **Git**: Version control with semantic commit messages
-- **GitHub Actions**: Automated testing and releases
-- **Testify**: Enhanced testing framework for Go
-- **pdfcpu**: PDF processing library
-
-### Documentation Tools
-- **Markdown**: All documentation in markdown format
-- **Cross-references**: Link related documents together
-- **Code Examples**: Include working code snippets
-- **Status Tracking**: Visual indicators for progress
-
-### Process Tools
-- **Task Lists**: Checkbox-based progress tracking
-- **Experiment Framework**: Consistent testing approach
-- **Automated Testing**: Continuous integration and validation
-- **Release Automation**: Streamlined deployment process
-
----
-
-## 12. Development Environment Setup
-
-### Required Tools
-- **Go 1.24+**: Primary development language
-- **Git**: Version control with semantic commits
-- **golangci-lint**: Code quality and linting
-- **GitHub CLI (gh)**: Repository and CI/CD monitoring
-
-### Environment Setup Commands
-```bash
-# Install development environment
-make setup                    # Installs golangci-lint and git hooks
-
-# Manual GitHub CLI setup (if needed)
-# Ubuntu/Debian: apt install gh
-# macOS: brew install gh
-# Windows: winget install GitHub.CLI
-gh auth login                 # Authenticate with GitHub
-
-# Verify installation
-gh --version
-golangci-lint --version
-go version
-```
-
-### Development Workflow Integration
-- **Pre-commit Hooks**: Automatic linting and testing before commits
-- **Build Process**: `make build` includes linting validation
-- **Release Monitoring**: Real-time GitHub Actions status checking
-- **Quality Gates**: All checks must pass before code integration
-
----
-
-## 13. Future Process Improvements
-
-### Potential Enhancements
-- **Automated Task Status Updates**: Sync task completion with git commits
-- **Performance Benchmarking**: Automated performance regression detection
-- **Documentation Generation**: Auto-generate API docs from code
-- **Test Coverage Reporting**: Automated coverage tracking and reporting
-
-### Process Evolution
-- **Regular Reviews**: Periodically evaluate and improve processes
-- **Feedback Integration**: Incorporate lessons learned from each project
-- **Tool Evaluation**: Stay current with better tools and techniques
-- **Knowledge Sharing**: Document and share successful patterns
-
----
-
-This document represents the accumulated knowledge and processes developed during the BlendPDFGo project. These patterns can be applied to future projects for improved efficiency, quality, and collaboration.
+This methodology evolves based on practical usage and feedback. Document successful patterns and suggest improvements to keep it effective and current.
