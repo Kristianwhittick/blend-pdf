@@ -132,8 +132,11 @@ project-name/
 ### Phase 0: Project Setup
 1. **Run interactive setup** to create project structure
 2. **Initialize version control** with proper .gitignore
-3. **Create initial documentation** from templates
-4. **Set up development environment** and tools
+3. **Copy default standards** from `~/.aws/amazonq/rules/` to `.amazonq/rules/`:
+   - `git-workflow.md` - Git branching, commits, and merge standards
+   - `documentation-standards.md` - Code commenting and README requirements
+4. **Create initial documentation** from templates
+5. **Set up development environment** and tools
 
 ### Phase 1: Requirements and Planning
 1. **Capture initial requirements** in requirements.md
