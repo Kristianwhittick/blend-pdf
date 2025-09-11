@@ -58,3 +58,4 @@ RELEASE_NOTES_*.md
 # OS files
 .DS_Store
 Thumbs.db
+blend-pdf

@@ -1,4 +1,4 @@
-# BlendPDFGo
+# Blend PDF (GO)
 
 
 ## Purpose

@@ -25,7 +25,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/kris/blendpdfgo/ui"
+	"github.com/Kristianwhittick/blend-pdf/ui"
 )
 
 func main() {
