@@ -113,7 +113,7 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 
 ### Download Pre-built Binaries
 
-Download the latest release for your platform from the [Releases page](https://github.com/Kristianwhittick/blend_pdf/releases):
+Download the latest release for your platform from the [Releases page](https://github.com/Kristianwhittick/blend-pdf/releases):
 
 - **Windows (64-bit)**: `blendpdf-{version}-windows-amd64.exe`
 - **Linux (64-bit)**: `blendpdf-{version}-linux-amd64`
@@ -136,8 +136,8 @@ Download the latest release for your platform from the [Releases page](https://g
 #### Quick Build
 ```bash
 # Clone the repository
-git clone https://github.com/Kristianwhittick/blend_pdf.git
-cd blend_pdf
+git clone https://github.com/Kristianwhittick/blend-pdf.git
+cd blend-pdf
 
 # Build for current platform
 go build
@@ -323,7 +323,7 @@ Time elapsed: 2m 34s
 
 ### Project Structure
 ```
-blend_pdf/
+blend-pdf/
 ├── main.go              # Main application entry point
 ├── constants.go         # Application constants and loggers
 ├── setup.go            # Initialization and CLI parsing
