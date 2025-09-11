@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2025-09-11
+
+### Changed
+- Updated module name to match repository path (github.com/Kristianwhittick/blend-pdf)
+- Changed README title to "Blend PDF (GO)" for better clarity
+
+### Fixed
+- Module path now matches actual repository location for proper go get functionality
+
 ## [1.1.0] - 2025-09-01
 
 ### Added
