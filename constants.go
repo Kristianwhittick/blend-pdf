@@ -64,6 +64,18 @@ var (
 	START_TIME  = time.Now()
 )
 
+// Operation tracking for undo functionality
+type LastOperation struct {
+	Type          string   // "single" or "merge"
+	OriginalFiles []string // Original file paths in main/
+	ActualFiles   []string // Actual filenames used (with conflict resolution)
+	OutputFolders []string // Output folders used
+	ArchiveFiles  []string // Files in archive/ (for merge operations)
+	Timestamp     time.Time
+}
+
+var LAST_OPERATION *LastOperation
+
 // Structured logging instances
 var (
 	debugLogger *log.Logger

@@ -441,13 +441,21 @@ func attemptCopyAndDelete(src, dst string, originalErr error) error {
 	return nil
 }
 
-// Copy file as fallback for move operations
-func copyFile(src, dst string) error {
+// Copy file with conflict resolution, returns actual destination used
+func copyFileWithConflictResolution(src, dst string) (string, error) {
 	if err := validateFilePaths(src, dst); err != nil {
-		return err
+		return "", err
 	}
 
-	return performFileCopy(src, dst)
+	actualDst := resolveDestinationConflicts(dst)
+	err := performFileCopy(src, actualDst)
+	return actualDst, err
+}
+
+// Copy file as fallback for move operations
+func copyFile(src, dst string) error {
+	_, err := copyFileWithConflictResolution(src, dst)
+	return err
 }
 
 // Validate file paths to prevent directory traversal

@@ -191,6 +191,8 @@ func executeUserChoice(choice string) {
 		processSingleFileOperation()
 	case "M":
 		processMergeOperation()
+	case "U":
+		processUndoOperation()
 	case "A":
 		toggleArchiveMode()
 	case "H":
@@ -202,7 +204,7 @@ func executeUserChoice(choice string) {
 	case "Q":
 		exitApplication()
 	default:
-		printWarning("Invalid choice. Please enter S, M, A, H, V, D, or Q.")
+		printWarning("Invalid choice. Please enter S, M, U, A, H, V, D, or Q.")
 	}
 }
 
@@ -216,13 +218,102 @@ func processMergeOperation() {
 	processMergeFilesWithValidation()
 }
 
+// Process undo operation
+func processUndoOperation() {
+	if LAST_OPERATION == nil {
+		printWarning("No operation to undo")
+		return
+	}
+
+	startTime := time.Now()
+
+	switch LAST_OPERATION.Type {
+	case "single":
+		undoSingleFileOperation()
+	case "merge":
+		undoMergeOperation()
+	default:
+		printError("Unknown operation type for undo")
+		return
+	}
+
+	// Clear undo history after successful undo
+	LAST_OPERATION = nil
+
+	duration := time.Since(startTime)
+	printSuccess(fmt.Sprintf("Undo completed in %v", duration))
+}
+
+// Undo single file operation
+func undoSingleFileOperation() {
+	op := LAST_OPERATION
+
+	// Find first successful output file to restore from
+	var sourceFile string
+	for _, actualFile := range op.ActualFiles {
+		if actualFile != "" && fileExists(actualFile) {
+			sourceFile = actualFile
+			break
+		}
+	}
+
+	if sourceFile == "" {
+		printError("No output file found to restore from")
+		return
+	}
+
+	// Restore original file to main directory
+	originalPath := op.OriginalFiles[0]
+	if err := moveFileWithRecovery(sourceFile, originalPath); err != nil {
+		printError(fmt.Sprintf("Failed to restore file: %v", err))
+		return
+	}
+
+	// Remove from other output folders
+	for _, actualFile := range op.ActualFiles {
+		if actualFile != "" && actualFile != sourceFile && fileExists(actualFile) {
+			if err := os.Remove(actualFile); err != nil && VERBOSE {
+				printWarning(fmt.Sprintf("Failed to remove %s: %v", actualFile, err))
+			}
+		}
+	}
+
+	printSuccess(fmt.Sprintf("Restored %s to main directory", filepath.Base(originalPath)))
+}
+
+// Undo merge operation
+func undoMergeOperation() {
+	op := LAST_OPERATION
+
+	// Restore original files from archive
+	for i, archiveFile := range op.ArchiveFiles {
+		if archiveFile != "" && fileExists(archiveFile) {
+			originalPath := op.OriginalFiles[i]
+			if err := moveFileWithRecovery(archiveFile, originalPath); err != nil {
+				printWarning(fmt.Sprintf("Failed to restore %s: %v", filepath.Base(originalPath), err))
+			}
+		}
+	}
+
+	// Remove merged files from all output folders
+	for _, actualFile := range op.ActualFiles {
+		if actualFile != "" && fileExists(actualFile) {
+			if err := os.Remove(actualFile); err != nil && VERBOSE {
+				printWarning(fmt.Sprintf("Failed to remove merged file %s: %v", actualFile, err))
+			}
+		}
+	}
+
+	printSuccess("Restored original files to main directory and removed merged outputs")
+}
+
 // Show application help
 func showApplicationHelp() {
 	showHelp()
 }
 
-// Copy file to all configured output folders
-func copyToAllOutputFolders(srcFile, filename string) error {
+// Copy file to all configured output folders, returns actual filenames used
+func copyToAllOutputFolders(srcFile, filename string) ([]string, error) {
 	// Get output folders from config or use default
 	outputFolders := []string{"output"}
 	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
@@ -230,13 +321,17 @@ func copyToAllOutputFolders(srcFile, filename string) error {
 	}
 
 	var errors []string
+	var actualFiles []string
 	successCount := 0
 
 	for _, folder := range outputFolders {
 		destFile := filepath.Join(folder, filename)
-		if err := copyFile(srcFile, destFile); err != nil {
+		actualFile, err := copyFileWithConflictResolution(srcFile, destFile)
+		if err != nil {
 			errors = append(errors, fmt.Sprintf("%s: %v", folder, err))
+			actualFiles = append(actualFiles, "") // Empty for failed copies
 		} else {
+			actualFiles = append(actualFiles, actualFile)
 			successCount++
 		}
 	}
@@ -244,7 +339,7 @@ func copyToAllOutputFolders(srcFile, filename string) error {
 	// If any destination failed, copy to error folder
 	if len(errors) > 0 {
 		errorFile := filepath.Join(ERROR_DIR, filename)
-		if err := copyFile(srcFile, errorFile); err != nil && VERBOSE {
+		if _, err := copyFileWithConflictResolution(srcFile, errorFile); err != nil && VERBOSE {
 			printWarning(fmt.Sprintf("Failed to copy to error folder: %v", err))
 		}
 
@@ -256,11 +351,11 @@ func copyToAllOutputFolders(srcFile, filename string) error {
 
 		// If no destinations succeeded, return error
 		if successCount == 0 {
-			return fmt.Errorf("all output destinations failed: %v", errors)
+			return actualFiles, fmt.Errorf("all output destinations failed: %v", errors)
 		}
 	}
 
-	return nil
+	return actualFiles, nil
 }
 
 // Toggle archive mode
@@ -401,23 +496,44 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 
 	fileSize := getFileSize(file)
 
+	// Get output folders for tracking
+	outputFolders := []string{"output"}
+	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
+		outputFolders = CONFIG.OutputFolders
+	}
+
+	var archiveFiles []string
+
 	// Archive mode handling
 	if CONFIG != nil && CONFIG.ArchiveMode {
 		// Copy to archive first
 		archiveFile := filepath.Join(ARCHIVE, filename)
-		if err := copyFile(file, archiveFile); err != nil {
+		actualArchive, err := copyFileWithConflictResolution(file, archiveFile)
+		if err != nil {
 			return fmt.Errorf("archive copy failed: %v", err)
 		}
+		archiveFiles = append(archiveFiles, actualArchive)
 	}
 
 	// Copy to all output folders
-	if err := copyToAllOutputFolders(file, filename); err != nil {
+	actualFiles, err := copyToAllOutputFolders(file, filename)
+	if err != nil {
 		return fmt.Errorf("output copy failed: %v", err)
 	}
 
 	// Remove original file
 	if err := os.Remove(file); err != nil {
 		return fmt.Errorf("failed to remove original file: %v", err)
+	}
+
+	// Track operation for undo
+	LAST_OPERATION = &LastOperation{
+		Type:          "single",
+		OriginalFiles: []string{file},
+		ActualFiles:   actualFiles,
+		OutputFolders: outputFolders,
+		ArchiveFiles:  archiveFiles,
+		Timestamp:     time.Now(),
 	}
 
 	recordSuccessfulOperation(startTime, filename, fileSize)
@@ -480,6 +596,12 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 	displayMergeInfo(file1, file2)
 	totalSize := getFileSize(file1) + getFileSize(file2)
 
+	// Get output folders for tracking
+	outputFolders := []string{"output"}
+	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
+		outputFolders = CONFIG.OutputFolders
+	}
+
 	// Create temporary output file
 	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
 	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
@@ -490,7 +612,8 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 
 	// Copy to all output folders
 	filename := name1 + "-" + name2 + ".pdf"
-	if err := copyToAllOutputFolders(tempOutputFile, filename); err != nil {
+	actualFiles, err := copyToAllOutputFolders(tempOutputFile, filename)
+	if err != nil {
 		os.Remove(tempOutputFile)
 		return fmt.Errorf("failed to copy to output folders: %v", err)
 	}
@@ -499,7 +622,29 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 	os.Remove(tempOutputFile)
 
 	// Move source files to archive (always archive for merge operations)
+	archiveFile1 := filepath.Join(ARCHIVE, filepath.Base(file1))
+	archiveFile2 := filepath.Join(ARCHIVE, filepath.Base(file2))
+	actualArchive1, err1 := copyFileWithConflictResolution(file1, archiveFile1)
+	actualArchive2, err2 := copyFileWithConflictResolution(file2, archiveFile2)
+
 	moveProcessedFiles(ARCHIVE, "Files merged and moved.", file1, file2)
+
+	// Track operation for undo (only if archive copies succeeded)
+	var archiveFiles []string
+	if err1 == nil {
+		archiveFiles = append(archiveFiles, actualArchive1)
+	}
+	if err2 == nil {
+		archiveFiles = append(archiveFiles, actualArchive2)
+	}
+	LAST_OPERATION = &LastOperation{
+		Type:          "merge",
+		OriginalFiles: []string{file1, file2},
+		ActualFiles:   actualFiles,
+		OutputFolders: outputFolders,
+		ArchiveFiles:  archiveFiles,
+		Timestamp:     time.Now(),
+	}
 
 	duration := time.Since(startTime)
 	logOperation("MERGE", filepath.Base(file1), filepath.Base(file2), "COMPLETED")
