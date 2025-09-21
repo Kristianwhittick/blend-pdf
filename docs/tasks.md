@@ -204,6 +204,29 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
+### T-036: Enhanced Clean Build Process ✅ COMPLETED
+**Epic**: E-06 | **Story**: US-010
+**Completed**: Sep 21 | **Actual Time**: 0.5 hours
+
+**Description**: Improve build script clean function to remove all development and test artefacts
+
+**Completion Notes**: Enhanced clean_build_dir() function to remove all build and test artefacts including local development binaries, test coverage files, and legacy test directories. Provides completely clean development environment.
+
+**Implementation Details**:
+- Added removal of 'blend-pdf' local development binary
+- Added removal of 'coverage.out' test coverage files
+- Added removal of 'version/' legacy test directory
+- Manually cleaned up existing artefacts
+- Tested clean function with comprehensive artifact removal
+
+**Benefits Achieved**:
+- **Complete Cleanup**: Clean build now removes ALL build and test artefacts
+- **Fresh Environment**: Completely clean state for development
+- **No Legacy Files**: Old test directories and coverage files removed
+- **Consistent Behaviour**: Clean means truly clean across all artifact types
+
+---
+
 ### T-037: Error Recovery Enhancement
 **Epic**: E-01 | **Story**: US-004
 **Priority**: Low | **Estimate**: 6 hours

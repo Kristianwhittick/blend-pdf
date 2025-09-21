@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced keyboard shortcuts for faster navigation (F1, Ctrl+Q, Ctrl+Z, etc.)
 - Multiple input methods: descriptive words, numbers, and control key combinations
 - Terminal capability detection for automatic UI selection
+- Enhanced clean build removes all development and test artefacts (coverage.out, version/, local binaries)
 
 ### Fixed
 - Merge operations now respect --no-archive flag (previously only single file operations did)
