@@ -1,5 +1,40 @@
 # Amazon Q Development Methodology
 
+## Project-Specific Methodologies
+
+### Go Project Standards
+
+#### Experiment Organization
+- **Individual Folders**: Each experiment in separate folder (`exp01/`, `exp02/`, etc.) to prevent Go linting warnings
+- **Unified Runner**: `experiments/run_experiments.go` handles execution of all experiments
+- **Naming Convention**: `experiment##_description.go` within each folder
+- **Usage**: `go run experiments/run_experiments.go ##`
+
+#### API Research Process
+1. **Create Experiment**: New experiment in next available `exp##/` folder
+2. **Update Runner**: Add case to `run_experiments.go` switch statement
+3. **Document Results**: Update `docs/api_knowledge.md` with findings
+4. **Commit Changes**: Follow git workflow for experiment commits
+
+#### Testing Integration
+- Experiments excluded from main test suite (no test files in experiment folders)
+- API validation through experimental testing rather than unit tests
+- Results documented in knowledge base for reference
+
+### Development Workflow Additions
+
+#### Experiment-Driven Development
+- Use experiments to validate API assumptions before implementation
+- Document breakthrough discoveries in task updates
+- Reference experiment numbers in commit messages and documentation
+
+#### Knowledge Management
+- `docs/api_knowledge.md`: Comprehensive API function reference
+- `docs/api_experiments_procedures.md`: Step-by-step testing procedures
+- Experiment results inform implementation decisions
+
+---
+
 ## Overview
 This document defines the standardized approach to development using Amazon Q Developer. Choose between Light and Full methodologies based on your project needs.
 
