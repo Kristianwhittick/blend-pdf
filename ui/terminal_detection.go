@@ -70,13 +70,15 @@ func DetectTerminalCapabilities() *TerminalCapabilities {
 		// Windows Terminal should always use modern UI
 	}
 
-	// Check TERM environment variable
-	term := os.Getenv("TERM")
-	if term == "dumb" || term == "" {
-		caps.IsLegacy = true
-		caps.SupportsColor = false
-		caps.SupportsBorders = false
-		caps.Name = "basic"
+	// Check TERM environment variable (but not on Windows where we have better detection)
+	if runtime.GOOS != "windows" {
+		term := os.Getenv("TERM")
+		if term == "dumb" || term == "" {
+			caps.IsLegacy = true
+			caps.SupportsColor = false
+			caps.SupportsBorders = false
+			caps.Name = "basic"
+		}
 	}
 
 	return caps
