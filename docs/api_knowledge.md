@@ -8,6 +8,116 @@ Documentation of pdfcpu API functions based on experimental testing.
 - **[Memory Processing Research](memory_processing_research.md)**: In-memory processing research and conclusions
 - **[Testing Guide](testing.md)**: Comprehensive testing procedures for the application
 
+## Breakthrough: Stream-Based APIs Discovered ✅
+
+### Response from pdfcpu Maintainer (Issue #1219)
+The maintainer pointed us to existing stream-based APIs that we had missed:
+
+1. **extract_test.go: func TestExtractPagesLowLevel(t *testing.T)**
+2. **merge_test.go: TestMergeRaw(t *testing.T)**  
+3. **trim.go: func Trim(rs io.ReadSeeker, w io.Writer, selectedPages []string, conf *model.Configuration) error**
+
+### Newly Discovered Stream-Based Functions ✅
+
+#### `api.Trim(rs io.ReadSeeker, w io.Writer, selectedPages []string, conf *model.Configuration) error`
+- **Status**: ✅ TESTED & WORKING (Experiment 29)
+- **Purpose**: Extract/trim pages from PDF stream to output stream
+- **Parameters**:
+  - `rs`: Input PDF as ReadSeeker (use bytes.NewReader)
+  - `w`: Output writer (use bytes.Buffer)
+  - `selectedPages`: Page selection from ParsePageSelection
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - TRUE in-memory processing - no temporary files!
+  - Can reverse page order: "3,2,1" works correctly
+  - Perfect for page extraction and reordering
+
+#### `api.MergeRaw(rsc []io.ReadSeeker, w io.Writer, dividerPage bool, conf *model.Configuration) error`
+- **Status**: ✅ TESTED & WORKING (Experiment 29)
+- **Purpose**: Merge multiple PDF streams into single output stream
+- **Parameters**:
+  - `rsc`: Slice of ReadSeekers (multiple PDFs)
+  - `w`: Output writer (use bytes.Buffer)
+  - `dividerPage`: Whether to add divider pages (use false)
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - TRUE in-memory merging - no temporary files!
+  - Handles multiple PDFs in sequence
+  - Perfect for combining extracted pages
+
+#### `api.MergeCreateZip(rs1, rs2 io.ReadSeeker, w io.Writer, conf *model.Configuration) error`
+- **Status**: ✅ TESTED & WORKING (Experiment 29)
+- **Purpose**: Merge two PDF streams with interleaved (zip) pattern
+- **Parameters**:
+  - `rs1`: First PDF as ReadSeeker
+  - `rs2`: Second PDF as ReadSeeker  
+  - `w`: Output writer (use bytes.Buffer)
+  - `conf`: Configuration object
+- **Returns**: Error if failed
+- **Notes**: 
+  - TRUE in-memory interleaved merging!
+  - Creates perfect zip pattern: A1, B1, A2, B2, A3, B3
+  - Combined with Trim for complete solution
+
+## Complete In-Memory Workflow ✅
+
+### Perfect Solution Achieved
+Using the discovered APIs, we can now achieve 100% in-memory processing:
+
+```go
+// Complete in-memory interleaved merge workflow
+func createInterleavedMergeInMemory(file1, file2, output string) error {
+    // 1. Load PDFs into memory
+    bytes1, _ := os.ReadFile(file1)
+    bytes2, _ := os.ReadFile(file2)
+    
+    // 2. Validate page counts (using file API for simplicity)
+    pageCount1, _ := api.PageCountFile(file1)
+    pageCount2, _ := api.PageCountFile(file2)
+    if pageCount1 != pageCount2 {
+        return errors.New("page count mismatch")
+    }
+    
+    // 3. Reverse second document in memory
+    reader2 := bytes.NewReader(bytes2)
+    var reversedBuffer bytes.Buffer
+    reversePages := "3,2,1" // For 3-page document
+    reverseSelection, _ := api.ParsePageSelection(reversePages)
+    err := api.Trim(reader2, &reversedBuffer, reverseSelection, conf)
+    
+    // 4. Zip merge for perfect interleaving
+    reader1 := bytes.NewReader(bytes1)
+    reversedReader := bytes.NewReader(reversedBuffer.Bytes())
+    var finalBuffer bytes.Buffer
+    err = api.MergeCreateZip(reader1, reversedReader, &finalBuffer, conf)
+    
+    // 5. Write final result
+    return os.WriteFile(output, finalBuffer.Bytes(), 0644)
+}
+```
+
+### Benefits of Stream-Based Approach ✅
+- **Zero Temporary Files**: Complete in-memory processing
+- **Better Performance**: No disk I/O during processing
+- **Simpler Code**: Eliminates temp file management
+- **More Reliable**: Fewer failure points
+- **Memory Efficient**: Process only what's needed
+
+### Comparison with Previous Approaches
+
+#### Old Zip Merge Approach (Experiment 21)
+- **Temp Files**: 1 (for reversed document)
+- **API Calls**: 2 (CollectFile + MergeCreateZipFile)
+- **Complexity**: Medium
+
+#### New Stream-Based Approach (Experiment 29) ✅
+- **Temp Files**: 0 (pure in-memory)
+- **API Calls**: 2 (Trim + MergeCreateZip)
+- **Complexity**: Low
+- **Performance**: Best
+
 ## API Functions Tested
 
 ### `api.PageCountFile(filename string) (int, error)`

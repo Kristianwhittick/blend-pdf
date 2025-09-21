@@ -80,6 +80,20 @@ func main() {
 		cmd = exec.Command("go", "run", "experiments/exp21/experiment21_collect_zip_merge.go")
 	case "22":
 		cmd = exec.Command("go", "run", "experiments/exp22/experiment22_complete_zip_flow.go")
+	case "23":
+		cmd = exec.Command("go", "run", "experiments/exp23/experiment23_extract_low_level.go")
+	case "24":
+		cmd = exec.Command("go", "run", "experiments/exp24/experiment24_trim_stream.go")
+	case "25":
+		cmd = exec.Command("go", "run", "experiments/exp25/experiment25_merge_raw.go")
+	case "26":
+		cmd = exec.Command("go", "run", "experiments/exp26/experiment26_complete_memory_workflow.go")
+	case "27":
+		cmd = exec.Command("go", "run", "experiments/exp27/experiment27_package_investigation.go")
+	case "28":
+		cmd = exec.Command("go", "run", "experiments/exp28/experiment28_import_testing.go")
+	case "29":
+		cmd = exec.Command("go", "run", "experiments/exp29/experiment29_discovered_apis.go")
 	default:
 		fmt.Printf("Unknown experiment: %s\n", experiment)
 		return

@@ -12,7 +12,7 @@ Testing individual pdfcpu API functions to understand their behaviour and requir
 
 ### Running Individual API Tests
 ```bash
-cd /home/kris/scan/blendpdf
+cd /home/kris/workspace/scan/blend-pdf
 go run experiments/run_experiments.go 01    # Test page counting
 go run experiments/run_experiments.go 02    # Test PDF validation
 go run experiments/run_experiments.go 03    # Test single page extraction
@@ -35,7 +35,19 @@ go run experiments/run_experiments.go 19    # Test CollectFile strategy
 go run experiments/run_experiments.go 20    # Test basic zip merge
 go run experiments/run_experiments.go 21    # Test CollectFile + zip merge
 go run experiments/run_experiments.go 22    # Test complete zip flow validation
+go run experiments/run_experiments.go 23    # Test low-level extract pages API
+go run experiments/run_experiments.go 24    # Test stream-based Trim function
+go run experiments/run_experiments.go 25    # Test raw merge function
+go run experiments/run_experiments.go 26    # Test complete in-memory workflow
+go run experiments/run_experiments.go 27    # Test package investigation
+go run experiments/run_experiments.go 28    # Test import path testing
+go run experiments/run_experiments.go 29    # Test discovered stream-based APIs
 ```
+
+### Experiment Structure
+- **Experiments 01-22**: Located in individual folders (`exp01/`, `exp02/`, etc.) to prevent Go linting warnings
+- **Experiments 23-29**: Located in root experiments directory as single files
+- **Runner**: `experiments/run_experiments.go` handles both folder and file structures
 
 ### Expected API Test Results
 - **Test 01**: Both PDFs should have 3 pages

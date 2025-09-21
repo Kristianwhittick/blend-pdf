@@ -1005,66 +1005,95 @@ All core functionality complete with professional UI, real-time monitoring, comp
 > **⚠️ IMPORTANT**: These backlog items are **NOT TO BE WORKED ON** until explicitly moved to "Next Stages" section by request. They are documented here for future reference only.
 
 ### Task 14: Implement In-Memory Processing Approach (Phase 4)
-- **Status**: 🔄 READY FOR IMPLEMENTATION (ON HOLD)
+- **Status**: ✅ READY FOR IMPLEMENTATION - **BREAKTHROUGH ACHIEVED**
 - **Requirements**: R14.4-R14.6 (performance requirements), R2.1-R2.4 (smart page reversal), R13.4-R13.7 (temporary file management)
 - **Priority**: Performance Enhancement (Optional)
-- **Description**: Replace current file-based merging with hybrid in-memory approach to reduce temporary file usage
+- **Description**: Replace current file-based merging with **pure in-memory approach** using newly discovered stream-based APIs
 - **Benefits**: 
-  - 52.9% memory efficiency vs original files
-  - Reduced disk I/O operations
-  - Better error handling for problematic PDF pages
-  - Faster processing with minimal temporary files
+  - **100% in-memory processing** - Zero temporary files
+  - **Better Performance** - No disk I/O during processing
+  - **Simpler Code** - Eliminates temp file management
+  - **More Reliable** - Fewer failure points
+
+#### BREAKTHROUGH: Stream-Based APIs Discovered ✅
+**Source**: Response from pdfcpu maintainer on GitHub issue #1219
+
+**Discovered APIs** (Experiment 29):
+- `api.Trim(rs io.ReadSeeker, w io.Writer, selectedPages []string, conf *model.Configuration) error`
+- `api.MergeRaw(rsc []io.ReadSeeker, w io.Writer, dividerPage bool, conf *model.Configuration) error`
+- `api.MergeCreateZip(rs1, rs2 io.ReadSeeker, w io.Writer, conf *model.Configuration) error`
+
+**Complete Workflow**:
+```go
+// 1. Load PDFs into memory
+bytes1, _ := os.ReadFile(file1)
+bytes2, _ := os.ReadFile(file2)
+
+// 2. Reverse second document in memory
+reader2 := bytes.NewReader(bytes2)
+var reversedBuffer bytes.Buffer
+reverseSelection, _ := api.ParsePageSelection("3,2,1")
+api.Trim(reader2, &reversedBuffer, reverseSelection, conf)
+
+// 3. Zip merge for perfect interleaving
+reader1 := bytes.NewReader(bytes1)
+reversedReader := bytes.NewReader(reversedBuffer.Bytes())
+var finalBuffer bytes.Buffer
+api.MergeCreateZip(reader1, reversedReader, &finalBuffer, conf)
+
+// 4. Write final result
+os.WriteFile(output, finalBuffer.Bytes(), 0644)
+```
 
 #### Implementation Details
-- **Research Completed**: ✅ (Experiments 09-16 in `/experiments/` directory)
-- **API Knowledge**: ✅ (Documented in `/docs/api_knowledge.md`)
-- **Approach Validated**: ✅ (Hybrid approach in `experiment16_final_memory_approach.go`)
+- **Research Completed**: ✅ (Experiments 23-29 validate stream-based APIs)
+- **API Knowledge**: ✅ (Complete stream-based workflow documented)
+- **Approach Validated**: ✅ (Experiment 29 proves 100% in-memory processing)
 
 #### Technical Requirements
 1. **Load PDFs into memory** as byte arrays for validation
-2. **Use `api.ReadContextFile()`** for reliable context creation
-3. **Validate page counts** in memory before processing
-4. **Extract pages with minimal temp files** using error handling
-5. **Keep extracted pages in memory** as byte arrays
-6. **Final merge from memory** with proper cleanup
+2. **Use stream-based `api.Trim()`** for page reversal in memory
+3. **Use stream-based `api.MergeCreateZip()`** for interleaved merging
+4. **Eliminate all temporary files** from the workflow
+5. **Maintain existing interleaved pattern** (A1, B3, A2, B2, A3, B1)
 
 #### Files to Modify
-- `main.go` - Update merge logic in interactive menu
-- `pdfops.go` - Replace `createInterleavedMerge()` function
-- `fileops.go` - May need updates for temp file handling
+- `pdfops.go` - Replace `createInterleavedMerge()` function with stream-based implementation
 
 #### Reference Implementation
-- See `experiments/experiment16_final_memory_approach.go` for working example
-- See `docs/memory_processing_research.md` for implementation pattern
-- See `docs/api_knowledge.md` for API reference
+- See `experiments/experiment29_discovered_apis.go` for working example
+- See `docs/api_knowledge.md` for complete API reference
 
-#### Important Notes
-- **Hybrid Approach**: Not pure in-memory due to pdfcpu API limitations
-- **Temp Files**: Reduces from 7 to 2-3 files (not zero due to API constraints)
-- **API Limitation**: pdfcpu requires file paths for page extraction and merging
-- **For Zero Temp Files**: See Task 25 (pdfcpu feature request) for true in-memory processing
+#### Benefits Achieved
+- **Zero Temporary Files**: Complete in-memory processing
+- **Better Performance**: No disk I/O during processing operations
+- **Simpler Code**: Eliminates complex temp file management
+- **More Reliable**: Fewer failure points and edge cases
+- **Memory Efficient**: Process only what's needed in memory
 
 #### Acceptance Criteria
-- [ ] Merging uses minimal temporary files (only during page extraction)
-- [ ] Original PDF data kept in memory throughout process
-- [ ] Graceful handling of pages that fail extraction
-- [ ] Memory usage ~50% of original file sizes
-- [ ] Proper cleanup of all temporary files
+- [ ] Merging uses zero temporary files (pure in-memory)
+- [ ] Original PDF data loaded once into memory
+- [ ] Page reversal performed in memory using `api.Trim()`
+- [ ] Interleaved merging performed in memory using `api.MergeCreateZip()`
 - [ ] Maintains existing interleaved merge pattern (A1, B3, A2, B2, A3, B1)
+- [ ] Memory usage optimized vs current approach
+- [ ] All existing functionality preserved
 
 #### Estimated Effort
-- **Development**: 4-6 hours
-- **Testing**: 2-3 hours
-- **Documentation**: 1 hour
+- **Development**: 2-3 hours (simple replacement of existing function)
+- **Testing**: 1-2 hours (verify against existing test suite)
+- **Documentation**: 30 minutes (update API knowledge)
 
 #### Suggested Commit Message
 ```
-perf: Add hybrid in-memory PDF processing
+feat: Implement pure in-memory PDF processing using stream-based APIs
 
-- Load PDFs into memory for validation
-- Use minimal temporary files during operations
-- Implement graceful handling of extraction failures
-- Achieve ~50% memory efficiency vs original approach
+- Replace file-based merging with stream-based api.Trim() and api.MergeCreateZip()
+- Eliminate all temporary files from interleaved merge workflow
+- Achieve 100% in-memory processing with zero disk I/O during operations
+- Maintain existing interleaved pattern (A1, B3, A2, B2, A3, B1)
+- Based on pdfcpu maintainer guidance from GitHub issue #1219
 ```
 
 ### Task 29: Web Interface
