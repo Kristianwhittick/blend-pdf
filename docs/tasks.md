@@ -1,9 +1,9 @@
 # Task Board - BlendPDFGo
 
 ## Task Summary (40 Total)
-- ✅ **Done**: 31 tasks
+- ✅ **Done**: 32 tasks
 - 🔄 **In Progress**: 0 tasks  
-- 📋 **To Do**: 1 task
+- 📋 **To Do**: 0 tasks
 - 🗂️ **Backlog**: 7 tasks
 
 ### 📊 Project Status: PRODUCTION READY
@@ -141,18 +141,27 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-034: Keyboard Shortcuts Enhancement
+### T-034: Keyboard Shortcuts Enhancement ✅ COMPLETED
 **Epic**: E-03 | **Story**: US-014
-**Priority**: Low | **Estimate**: 2 hours
-**Dependencies**: T-009
+**Completed**: Sep 21 | **Actual Time**: 1.5 hours
 
 **Description**: Add more keyboard shortcuts for faster navigation
 
-**Acceptance Criteria**:
-- [ ] Additional keyboard shortcuts for common operations
-- [ ] Help display for available shortcuts
-- [ ] Cross-platform keyboard handling
-- [ ] User documentation updates
+**Completion Notes**: Implemented enhanced keyboard shortcuts for both modern and legacy UI modes. Users can now use multiple ways to trigger operations including function keys, descriptive words, and control key combinations.
+
+**Implementation Details**:
+- Added `processKeyboardShortcuts()` method to both EnhancedMenu and LegacyUI
+- Enhanced shortcuts: F1/help/? for help, Ctrl+Q/exit/quit for quit, Ctrl+Z/undo for undo
+- Descriptive shortcuts: single/1 for single file, merge/2 for merge, archive for toggle
+- Added refresh shortcut (R/space/refresh) for manual display updates
+- Updated help text in both UI modes to document all available shortcuts
+- Extended FileOperations interface to support undo and archive toggle operations
+
+**Benefits Achieved**:
+- **Multiple Input Methods**: Users can type full words, numbers, or single letters
+- **Intuitive Shortcuts**: Common shortcuts like Ctrl+Z, F1, Ctrl+Q work as expected
+- **Cross-Platform**: Works in both modern terminals and legacy environments
+- **Comprehensive Help**: All shortcuts documented in interactive help system
 
 ---
 

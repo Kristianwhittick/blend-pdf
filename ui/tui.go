@@ -30,6 +30,8 @@ type FileOperations interface {
 	GetHumanReadableSize(filename string) string
 	ProcessSingleFile() (string, error) // Returns operation description
 	ProcessMergeFiles() (string, error) // Returns operation description
+	ProcessUndo() error                 // Undo last operation
+	ToggleArchiveMode()                 // Toggle archive mode
 }
 
 // TUI represents the terminal user interface

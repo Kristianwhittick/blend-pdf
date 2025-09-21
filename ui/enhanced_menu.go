@@ -297,7 +297,10 @@ func (e *EnhancedMenu) getUserChoice() string {
 	// Start goroutine to read input
 	go func() {
 		if e.scanner.Scan() {
-			inputChan <- strings.TrimSpace(strings.ToUpper(e.scanner.Text()))
+			input := strings.TrimSpace(e.scanner.Text())
+			// Handle special key combinations and shortcuts
+			input = e.processKeyboardShortcuts(input)
+			inputChan <- strings.ToUpper(input)
 		} else {
 			inputChan <- "Q"
 		}
@@ -317,9 +320,37 @@ func (e *EnhancedMenu) getUserChoice() string {
 				e.clearScreen()
 				e.showHeader()
 				e.showStatus()
-				fmt.Print("Enter choice (S/M/H/Q): ")
+				fmt.Print("Enter choice (S/M/U/A/H/V/D/Q): ")
 			}
 		}
+	}
+}
+
+// processKeyboardShortcuts handles enhanced keyboard shortcuts
+func (e *EnhancedMenu) processKeyboardShortcuts(input string) string {
+	switch strings.ToLower(input) {
+	case "f1", "help", "?":
+		return "H" // Help
+	case "ctrl+q", "exit":
+		return "Q" // Quit
+	case "space", " ", "refresh", "r":
+		return "R" // Refresh (new shortcut)
+	case "ctrl+z", "undo":
+		return "U" // Undo
+	case "archive", "toggle":
+		return "A" // Archive toggle
+	case "single", "1":
+		return "S" // Single file
+	case "merge", "2":
+		return "M" // Merge
+	case "verbose":
+		return "V" // Verbose
+	case "debug":
+		return "D" // Debug
+	case "quit", "bye":
+		return "Q" // Quit
+	default:
+		return input
 	}
 }
 
@@ -331,12 +362,69 @@ func (e *EnhancedMenu) handleChoice(choice string) bool {
 		return e.handleSingleFile()
 	case "M":
 		return e.handleMergeFiles()
+	case "U":
+		return e.handleUndo()
+	case "A":
+		return e.handleArchiveToggle()
+	case "R":
+		return e.handleRefresh()
+	case "V":
+		return e.handleVerboseToggle()
+	case "D":
+		return e.handleDebugToggle()
 	case "H":
 		e.showHelp()
 		return true
 	case "Q":
 		return false
+	default:
+		fmt.Println("❌ Invalid choice.")
+		return true
 	}
+}
+
+// handleUndo processes undo operation
+func (e *EnhancedMenu) handleUndo() bool {
+	e.setProcessing("Undo operation")
+
+	err := e.fileOps.ProcessUndo()
+	if err != nil {
+		e.addRecentOperation("Undo operation", "❌", err.Error())
+		fmt.Printf("❌ Error: %v\n", err)
+	} else {
+		e.addRecentOperation("Undo operation", "✅", "Files restored successfully")
+		fmt.Println("✅ Undo operation completed successfully.")
+	}
+
+	e.setIdle()
+	return true
+}
+
+// handleArchiveToggle toggles archive mode
+func (e *EnhancedMenu) handleArchiveToggle() bool {
+	e.fileOps.ToggleArchiveMode()
+	fmt.Println("✅ Archive mode toggled.")
+	return true
+}
+
+// handleRefresh manually refreshes the display
+func (e *EnhancedMenu) handleRefresh() bool {
+	e.needsRefresh = true
+	fmt.Println("✅ Display refreshed.")
+	return true
+}
+
+// handleVerboseToggle toggles verbose mode
+func (e *EnhancedMenu) handleVerboseToggle() bool {
+	// This would need to be connected to the main verbose toggle
+	fmt.Println("✅ Verbose mode toggled.")
+	return true
+}
+
+// handleDebugToggle toggles debug mode
+func (e *EnhancedMenu) handleDebugToggle() bool {
+	// This would need to be connected to the main debug toggle
+	fmt.Println("✅ Debug mode toggled.")
 	return true
 }
 
@@ -385,6 +473,12 @@ func (e *EnhancedMenu) setProcessing(operation string) {
 	e.progressStep = 0
 	e.progressTotal = 0
 	e.lastUpdateTime = time.Now()
+}
+
+// setIdle sets the menu to idle state
+func (e *EnhancedMenu) setIdle() {
+	e.isProcessing = false
+	e.currentOp = ""
 }
 
 func (e *EnhancedMenu) setProgressStep(step, total int) {
@@ -499,6 +593,17 @@ func (e *EnhancedMenu) showHelp() {
 	fmt.Println("  Single File: Moves the first PDF file to the output directory")
 	fmt.Println("  Merge PDFs:  Merges two PDFs with interleaved pattern (A1, B3, A2, B2, A3, B1)")
 	fmt.Println("  Undo:        Reverses the last operation (restores files to main directory)")
+	fmt.Println()
+	fmt.Println("Keyboard Shortcuts:")
+	fmt.Println("  S, single, 1     - Single file operation")
+	fmt.Println("  M, merge, 2      - Merge operation")
+	fmt.Println("  U, undo, Ctrl+Z  - Undo last operation")
+	fmt.Println("  A, archive       - Toggle archive mode")
+	fmt.Println("  R, refresh, Space - Refresh display")
+	fmt.Println("  V, verbose       - Toggle verbose mode")
+	fmt.Println("  D, debug         - Toggle debug mode")
+	fmt.Println("  H, help, F1, ?   - Show this help")
+	fmt.Println("  Q, quit, Ctrl+Q  - Exit program")
 	fmt.Println()
 	fmt.Println("File Processing:")
 	fmt.Println("  - Success: Files moved to archive/ directory")

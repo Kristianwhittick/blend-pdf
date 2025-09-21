@@ -93,9 +93,32 @@ func (l *LegacyUI) showMenu() {
 func (l *LegacyUI) getUserChoice() string {
 	fmt.Print("Enter choice (S/M/U/A/H/Q): ")
 	if l.scanner.Scan() {
-		return strings.ToUpper(strings.TrimSpace(l.scanner.Text()))
+		input := strings.TrimSpace(l.scanner.Text())
+		// Handle keyboard shortcuts
+		input = l.processKeyboardShortcuts(input)
+		return strings.ToUpper(input)
 	}
 	return "Q"
+}
+
+// processKeyboardShortcuts handles enhanced keyboard shortcuts
+func (l *LegacyUI) processKeyboardShortcuts(input string) string {
+	switch strings.ToLower(input) {
+	case "f1", "help", "?":
+		return "H" // Help
+	case "ctrl+q", "exit", "quit", "bye":
+		return "Q" // Quit
+	case "ctrl+z", "undo":
+		return "U" // Undo
+	case "archive", "toggle":
+		return "A" // Archive toggle
+	case "single", "1":
+		return "S" // Single file
+	case "merge", "2":
+		return "M" // Merge
+	default:
+		return input
+	}
 }
 
 // handleChoice processes user choice
@@ -170,6 +193,14 @@ func (l *LegacyUI) showHelp() {
 	fmt.Println("  Single File: Moves the first PDF file to the output directory")
 	fmt.Println("  Merge PDFs:  Merges two PDFs with interleaved pattern")
 	fmt.Println("  Undo:        Reverses the last operation")
+	fmt.Println()
+	fmt.Println("Keyboard Shortcuts:")
+	fmt.Println("  S, single, 1     - Single file operation")
+	fmt.Println("  M, merge, 2      - Merge operation")
+	fmt.Println("  U, undo, Ctrl+Z  - Undo last operation")
+	fmt.Println("  A, archive       - Toggle archive mode")
+	fmt.Println("  H, help, F1, ?   - Show this help")
+	fmt.Println("  Q, quit, Ctrl+Q  - Exit program")
 	fmt.Println()
 	fmt.Println("Archive Mode:")
 	fmt.Println("  ON:  Files are copied to archive before processing")
