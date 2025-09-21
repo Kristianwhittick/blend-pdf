@@ -920,12 +920,18 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - Add [U]ndo option to main menu
   - Validate files still exist before restore attempt
   - Update session statistics after restore operations
+- **Multi-Output Folder Behavior**:
+  - **Single File Undo**: Move file from first output folder back to main/, delete from all other output folders
+  - **Merge Undo**: Move original files from archive/ back to main/, delete merged file from all output folders
+  - **Consistent Result**: Both operations restore clean "pre-operation" state with files only in main/
+  - **Archive Preservation**: Keep archive copies (they serve as backups)
 - **Acceptance Criteria**:
-  - [ ] Can undo last single file move (move from output back to main)
-  - [ ] Can undo last merge operation (move files from archive back to main, remove merged output)
+  - [ ] Can undo last single file move (move from first output back to main, delete from other outputs)
+  - [ ] Can undo last merge operation (move files from archive back to main, remove merged output from all folders)
   - [ ] Clear undo history after successful undo operation
   - [ ] Show appropriate messages when undo is not available
   - [ ] Maintain file integrity during restore operations
+  - [ ] Handle partial failures gracefully (log warnings, continue operation)
 
 ### Task 31: Configuration File Support
 - **Status**: 📋 TO DO
