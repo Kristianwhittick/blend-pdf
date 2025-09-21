@@ -1,8 +1,33 @@
 # Amazon Q Development Methodology
 
+## ⚠️ CRITICAL: UK ENGLISH SPELLING REQUIREMENT
+
+**MANDATORY**: Use UK English spelling in ALL text, documentation, comments, and commit messages:
+- behaviour (not behavior)
+- colour (not color)
+- optimise (not optimize)
+- realise (not realize)
+- centre (not center)
+- licence (not license as noun)
+- analyse (not analyze)
+
+**PROCESS**: Check every response and commit for US spellings before submitting.
+
 ## Project-Specific Methodologies
 
 ### Go Project Standards
+
+#### UK English Spelling - CRITICAL REQUIREMENT ⚠️
+**ALWAYS use UK English spelling in ALL documentation, comments, and user-facing text:**
+- behaviour (not behavior)
+- colour (not color) 
+- optimise (not optimize)
+- realise (not realize)
+- centre (not center)
+- licence (not license as noun)
+- analyse (not analyze)
+
+**Check EVERY commit for US spellings before committing.**
 
 #### Experiment Organization
 - **Individual Folders**: Each experiment in separate folder (`exp01/`, `exp02/`, etc.) to prevent Go linting warnings
