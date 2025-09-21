@@ -1,10 +1,10 @@
 # Task Board - BlendPDFGo
 
 ## Task Summary (40 Total)
-- ✅ **Done**: 29 tasks
+- ✅ **Done**: 30 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 2 tasks
-- 🗂️ **Backlog**: 9 tasks
+- 🗂️ **Backlog**: 8 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -204,6 +204,29 @@ All core functionality complete with professional UI, real-time monitoring, comp
 **Priority**: Low | **Estimate**: 4 hours
 
 **Description**: Detailed operation logs for compliance
+
+---
+
+### T-035: Fix --no-archive Flag for Merge Operations ✅ COMPLETED
+**Epic**: E-02 | **Story**: US-005
+**Completed**: Sep 21 | **Actual Time**: 0.5 hours
+
+**Description**: Fix inconsistency where --no-archive flag only worked for single file operations but not merge operations
+
+**Completion Notes**: Fixed merge operations to respect the CONFIG.ArchiveMode setting. Previously merge operations always archived regardless of the --no-archive flag, creating inconsistent behavior.
+
+**Implementation Details**:
+- Added CONFIG.ArchiveMode check to merge operations
+- Archive mode ON: Copy files to archive before moving to output (existing behavior)
+- Archive mode OFF: Remove original files directly without archiving
+- Updated undo tracking to handle cases where no archive files exist
+- Maintained backward compatibility: default behavior still archives for both operations
+
+**Benefits Achieved**:
+- **Consistent Behavior**: Both single file and merge operations now respect --no-archive flag
+- **User Control**: --no-archive flag works as expected for all operations
+- **Backward Compatibility**: Default archiving behavior unchanged
+- **Proper Undo Support**: Undo functionality works correctly with both archive modes
 
 ---
 
