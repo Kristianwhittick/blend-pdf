@@ -621,21 +621,34 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 	// Clean up temporary file
 	os.Remove(tempOutputFile)
 
-	// Move source files to archive (always archive for merge operations)
-	archiveFile1 := filepath.Join(ARCHIVE, filepath.Base(file1))
-	archiveFile2 := filepath.Join(ARCHIVE, filepath.Base(file2))
-	actualArchive1, err1 := copyFileWithConflictResolution(file1, archiveFile1)
-	actualArchive2, err2 := copyFileWithConflictResolution(file2, archiveFile2)
-
-	moveProcessedFiles(ARCHIVE, "Files merged and moved.", file1, file2)
-
-	// Track operation for undo (only if archive copies succeeded)
+	// Move source files to archive (respect archive mode setting)
 	var archiveFiles []string
-	if err1 == nil {
-		archiveFiles = append(archiveFiles, actualArchive1)
-	}
-	if err2 == nil {
-		archiveFiles = append(archiveFiles, actualArchive2)
+	if CONFIG != nil && CONFIG.ArchiveMode {
+		archiveFile1 := filepath.Join(ARCHIVE, filepath.Base(file1))
+		archiveFile2 := filepath.Join(ARCHIVE, filepath.Base(file2))
+		actualArchive1, err1 := copyFileWithConflictResolution(file1, archiveFile1)
+		actualArchive2, err2 := copyFileWithConflictResolution(file2, archiveFile2)
+
+		moveProcessedFiles(ARCHIVE, "Files merged and moved.", file1, file2)
+
+		// Track archive files for undo (only if archive copies succeeded)
+		if err1 == nil {
+			archiveFiles = append(archiveFiles, actualArchive1)
+		}
+		if err2 == nil {
+			archiveFiles = append(archiveFiles, actualArchive2)
+		}
+	} else {
+		// No archiving - just remove original files
+		if err := os.Remove(file1); err != nil && VERBOSE {
+			printWarning(fmt.Sprintf("Failed to remove %s: %v", file1, err))
+		}
+		if err := os.Remove(file2); err != nil && VERBOSE {
+			printWarning(fmt.Sprintf("Failed to remove %s: %v", file2, err))
+		}
+		if VERBOSE {
+			printSuccess("Files merged and removed.")
+		}
 	}
 	LAST_OPERATION = &LastOperation{
 		Type:          "merge",
