@@ -13,6 +13,42 @@
 
 **PROCESS**: Check every response and commit for US spellings before submitting.
 
+## Operation Checklists
+
+### Before Every Response
+- [ ] Use UK English spelling (behaviour, colour, optimise, realise, centre, licence, analyse)
+- [ ] Check if task documentation needs updating
+- [ ] Verify if CHANGELOG.md needs updating
+- [ ] Consider if README.md needs updating
+
+### Code Changes Checklist
+- [ ] Use UK English in all comments and documentation
+- [ ] Update relevant task in docs/tasks.md if completing/fixing something
+- [ ] Add entry to CHANGELOG.md if user-facing change
+- [ ] Update README.md if new features or significant changes
+- [ ] Run tests before committing
+- [ ] Use proper commit message format with UK spelling
+
+### Bug Fixes Checklist
+- [ ] Document the fix in the relevant task (T-XXX completion notes)
+- [ ] Add fix to CHANGELOG.md Fixed section
+- [ ] Use UK English in all documentation updates
+- [ ] Test the fix thoroughly
+- [ ] Update any affected documentation
+
+### New Features Checklist
+- [ ] Update task status in docs/tasks.md
+- [ ] Add feature to CHANGELOG.md Added section
+- [ ] Update README.md features section if significant
+- [ ] Use UK English throughout
+- [ ] Include proper documentation and comments
+
+### Documentation Updates Checklist
+- [ ] Use UK English spelling throughout
+- [ ] Update all affected files (tasks.md, CHANGELOG.md, README.md)
+- [ ] Ensure consistency across all documentation
+- [ ] Check cross-references are still valid
+
 ## Project-Specific Methodologies
 
 ### Go Project Standards
