@@ -33,6 +33,8 @@ type FileOpsBridge struct {
 	getFileSizeFunc       func(string) string
 	processSingleFileFunc func() error
 	processMergeFilesFunc func() error
+	processUndoFunc       func() error
+	toggleArchiveModeFunc func()
 }
 
 // NewFileOpsBridge creates a new bridge with function pointers
@@ -58,6 +60,16 @@ func (b *FileOpsBridge) SetFunctions(
 	b.getFileSizeFunc = getFileSize
 	b.processSingleFileFunc = processSingleFile
 	b.processMergeFilesFunc = processMergeFiles
+}
+
+// SetUndoFunction sets the undo function
+func (b *FileOpsBridge) SetUndoFunction(undoFunc func() error) {
+	b.processUndoFunc = undoFunc
+}
+
+// SetArchiveToggleFunction sets the archive toggle function
+func (b *FileOpsBridge) SetArchiveToggleFunction(toggleFunc func()) {
+	b.toggleArchiveModeFunc = toggleFunc
 }
 
 // FindPDFFiles implements FileOperations interface
@@ -143,4 +155,19 @@ func (b *FileOpsBridge) ProcessMergeFiles() (string, error) {
 		return "Merge - " + file1 + " + " + file2 + " → " + outputName, nil
 	}
 	return "", nil
+}
+
+// ProcessUndo calls the undo function
+func (b *FileOpsBridge) ProcessUndo() error {
+	if b.processUndoFunc != nil {
+		return b.processUndoFunc()
+	}
+	return fmt.Errorf("undo function not set")
+}
+
+// ToggleArchiveMode calls the archive toggle function
+func (b *FileOpsBridge) ToggleArchiveMode() {
+	if b.toggleArchiveModeFunc != nil {
+		b.toggleArchiveModeFunc()
+	}
 }

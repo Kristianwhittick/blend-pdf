@@ -68,7 +68,18 @@ func runTUI() error {
 		func() error { processMergeOperation(); return nil },      // Wrapper for void function
 	)
 
-	// Create and run enhanced menu (no complex TUI)
+	// Add undo and archive toggle functions
+	bridge.SetUndoFunction(func() error { processUndoOperation(); return nil })
+	bridge.SetArchiveToggleFunction(toggleArchiveMode)
+
+	// Detect terminal capabilities and choose appropriate UI
+	if ui.ShouldUseFallbackUI() {
+		// Use legacy UI for PowerShell 5, CMD, or other limited terminals
+		legacyUI := ui.NewLegacyUI(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR, VERSION, bridge)
+		return legacyUI.Run()
+	}
+
+	// Create and run enhanced menu (modern terminals)
 	menu := ui.NewEnhancedMenu(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR, VERSION, bridge)
 	return menu.Run()
 }
