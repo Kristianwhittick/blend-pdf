@@ -260,6 +260,21 @@ func createInterleavedMerge(file1, file2, outputFile string, pageCount int) erro
 // Main processing function
 
 // Process and merge files with smart page reversal
+// Process and merge to temporary file (for multi-output support)
+func processAndMergeToTemp(outputFile, file1, file2 string, pages int) {
+	pages1, pages2, err := validatePDFsForMerge(file1, file2)
+	if err != nil {
+		handleMergeValidationError(file1, file2, err)
+		return
+	}
+
+	if err := smartMerge(file1, file2, outputFile, pages1, pages2); err != nil {
+		handleMergeExecutionError(file1, file2, err)
+	}
+	// Note: Don't move source files here - that's handled by the caller
+}
+
+// Process and merge PDFs with file movement
 func processAndMerge(outputFile, file1, file2 string, pages int) {
 	pages1, pages2, err := validatePDFsForMerge(file1, file2)
 	if err != nil {

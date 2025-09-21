@@ -195,7 +195,7 @@ func parseArgs() (string, error) {
 
 // Apply command line overrides to configuration
 func applyCommandLineOverrides(args []string) {
-	for _, arg := range args {
+	for i, arg := range args {
 		switch arg {
 		case "-V", "--verbose":
 			CONFIG.VerboseMode = true
@@ -204,6 +204,12 @@ func applyCommandLineOverrides(args []string) {
 			CONFIG.VerboseMode = true
 		case "--no-archive":
 			CONFIG.ArchiveMode = false
+		case "-o", "--output":
+			// Handle multiple output folders: -o folder1,folder2,folder3
+			if i+1 < len(args) {
+				folders := strings.Split(args[i+1], ",")
+				CONFIG.OutputFolders = folders
+			}
 		}
 	}
 
@@ -226,6 +232,9 @@ func processArgument(arg string, args []string, index int, folder *string) error
 	case "-D", "--debug":
 		enableDebugMode()
 	case "--no-archive":
+		// Handled in applyCommandLineOverrides
+	case "-o", "--output":
+		// Skip the next argument (it's the folder list)
 		// Handled in applyCommandLineOverrides
 	default:
 		return handleNonFlagArgument(arg, args, index, folder)

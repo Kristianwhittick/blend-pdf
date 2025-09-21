@@ -221,6 +221,48 @@ func showApplicationHelp() {
 	showHelp()
 }
 
+// Copy file to all configured output folders
+func copyToAllOutputFolders(srcFile, filename string) error {
+	// Get output folders from config or use default
+	outputFolders := []string{"output"}
+	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
+		outputFolders = CONFIG.OutputFolders
+	}
+
+	var errors []string
+	successCount := 0
+
+	for _, folder := range outputFolders {
+		destFile := filepath.Join(folder, filename)
+		if err := copyFile(srcFile, destFile); err != nil {
+			errors = append(errors, fmt.Sprintf("%s: %v", folder, err))
+		} else {
+			successCount++
+		}
+	}
+
+	// If any destination failed, copy to error folder
+	if len(errors) > 0 {
+		errorFile := filepath.Join(ERROR_DIR, filename)
+		if err := copyFile(srcFile, errorFile); err != nil && VERBOSE {
+			printWarning(fmt.Sprintf("Failed to copy to error folder: %v", err))
+		}
+
+		if VERBOSE {
+			for _, errMsg := range errors {
+				printWarning(fmt.Sprintf("Output destination failed: %s", errMsg))
+			}
+		}
+
+		// If no destinations succeeded, return error
+		if successCount == 0 {
+			return fmt.Errorf("all output destinations failed: %v", errors)
+		}
+	}
+
+	return nil
+}
+
 // Toggle archive mode
 func toggleArchiveMode() {
 	if CONFIG == nil {
@@ -293,6 +335,7 @@ func showCommandLineOptions() {
 	fmt.Printf("  -V, --verbose  Enable verbose mode (show all program output)\n")
 	fmt.Printf("  -D, --debug    Enable debug mode (includes verbose + structured logging)\n")
 	fmt.Printf("  --no-archive   Disable archiving for this session\n")
+	fmt.Printf("  -o, --output   Specify multiple output folders (comma-separated)\n")
 	fmt.Printf("  [folder]       Specify folder to watch (default: current directory)\n\n")
 }
 
@@ -358,28 +401,23 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 
 	fileSize := getFileSize(file)
 
-	// Use default output folder if CONFIG is nil
-	outputFolder := "output"
-	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
-		outputFolder = CONFIG.OutputFolders[0]
-	}
-	destFile := filepath.Join(outputFolder, filename)
-
 	// Archive mode handling
 	if CONFIG != nil && CONFIG.ArchiveMode {
-		// Copy to archive first, then move to output
+		// Copy to archive first
 		archiveFile := filepath.Join(ARCHIVE, filename)
 		if err := copyFile(file, archiveFile); err != nil {
 			return fmt.Errorf("archive copy failed: %v", err)
 		}
-		if err := moveFileWithRecovery(file, destFile); err != nil {
-			return fmt.Errorf("move to output failed: %v", err)
-		}
-	} else {
-		// Move directly to output (current behavior)
-		if err := moveFileWithRecovery(file, destFile); err != nil {
-			return fmt.Errorf("move failed: %v", err)
-		}
+	}
+
+	// Copy to all output folders
+	if err := copyToAllOutputFolders(file, filename); err != nil {
+		return fmt.Errorf("output copy failed: %v", err)
+	}
+
+	// Remove original file
+	if err := os.Remove(file); err != nil {
+		return fmt.Errorf("failed to remove original file: %v", err)
 	}
 
 	recordSuccessfulOperation(startTime, filename, fileSize)
@@ -441,9 +479,27 @@ func validateAndProcessMerge(file1, file2 string, startTime time.Time) error {
 
 	displayMergeInfo(file1, file2)
 	totalSize := getFileSize(file1) + getFileSize(file2)
-	outputFile := createMergeOutputPath(file1, file2)
 
-	processAndMerge(outputFile, file1, file2, 0)
+	// Create temporary output file
+	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
+	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
+	tempOutputFile := filepath.Join(os.TempDir(), name1+"-"+name2+".pdf")
+
+	// Process and merge to temporary file
+	processAndMergeToTemp(tempOutputFile, file1, file2, 0)
+
+	// Copy to all output folders
+	filename := name1 + "-" + name2 + ".pdf"
+	if err := copyToAllOutputFolders(tempOutputFile, filename); err != nil {
+		os.Remove(tempOutputFile)
+		return fmt.Errorf("failed to copy to output folders: %v", err)
+	}
+
+	// Clean up temporary file
+	os.Remove(tempOutputFile)
+
+	// Move source files to archive (always archive for merge operations)
+	moveProcessedFiles(ARCHIVE, "Files merged and moved.", file1, file2)
 
 	duration := time.Since(startTime)
 	logOperation("MERGE", filepath.Base(file1), filepath.Base(file2), "COMPLETED")
@@ -480,13 +536,6 @@ func displayMergeInfo(file1, file2 string) {
 		fmt.Printf("File 1 size: %s\n", size1)
 		fmt.Printf("File 2 size: %s\n", size2)
 	}
-}
-
-// Create merge output file path
-func createMergeOutputPath(file1, file2 string) string {
-	name1 := strings.TrimSuffix(filepath.Base(file1), filepath.Ext(file1))
-	name2 := strings.TrimSuffix(filepath.Base(file2), filepath.Ext(file2))
-	return filepath.Join(OUTPUT, name1+"-"+name2+".pdf")
 }
 
 // Handle merge processing errors
