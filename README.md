@@ -222,6 +222,16 @@ Once running, use these options:
 - **D** - Toggle debug mode (structured logging)
 - **Q** - Quit the program
 
+### Enhanced Keyboard Shortcuts
+
+The application supports multiple input methods for faster navigation:
+
+- **Operations**: `S`, `single`, `1` (single file) | `M`, `merge`, `2` (merge)
+- **Management**: `U`, `undo`, `Ctrl+Z` (undo) | `A`, `archive` (toggle archive)
+- **Interface**: `R`, `refresh`, `Space` (refresh) | `V`, `verbose` (toggle verbose)
+- **Help & Exit**: `H`, `help`, `F1`, `?` (help) | `Q`, `quit`, `Ctrl+Q` (exit)
+- **Debug**: `D`, `debug` (toggle debug mode)
+
 ### Expected Behavior
 
 #### Single File Mode (S)

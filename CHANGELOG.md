@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Operation tracking for single file and merge operations
 - Consistent file conflict resolution across all operations
 - Archive preservation during undo operations
+- PowerShell 5/CMD compatibility with terminal detection and legacy UI fallback
+- Enhanced keyboard shortcuts for faster navigation (F1, Ctrl+Q, Ctrl+Z, etc.)
+- Multiple input methods: descriptive words, numbers, and control key combinations
+- Terminal capability detection for automatic UI selection
 
 ### Fixed
 - Merge operations now respect --no-archive flag (previously only single file operations did)
@@ -22,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Both single file and merge operations now consistently respect CONFIG.ArchiveMode setting
 - Undo operations restore clean "pre-operation" state with files only in main directory
 - Enhanced conflict resolution tracks actual filenames used (including _1, _2 suffixes)
+- Automatic UI selection: enhanced for modern terminals, basic for legacy environments
+- Cross-platform compatibility with graceful fallback for limited terminals
 
 ## [1.2.0] - 2025-09-11
 
