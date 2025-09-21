@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - File conflict handling: all operations now generate unique names instead of overwriting
 - Consistent behavior between single file and merge operations for archiving
 - PowerShell 7 terminal detection now correctly uses modern UI with Unicode box-drawing characters
+- TERM environment variable no longer overrides Windows terminal detection on Windows systems
 
 ### Changed
 - Both single file and merge operations now consistently respect CONFIG.ArchiveMode setting

@@ -78,6 +78,8 @@ A Go-based tool for merging and managing PDF files with automatic page reversal 
 - **File Count Display**: Real-time display of PDF counts integrated into header
 - **Recent Operations**: Single-line operation history with timestamps and status icons
 - **Progress Bars**: Animated progress indicators during operations
+- **Terminal Compatibility**: Automatic detection and fallback for legacy terminals
+- **Cross-Platform UI**: Modern Unicode interface for PowerShell 7/Windows Terminal, basic interface for CMD/PowerShell 5
 - **Persistent Actions**: Actions menu remains visible during processing
 - **Real-time Monitoring**: Automatic file count updates without user input
 - **Coloured Output**: Colour-coded messages for better readability
