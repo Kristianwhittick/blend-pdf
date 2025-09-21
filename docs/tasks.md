@@ -18,6 +18,35 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ## 📋 To Do (Ready for Work)
 
+### T-037: Lock File Cleanup Investigation
+**Epic**: E-06 | **Story**: US-010
+**Priority**: Medium | **Estimate**: 2 hours
+
+**Description**: Investigate and fix lock file cleanup to ensure proper release on application exit
+
+**Background**: Found 20 stale lock files in /tmp/ during cleanup, indicating lock files are not being properly released when application terminates (likely from Ctrl+C, crashes, or abnormal exits).
+
+**Investigation Required**:
+- Review signal handling for graceful shutdown
+- Ensure lock file cleanup in defer statements
+- Test lock file release on normal exit, Ctrl+C, and crashes
+- Consider adding lock file age checking and auto-cleanup
+
+**Acceptance Criteria**:
+- [ ] Lock files properly released on normal application exit
+- [ ] Lock files cleaned up on Ctrl+C (SIGINT) signal
+- [ ] Lock files handled appropriately on crashes
+- [ ] Consider stale lock file detection and cleanup on startup
+- [ ] Test across different termination scenarios
+
+**Definition of Done**:
+- [ ] Signal handling reviewed and improved
+- [ ] Lock file cleanup tested in all exit scenarios
+- [ ] Documentation updated with lock file behaviour
+- [ ] No stale lock files left after normal usage
+
+---
+
 ### T-023: PowerShell 5/CMD Compatibility Implementation ✅ COMPLETED
 **Epic**: E-05 | **Story**: US-009
 **Completed**: Sep 21 | **Actual Time**: 2 hours
