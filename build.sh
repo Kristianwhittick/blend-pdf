@@ -87,6 +87,18 @@ clean_build_dir() {
         rm -f "blend-pdf"
     fi
     
+    # Clean test artifacts
+    if [[ -f "coverage.out" ]]; then
+        log_info "Removing coverage file: coverage.out"
+        rm -f "coverage.out"
+    fi
+    
+    # Clean legacy test directory
+    if [[ -d "version" ]]; then
+        log_info "Removing legacy test directory: version"
+        rm -rf "version"
+    fi
+    
     mkdir -p "$BUILD_DIR"
 }
 
