@@ -161,6 +161,9 @@ func cleanupLock() {
 
 // Command line argument parsing functions
 
+// Global configuration
+var CONFIG *Config
+
 // Parse command line arguments with enhanced error handling
 func parseArgs() (string, error) {
 	args := os.Args[1:]
@@ -172,7 +175,41 @@ func parseArgs() (string, error) {
 		}
 	}
 
-	return resolveFolderPath(folder)
+	resolvedFolder, err := resolveFolderPath(folder)
+	if err != nil {
+		return "", err
+	}
+
+	// Load configuration after resolving folder
+	CONFIG, err = loadConfig(resolvedFolder)
+	if err != nil && VERBOSE {
+		printWarning(fmt.Sprintf("Failed to load config: %v, using defaults", err))
+		CONFIG = getDefaultConfig()
+	}
+
+	// Override config with command line flags
+	applyCommandLineOverrides(args)
+
+	return resolvedFolder, nil
+}
+
+// Apply command line overrides to configuration
+func applyCommandLineOverrides(args []string) {
+	for _, arg := range args {
+		switch arg {
+		case "-V", "--verbose":
+			CONFIG.VerboseMode = true
+		case "-D", "--debug":
+			CONFIG.DebugMode = true
+			CONFIG.VerboseMode = true
+		case "--no-archive":
+			CONFIG.ArchiveMode = false
+		}
+	}
+
+	// Apply config to global variables
+	VERBOSE = CONFIG.VerboseMode
+	DEBUG = CONFIG.DebugMode
 }
 
 // Process individual command line argument
@@ -188,6 +225,8 @@ func processArgument(arg string, args []string, index int, folder *string) error
 		enableVerboseMode()
 	case "-D", "--debug":
 		enableDebugMode()
+	case "--no-archive":
+		// Handled in applyCommandLineOverrides
 	default:
 		return handleNonFlagArgument(arg, args, index, folder)
 	}

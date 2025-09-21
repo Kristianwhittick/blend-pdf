@@ -262,6 +262,7 @@ func showCommandLineOptions() {
 	fmt.Printf("  -v, --version  Show version information and exit\n")
 	fmt.Printf("  -V, --verbose  Enable verbose mode (show all program output)\n")
 	fmt.Printf("  -D, --debug    Enable debug mode (includes verbose + structured logging)\n")
+	fmt.Printf("  --no-archive   Disable archiving for this session\n")
 	fmt.Printf("  [folder]       Specify folder to watch (default: current directory)\n\n")
 }
 

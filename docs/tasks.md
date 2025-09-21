@@ -48,18 +48,26 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-031: Configuration File Support
+### T-031: Configuration File Support ✅ COMPLETED
 **Epic**: E-07 | **Story**: US-011
-**Priority**: Low | **Estimate**: 6 hours
-**Dependencies**: Core functionality
+**Completed**: Sep 21 | **Actual Time**: 2 hours
 
 **Description**: Store configuration in blendpdf.json in working directory
 
-**Acceptance Criteria**:
-- [ ] JSON configuration file format
-- [ ] Customizable output directories and naming
-- [ ] Configuration validation and defaults
-- [ ] Documentation and examples
+**Completion Notes**: Implemented JSON configuration system with command line overrides. Configuration file supports archiveMode, outputFolders, verboseMode, and debugMode settings.
+
+**Implementation Details**:
+- Created config.go with Config structure and JSON marshaling
+- Added loadConfig() and saveConfig() functions
+- Command line flags override configuration file settings
+- Default configuration created if file missing
+- Added --no-archive flag for session-level archive mode control
+
+**Benefits Achieved**:
+- **Persistent Settings**: User preferences saved between sessions
+- **Flexible Configuration**: JSON format with validation
+- **Command Line Override**: Flags take precedence over config file
+- **Graceful Fallback**: Default config if file missing or invalid
 
 ---
 
