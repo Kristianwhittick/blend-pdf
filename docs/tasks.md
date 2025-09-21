@@ -28,7 +28,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 **Post-Completion Fix**: Fixed PowerShell 7 detection logic to properly use modern UI with Unicode box-drawing characters. Updated detection to use PSEdition environment variable for accurate PowerShell version identification.
 
-**Second Fix Required**: Main application incorrectly using legacy UI despite correct terminal detection. Debug program shows Windows Terminal detected and Unicode support working, but main app selects legacy UI instead of enhanced UI with borders.
+**Second Fix Completed**: Fixed TERM environment variable override issue. Empty TERM variable on Windows was forcing legacy UI despite correct Windows Terminal detection. Now skips TERM check on Windows where better detection methods exist. PowerShell 7 + Windows Terminal now correctly displays Unicode box-drawing characters.
 
 **Implementation Details**:
 - Added terminal capability detection in `ui/terminal_detection.go`
