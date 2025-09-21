@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Undo/Restore functionality with [U] option in interactive menu
+- Operation tracking for single file and merge operations
+- Consistent file conflict resolution across all operations
+- Archive preservation during undo operations
+
+### Fixed
+- Merge operations now respect --no-archive flag (previously only single file operations did)
+- File conflict handling: all operations now generate unique names instead of overwriting
+- Consistent behavior between single file and merge operations for archiving
+
+### Changed
+- Both single file and merge operations now consistently respect CONFIG.ArchiveMode setting
+- Undo operations restore clean "pre-operation" state with files only in main directory
+- Enhanced conflict resolution tracks actual filenames used (including _1, _2 suffixes)
+
 ## [1.2.0] - 2025-09-11
 
 ### Changed

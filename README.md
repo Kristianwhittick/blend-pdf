@@ -199,11 +199,14 @@ make release        # Create complete release build
 # Run in debug mode (includes verbose + structured logging)
 ./blendpdf -D
 
+# Disable archiving for this session
+./blendpdf --no-archive
+
 # Watch specific folder
 ./blendpdf /path/to/pdfs
 
 # Combined options
-./blendpdf -V /path/to/pdfs
+./blendpdf -V --no-archive /path/to/pdfs
 ```
 
 ### Interactive Menu Options
@@ -212,6 +215,8 @@ Once running, use these options:
 
 - **S** - Move a single PDF file to the output directory
 - **M** - Merge two PDF files (first file + reversed second file)
+- **U** - Undo last operation (restore files to main directory)
+- **A** - Toggle archive mode (ON/OFF)
 - **H** - Show help information
 - **V** - Toggle verbose mode
 - **D** - Toggle debug mode (structured logging)
@@ -222,8 +227,9 @@ Once running, use these options:
 #### Single File Mode (S)
 1. Finds the first PDF file in the main directory
 2. Validates the PDF file structure
-3. **Valid PDF**: Moves to `output/` directory
-4. **Invalid PDF**: Moves to `error/` directory
+3. **Archive Mode ON**: Copies to `archive/` first, then moves to `output/`
+4. **Archive Mode OFF**: Moves directly to `output/` (no archiving)
+5. **Invalid PDF**: Moves to `error/` directory
 
 #### Merge Mode (M)
 1. Finds the first two PDF files in the main directory (alphabetically sorted)
@@ -232,8 +238,20 @@ Once running, use these options:
    - **Single-page second file**: Direct merge (no reversal)
    - **Multi-page second file**: Creates temporary reversed copy, then merges
 4. Creates merged file: `file1-file2.pdf` in `output/`
-5. **Success**: Moves original files to `archive/`
-6. **Failure**: Moves original files to `error/`
+5. **Archive Mode ON**: Moves original files to `archive/` (default)
+6. **Archive Mode OFF**: Removes original files without archiving
+7. **Failure**: Moves original files to `error/`
+
+#### Undo Mode (U)
+1. **Single File Undo**: Restores file from `output/` back to main directory
+2. **Merge Undo**: Restores original files from `archive/` back to main directory, removes merged output
+3. **Result**: Clean "pre-operation" state with files only in main directory
+4. **Archive Preservation**: Keeps archive copies as backups during undo
+
+#### Archive Mode Control
+- **Command Line**: Use `--no-archive` to disable archiving for session
+- **Interactive**: Use `[A]` key to toggle archive mode ON/OFF
+- **Default**: Archive mode is ON (both operations archive files)
 
 ## Directory Structure
 
