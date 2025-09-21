@@ -1,10 +1,10 @@
 # Task Board - BlendPDFGo
 
 ## Task Summary (40 Total)
-- ✅ **Done**: 28 tasks
+- ✅ **Done**: 29 tasks
 - 🔄 **In Progress**: 0 tasks  
-- 📋 **To Do**: 6 tasks
-- 🗂️ **Backlog**: 6 tasks
+- 📋 **To Do**: 2 tasks
+- 🗂️ **Backlog**: 9 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -33,18 +33,29 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-028: Undo/Restore Functionality
+### T-028: Undo/Restore Functionality ✅ COMPLETED
 **Epic**: E-08 | **Story**: US-012
-**Priority**: Low | **Estimate**: 8 hours
-**Dependencies**: Core functionality
+**Completed**: Sep 21 | **Actual Time**: 2 hours
 
 **Description**: Ability to reverse last operation (move files back from archive/output)
 
-**Acceptance Criteria**:
-- [ ] Track recent file operations
-- [ ] Implement restore from archive/output directories
-- [ ] Provide clear undo operation feedback
-- [ ] Handle undo conflicts gracefully
+**Completion Notes**: Implemented comprehensive undo functionality with consistent file conflict handling. Both single file and merge operations can be undone, restoring clean "pre-operation" state with files only in main directory.
+
+**Implementation Details**:
+- Added LastOperation tracking structure for undo operations
+- Implemented copyFileWithConflictResolution for consistent conflict handling
+- Updated copyToAllOutputFolders to track actual filenames used (including conflict-resolved names)
+- Added operation tracking to single file and merge operations
+- Implemented undoSingleFileOperation and undoMergeOperation functions
+- Added [U]ndo option to interactive menu and help text
+- Fixed file conflict inconsistency: all operations now use conflict resolution
+
+**Benefits Achieved**:
+- **Consistent Undo Behavior**: Both operations restore clean "pre-operation" state with files only in main/
+- **File Conflict Resolution**: All operations generate unique names instead of overwriting
+- **Accurate Tracking**: Track actual filenames used (including _1, _2 suffixes) for reliable undo
+- **Graceful Handling**: Partial failures logged with warnings, operation continues
+- **Archive Preservation**: Keep archive copies as backups during undo operations
 
 ---
 
