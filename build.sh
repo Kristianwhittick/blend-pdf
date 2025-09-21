@@ -80,6 +80,13 @@ clean_build_dir() {
         log_info "Cleaning build directory: $BUILD_DIR"
         rm -rf "$BUILD_DIR"
     fi
+    
+    # Clean local development binary
+    if [[ -f "blend-pdf" ]]; then
+        log_info "Removing local binary: blend-pdf"
+        rm -f "blend-pdf"
+    fi
+    
     mkdir -p "$BUILD_DIR"
 }
 
