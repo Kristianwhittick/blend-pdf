@@ -26,6 +26,8 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 **Completion Notes**: Implemented terminal capability detection and legacy UI fallback for PowerShell 5, CMD, and other limited terminals. Modern terminals use enhanced UI while legacy terminals get a simplified text-based interface.
 
+**Post-Completion Fix**: Fixed PowerShell 7 detection logic to properly use modern UI with Unicode box-drawing characters. Updated detection to use PSEdition environment variable for accurate PowerShell version identification.
+
 **Implementation Details**:
 - Added terminal capability detection in `ui/terminal_detection.go`
 - Created legacy UI in `ui/legacy_ui.go` for PowerShell 5/CMD compatibility
