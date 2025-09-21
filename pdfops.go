@@ -15,6 +15,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -137,70 +138,6 @@ func displayPageCount(pages int) {
 
 // PDF reversal operations
 
-// Create reversed copy of PDF using CollectFile for order preservation
-func createReversedPDF(inputFile, outputFile string, pageCount int) error {
-	if pageCount <= 1 {
-		return fmt.Errorf("cannot reverse single-page PDF")
-	}
-
-	// Build reverse page selection: "3,2,1" for 3-page document
-	var pageNums []string
-	for i := pageCount; i >= 1; i-- {
-		pageNums = append(pageNums, fmt.Sprintf("%d", i))
-	}
-	reverseSelection := strings.Join(pageNums, ",")
-
-	// Parse page selection
-	pageSelection, err := api.ParsePageSelection(reverseSelection)
-	if err != nil {
-		return fmt.Errorf("failed to parse reverse page selection '%s': %v", reverseSelection, err)
-	}
-
-	// Use CollectFile to preserve specified order
-	conf := model.NewDefaultConfiguration()
-	err = api.CollectFile(inputFile, outputFile, pageSelection, conf)
-	if err != nil {
-		return fmt.Errorf("failed to reverse PDF pages: %v", err)
-	}
-
-	displayReversalInfo(pageCount)
-	return nil
-}
-
-// Extract pages in reverse order
-func extractPagesInReverseOrder(inputFile string, pageCount int) ([]string, error) {
-	conf := model.NewDefaultConfiguration()
-	var tempFiles []string
-
-	for i := pageCount; i >= 1; i-- {
-		tempFile, err := extractSinglePage(inputFile, i, conf)
-		if err != nil {
-			cleanupTempFiles(tempFiles) // Clean up on error
-			return nil, fmt.Errorf("failed to extract page %d: %v", i, err)
-		}
-		tempFiles = append(tempFiles, tempFile)
-	}
-
-	return tempFiles, nil
-}
-
-// Extract a single page from PDF
-func extractSinglePage(inputFile string, pageNum int, conf *model.Configuration) (string, error) {
-	tempFile := fmt.Sprintf("temp_reverse_%d.pdf", pageNum)
-
-	pageSelection, err := api.ParsePageSelection(fmt.Sprintf("%d", pageNum))
-	if err != nil {
-		return "", fmt.Errorf("failed to parse page selection for page %d: %v", pageNum, err)
-	}
-
-	err = api.TrimFile(inputFile, tempFile, pageSelection, conf)
-	if err != nil {
-		return "", err
-	}
-
-	return tempFile, nil
-}
-
 // Display reversal information in verbose mode
 func displayReversalInfo(pageCount int) {
 	if VERBOSE {
@@ -210,12 +147,6 @@ func displayReversalInfo(pageCount int) {
 		}
 		fmt.Printf("%s\n", NC)
 	}
-}
-
-// Merge extracted pages into output file
-func mergeExtractedPages(tempFiles []string, outputFile string) error {
-	conf := model.NewDefaultConfiguration()
-	return api.MergeCreateFile(tempFiles, outputFile, false, conf)
 }
 
 // Clean up temporary files
@@ -249,21 +180,13 @@ func performDirectMerge(file1, file2, outputFile string) error {
 	return api.MergeCreateFile(inputFiles, outputFile, false, conf)
 }
 
-// Perform reversed merge for multi-page second file
+// Perform reversed merge for multi-page second file using in-memory processing
 func performReversedMerge(file1, file2, outputFile string, pages1, pages2 int) error {
 	if VERBOSE {
-		printInfo(fmt.Sprintf("Multi-page second file detected (%d pages) - creating reversed copy", pages2))
+		printInfo(fmt.Sprintf("Multi-page second file detected (%d pages) - processing in memory", pages2))
 	}
 
-	reversedFile := createReversedFileName(file2)
-
-	if err := createReversedPDF(file2, reversedFile, pages2); err != nil {
-		return fmt.Errorf("failed to create reversed PDF: %v", err)
-	}
-
-	defer removeReversedFile(reversedFile)
-
-	return createInterleavedMerge(file1, reversedFile, outputFile, pages1)
+	return createInterleavedMerge(file1, file2, outputFile, pages1)
 }
 
 // Create filename for reversed PDF
@@ -278,64 +201,60 @@ func removeReversedFile(reversedFile string) {
 	}
 }
 
-// Create interleaved merge pattern using zip merge approach
+// Create interleaved merge pattern using pure in-memory stream-based approach
 func createInterleavedMerge(file1, file2, outputFile string, pageCount int) error {
 	conf := model.NewDefaultConfiguration()
 
-	// Use zip merge for perfect interleaving
-	// file1: original document (A1, A2, A3)
-	// file2: already reversed document (f, 9, M)
-	// Result: A1, f, A2, 9, A3, M
-	err := api.MergeCreateZipFile(file1, file2, outputFile, conf)
+	// Load both PDFs into memory
+	bytes1, err := os.ReadFile(file1)
 	if err != nil {
-		return fmt.Errorf("zip merge failed: %v", err)
+		return fmt.Errorf("failed to read file1 into memory: %v", err)
+	}
+
+	bytes2, err := os.ReadFile(file2)
+	if err != nil {
+		return fmt.Errorf("failed to read file2 into memory: %v", err)
+	}
+
+	// Create reverse page selection for second document (3,2,1 for 3-page doc)
+	reversePages := ""
+	for i := pageCount; i >= 1; i-- {
+		if reversePages != "" {
+			reversePages += ","
+		}
+		reversePages += fmt.Sprintf("%d", i)
+	}
+
+	// Reverse second document in memory using stream-based Trim
+	reader2 := bytes.NewReader(bytes2)
+	var reversedBuffer bytes.Buffer
+	reverseSelection, err := api.ParsePageSelection(reversePages)
+	if err != nil {
+		return fmt.Errorf("failed to parse reverse page selection: %v", err)
+	}
+
+	err = api.Trim(reader2, &reversedBuffer, reverseSelection, conf)
+	if err != nil {
+		return fmt.Errorf("failed to reverse document in memory: %v", err)
+	}
+
+	// Zip merge for perfect interleaving using stream-based MergeCreateZip
+	reader1 := bytes.NewReader(bytes1)
+	reversedReader := bytes.NewReader(reversedBuffer.Bytes())
+	var finalBuffer bytes.Buffer
+
+	err = api.MergeCreateZip(reader1, reversedReader, &finalBuffer, conf)
+	if err != nil {
+		return fmt.Errorf("failed to create interleaved merge in memory: %v", err)
+	}
+
+	// Write final result to output file
+	err = os.WriteFile(outputFile, finalBuffer.Bytes(), 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write output file: %v", err)
 	}
 
 	return nil
-}
-
-// Extract pages in interleaved pattern
-func extractInterleavedPages(file1, file2 string, pageCount int) ([]string, error) {
-	conf := model.NewDefaultConfiguration()
-	var tempFiles []string
-
-	for i := 1; i <= pageCount; i++ {
-		// Extract page from first document
-		tempFile1, err := extractPageWithPrefix(file1, i, "temp_A_", conf)
-		if err != nil {
-			cleanupTempFiles(tempFiles)
-			return nil, fmt.Errorf("failed to extract page %d from file1: %v", i, err)
-		}
-
-		// Extract corresponding page from second document (reversed file)
-		tempFile2, err := extractPageWithPrefix(file2, i, "temp_B_", conf)
-		if err != nil {
-			cleanupTempFiles(tempFiles)
-			return nil, fmt.Errorf("failed to extract page %d from file2: %v", i, err)
-		}
-
-		// Add both pages to merge list (interleaved)
-		tempFiles = append(tempFiles, tempFile1, tempFile2)
-	}
-
-	return tempFiles, nil
-}
-
-// Extract page with specific filename prefix
-func extractPageWithPrefix(file string, pageNum int, prefix string, conf *model.Configuration) (string, error) {
-	tempFile := fmt.Sprintf("%s%d.pdf", prefix, pageNum)
-
-	pageSelection, err := api.ParsePageSelection(fmt.Sprintf("%d", pageNum))
-	if err != nil {
-		return "", fmt.Errorf("failed to parse page selection for page %d: %v", pageNum, err)
-	}
-
-	err = api.TrimFile(file, tempFile, pageSelection, conf)
-	if err != nil {
-		return "", err
-	}
-
-	return tempFile, nil
 }
 
 // Main processing function
