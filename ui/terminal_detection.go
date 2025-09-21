@@ -41,25 +41,33 @@ func DetectTerminalCapabilities() *TerminalCapabilities {
 
 	// Windows-specific detection
 	if runtime.GOOS == "windows" {
-		// Check for PowerShell version
-		psVersion := os.Getenv("PSVersionTable")
-		psModulePath := os.Getenv("PSModulePath")
+		// Check for Windows Terminal (modern)
+		wtSession := os.Getenv("WT_SESSION")
 
 		// Check for CMD
 		comSpec := os.Getenv("ComSpec")
 
-		// Check for Windows Terminal
-		wtSession := os.Getenv("WT_SESSION")
+		// Check PowerShell edition
+		psEdition := os.Getenv("PSEdition")
 
-		// PowerShell 5 or CMD detection
-		if (psModulePath != "" && psVersion == "") || strings.Contains(comSpec, "cmd.exe") {
-			if wtSession == "" { // Not Windows Terminal
-				caps.IsLegacy = true
-				caps.SupportsBorders = false
-				caps.SupportsUTF8 = false
-				caps.Name = "legacy-windows"
-			}
+		// CMD detection
+		if strings.Contains(comSpec, "cmd.exe") && wtSession == "" {
+			caps.IsLegacy = true
+			caps.SupportsBorders = false
+			caps.SupportsUTF8 = false
+			caps.Name = "cmd"
 		}
+
+		// PowerShell 5 detection (Desktop edition without Windows Terminal)
+		if psEdition == "Desktop" && wtSession == "" {
+			caps.IsLegacy = true
+			caps.SupportsBorders = false
+			caps.SupportsUTF8 = false
+			caps.Name = "powershell5"
+		}
+
+		// PowerShell 7+ (Core edition) should use modern UI
+		// Windows Terminal should always use modern UI
 	}
 
 	// Check TERM environment variable
