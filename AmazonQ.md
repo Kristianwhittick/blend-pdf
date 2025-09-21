@@ -49,6 +49,40 @@
 - [ ] Ensure consistency across all documentation
 - [ ] Check cross-references are still valid
 
+### Release Process Checklist
+- [ ] Update CHANGELOG.md with new version entry
+- [ ] Sync version in constants.go to match git tag
+- [ ] Create git tag (vX.Y.Z format)
+- [ ] Push tag to trigger GitHub Actions
+- [ ] Verify release artifacts and checksums
+- [ ] Test downloaded binaries
+
+### Debugging Process Checklist
+- [ ] Create debug programs for complex issues
+- [ ] Document findings in task completion notes
+- [ ] Update relevant documentation with solutions
+- [ ] Test fixes across all affected platforms
+- [ ] Commit fixes with descriptive messages
+
+## Process Cross-References
+
+**Development Tasks** also require:
+- Git processes (commits, branches)
+- Documentation updates
+- Testing validation
+
+**Release Tasks** also require:
+- Documentation updates (CHANGELOG, README)
+- Git tag management
+- Build and deployment processes
+
+**Bug Fixes** also require:
+- Debugging processes
+- Testing validation
+- Documentation updates
+
+**See**: `docs/process_map.md` for complete process tree and detailed cross-references.
+
 ## Project-Specific Methodologies
 
 ### Go Project Standards
