@@ -925,6 +925,11 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - **Merge Undo**: Move original files from archive/ back to main/, delete merged file from all output folders
   - **Consistent Result**: Both operations restore clean "pre-operation" state with files only in main/
   - **Archive Preservation**: Keep archive copies (they serve as backups)
+- **File Conflict Handling**:
+  - **Current Issue**: Copy operations overwrite existing files silently, move operations generate unique names
+  - **Required Fix**: All operations (copy/move to output/archive/error) must use conflict resolution
+  - **Conflict Resolution**: Generate unique names (`document_1.pdf`, `document_2.pdf`) instead of overwriting
+  - **Undo Tracking**: Track actual filenames used (including `_1`, `_2` suffixes) for accurate undo restoration
 - **Acceptance Criteria**:
   - [ ] Can undo last single file move (move from first output back to main, delete from other outputs)
   - [ ] Can undo last merge operation (move files from archive back to main, remove merged output from all folders)
@@ -932,6 +937,8 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - [ ] Show appropriate messages when undo is not available
   - [ ] Maintain file integrity during restore operations
   - [ ] Handle partial failures gracefully (log warnings, continue operation)
+  - [ ] Track actual filenames used during operations (including conflict-resolved names)
+  - [ ] Implement consistent conflict resolution for all copy/move operations
 
 ### Task 31: Configuration File Support
 - **Status**: 📋 TO DO
