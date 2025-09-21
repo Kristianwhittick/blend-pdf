@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Merge operations now respect --no-archive flag (previously only single file operations did)
 - File conflict handling: all operations now generate unique names instead of overwriting
 - Consistent behavior between single file and merge operations for archiving
+- PowerShell 7 terminal detection now correctly uses modern UI with Unicode box-drawing characters
 
 ### Changed
 - Both single file and merge operations now consistently respect CONFIG.ArchiveMode setting
