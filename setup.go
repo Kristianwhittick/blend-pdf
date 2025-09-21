@@ -362,6 +362,7 @@ func checkPDFStructure(file string) error {
 // File operation utilities
 
 // Enhanced file operation with error recovery
+// Move file with error recovery and conflict resolution
 func moveFileWithRecovery(src, dst string) error {
 	if err := ensureDestinationDirectory(dst); err != nil {
 		return err

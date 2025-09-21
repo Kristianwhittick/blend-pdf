@@ -67,6 +67,18 @@ func loadConfig(watchDir string) (*Config, error) {
 	return config, nil
 }
 
+// Save configuration to blendpdf.json
+func saveConfig(config *Config, watchDir string) error {
+	configPath := filepath.Join(watchDir, "blendpdf.json")
+
+	data, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(configPath, data, 0644)
+}
+
 // Validate configuration
 func validateConfig(config *Config) error {
 	// Ensure at least one output folder

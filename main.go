@@ -153,14 +153,18 @@ func displayApplicationStatus() {
 
 // Display menu options
 func displayMenuOptions() {
-	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[H]%selp, %s[V]%serbose, %s[D]%sebug, %s[Q]%suit\n",
-		YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
+	archiveStatus := "OFF"
+	if CONFIG != nil && CONFIG.ArchiveMode {
+		archiveStatus = "ON"
+	}
+	fmt.Printf("Options: %s[S]%single, %s[M]%serge, %s[A]%srchive:%s, %s[H]%selp, %s[V]%serbose, %s[D]%sebug, %s[Q]%suit\n",
+		YELLOW, NC, YELLOW, NC, YELLOW, NC, archiveStatus, YELLOW, NC, YELLOW, NC, YELLOW, NC, YELLOW, NC)
 }
 
 // Get user choice
 func getUserChoice() (string, error) {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter choice (S/M/H/V/D/Q): ")
+	fmt.Print("Enter choice (S/M/A/H/V/D/Q): ")
 
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -187,6 +191,8 @@ func executeUserChoice(choice string) {
 		processSingleFileOperation()
 	case "M":
 		processMergeOperation()
+	case "A":
+		toggleArchiveMode()
 	case "H":
 		showApplicationHelp()
 	case "V":
@@ -196,7 +202,7 @@ func executeUserChoice(choice string) {
 	case "Q":
 		exitApplication()
 	default:
-		printWarning("Invalid choice. Please enter S, M, H, V, D, or Q.")
+		printWarning("Invalid choice. Please enter S, M, A, H, V, D, or Q.")
 	}
 }
 
@@ -213,6 +219,30 @@ func processMergeOperation() {
 // Show application help
 func showApplicationHelp() {
 	showHelp()
+}
+
+// Toggle archive mode
+func toggleArchiveMode() {
+	if CONFIG == nil {
+		CONFIG = getDefaultConfig()
+	}
+
+	CONFIG.ArchiveMode = !CONFIG.ArchiveMode
+	status := "disabled"
+	if CONFIG.ArchiveMode {
+		status = "enabled"
+	}
+
+	// Save configuration to persist the change
+	currentDir, err := os.Getwd()
+	if err != nil {
+		currentDir = "." // Fallback to current directory
+	}
+	if err := saveConfig(CONFIG, currentDir); err != nil && VERBOSE {
+		printWarning(fmt.Sprintf("Failed to save config: %v", err))
+	}
+
+	printInfo(fmt.Sprintf("Archive mode %s", status))
 }
 
 // Toggle verbose mode
@@ -327,10 +357,29 @@ func validateAndProcessSingleFile(file, filename string, startTime time.Time) er
 	}
 
 	fileSize := getFileSize(file)
-	destFile := filepath.Join(OUTPUT, filename)
 
-	if err := moveFileWithRecovery(file, destFile); err != nil {
-		return fmt.Errorf("move failed: %v", err)
+	// Use default output folder if CONFIG is nil
+	outputFolder := "output"
+	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
+		outputFolder = CONFIG.OutputFolders[0]
+	}
+	destFile := filepath.Join(outputFolder, filename)
+
+	// Archive mode handling
+	if CONFIG != nil && CONFIG.ArchiveMode {
+		// Copy to archive first, then move to output
+		archiveFile := filepath.Join(ARCHIVE, filename)
+		if err := copyFile(file, archiveFile); err != nil {
+			return fmt.Errorf("archive copy failed: %v", err)
+		}
+		if err := moveFileWithRecovery(file, destFile); err != nil {
+			return fmt.Errorf("move to output failed: %v", err)
+		}
+	} else {
+		// Move directly to output (current behavior)
+		if err := moveFileWithRecovery(file, destFile); err != nil {
+			return fmt.Errorf("move failed: %v", err)
+		}
 	}
 
 	recordSuccessfulOperation(startTime, filename, fileSize)

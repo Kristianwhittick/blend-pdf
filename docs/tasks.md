@@ -71,18 +71,27 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-032: Archive Single Files
+### T-032: Archive Single Files ✅ COMPLETED
 **Epic**: E-02 | **Story**: US-005
-**Priority**: Medium | **Estimate**: 3 hours
-**Dependencies**: T-005
+**Completed**: Sep 21 | **Actual Time**: 1 hour
 
 **Description**: Copy single files to archive before moving to output, with --no-archive toggle
 
-**Acceptance Criteria**:
-- [ ] Copy files to archive before processing
-- [ ] Implement --no-archive command line option
-- [ ] Maintain backward compatibility
-- [ ] Update file organization logic
+**Completion Notes**: Implemented consistent archiving behavior for single file operations. Archive mode can be controlled via configuration file, command line flag, or interactive menu toggle.
+
+**Implementation Details**:
+- Modified single file processing to respect CONFIG.ArchiveMode
+- Archive mode ON: Copy to archive first, then move to output
+- Archive mode OFF: Move directly to output (original behavior)
+- Added [A]rchive toggle to interactive menu
+- Uses existing copyFile function for archive operations
+- Merge operations always archive (unchanged behavior)
+
+**Benefits Achieved**:
+- **Consistent File Management**: Same archiving behavior for single and merge operations
+- **User Control**: Multiple ways to control archive mode (config, CLI, interactive)
+- **Backward Compatibility**: Default behavior maintains archiving
+- **Flexible Workflow**: Can disable archiving when not needed
 
 ---
 
