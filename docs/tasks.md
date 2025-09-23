@@ -4,7 +4,7 @@
 - ✅ **Done**: 38 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 0 tasks
-- 🗂️ **Backlog**: 8 tasks
+- 🗂️ **Backlog**: 9 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -16,6 +16,20 @@ All core functionality complete with professional UI, real-time monitoring, comp
 *No tasks currently in progress*
 
 ---
+
+## 📋 To Do (Ready for Work)
+
+*No tasks currently ready for work*
+
+---
+
+
+
+
+
+
+
+## 🗂️ Backlog (Future Work)
 
 ### T-042: Fix Lock File Location Bug with Multi-Output Folders
 **Epic**: E-02 | **Story**: US-005
@@ -44,165 +58,6 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - [ ] Windows path handling confirmed working
 
 ---
-
-## 📋 To Do (Ready for Work)
-
-*No tasks currently ready for work*
-
----
-
-### T-023: PowerShell 5/CMD Compatibility Implementation ✅ COMPLETED
-**Epic**: E-05 | **Story**: US-009
-**Completed**: Sep 21 | **Actual Time**: 2 hours
-
-**Description**: Implement graceful fallback for legacy Windows terminals
-
-**Completion Notes**: Implemented terminal capability detection and legacy UI fallback for PowerShell 5, CMD, and other limited terminals. Modern terminals use enhanced UI while legacy terminals get a simplified text-based interface.
-
-**Post-Completion Fix**: Fixed PowerShell 7 detection logic to properly use modern UI with Unicode box-drawing characters. Updated detection to use PSEdition environment variable for accurate PowerShell version identification.
-
-**Second Fix Completed**: Fixed TERM environment variable override issue. Empty TERM variable on Windows was forcing legacy UI despite correct Windows Terminal detection. Now skips TERM check on Windows where better detection methods exist. PowerShell 7 + Windows Terminal now correctly displays Unicode box-drawing characters.
-
-**Implementation Details**:
-- Added terminal capability detection in `ui/terminal_detection.go`
-- Created legacy UI in `ui/legacy_ui.go` for PowerShell 5/CMD compatibility
-- Detects Windows legacy environments (PowerShell 5, CMD without Windows Terminal)
-- Automatic fallback to basic text interface for limited terminals
-- Maintains all functionality without advanced terminal features
-- Extended FileOpsBridge to support undo and archive toggle operations
-
-**Benefits Achieved**:
-- **Universal Compatibility**: Works on PowerShell 5, CMD, and all modern terminals
-- **Graceful Fallback**: Automatic detection and appropriate UI selection
-- **Full Functionality**: All operations available in both UI modes
-- **Cross-Platform**: Consistent behavior across Windows, macOS, and Linux
-
----
-
-### T-028: Undo/Restore Functionality ✅ COMPLETED
-**Epic**: E-08 | **Story**: US-012
-**Completed**: Sep 21 | **Actual Time**: 2 hours
-
-**Description**: Ability to reverse last operation (move files back from archive/output)
-
-**Completion Notes**: Implemented comprehensive undo functionality with consistent file conflict handling. Both single file and merge operations can be undone, restoring clean "pre-operation" state with files only in main directory.
-
-**Implementation Details**:
-- Added LastOperation tracking structure for undo operations
-- Implemented copyFileWithConflictResolution for consistent conflict handling
-- Updated copyToAllOutputFolders to track actual filenames used (including conflict-resolved names)
-- Added operation tracking to single file and merge operations
-- Implemented undoSingleFileOperation and undoMergeOperation functions
-- Added [U]ndo option to interactive menu and help text
-- Fixed file conflict inconsistency: all operations now use conflict resolution
-
-**Benefits Achieved**:
-- **Consistent Undo Behavior**: Both operations restore clean "pre-operation" state with files only in main/
-- **File Conflict Resolution**: All operations generate unique names instead of overwriting
-- **Accurate Tracking**: Track actual filenames used (including _1, _2 suffixes) for reliable undo
-- **Graceful Handling**: Partial failures logged with warnings, operation continues
-- **Archive Preservation**: Keep archive copies as backups during undo operations
-
----
-
-### T-031: Configuration File Support ✅ COMPLETED
-**Epic**: E-07 | **Story**: US-011
-**Completed**: Sep 21 | **Actual Time**: 2 hours
-
-**Description**: Store configuration in blendpdf.json in working directory
-
-**Completion Notes**: Implemented JSON configuration system with command line overrides. Configuration file supports archiveMode, outputFolders, verboseMode, and debugMode settings.
-
-**Implementation Details**:
-- Created config.go with Config structure and JSON marshaling
-- Added loadConfig() and saveConfig() functions
-- Command line flags override configuration file settings
-- Default configuration created if file missing
-- Added --no-archive flag for session-level archive mode control
-
-**Benefits Achieved**:
-- **Persistent Settings**: User preferences saved between sessions
-- **Flexible Configuration**: JSON format with validation
-- **Command Line Override**: Flags take precedence over config file
-- **Graceful Fallback**: Default config if file missing or invalid
-
----
-
-### T-032: Archive Single Files ✅ COMPLETED
-**Epic**: E-02 | **Story**: US-005
-**Completed**: Sep 21 | **Actual Time**: 1 hour
-
-**Description**: Copy single files to archive before moving to output, with --no-archive toggle
-
-**Completion Notes**: Implemented consistent archiving behavior for single file operations. Archive mode can be controlled via configuration file, command line flag, or interactive menu toggle.
-
-**Implementation Details**:
-- Modified single file processing to respect CONFIG.ArchiveMode
-- Archive mode ON: Copy to archive first, then move to output
-- Archive mode OFF: Move directly to output (original behavior)
-- Added [A]rchive toggle to interactive menu
-- Uses existing copyFile function for archive operations
-- Merge operations always archive (unchanged behavior)
-
-**Benefits Achieved**:
-- **Consistent File Management**: Same archiving behavior for single and merge operations
-- **User Control**: Multiple ways to control archive mode (config, CLI, interactive)
-- **Backward Compatibility**: Default behavior maintains archiving
-- **Flexible Workflow**: Can disable archiving when not needed
-
----
-
-### T-033: Multi Output Folders ✅ COMPLETED
-**Epic**: E-07 | **Story**: US-011
-**Completed**: Sep 21 | **Actual Time**: 2 hours
-
-**Description**: Support multiple output destinations with atomic operations and validation
-
-**Completion Notes**: Implemented multi-output folder support with atomic operations per destination. Failed destinations are logged and files copied to error folder, but successful destinations are not rolled back.
-
-**Implementation Details**:
-- Added -o/--output command line flag accepting comma-separated folder list
-- Configuration file supports outputFolders array
-- copyToAllOutputFolders function handles atomic operations per destination
-- Single file operations copy to all configured output folders
-- Merge operations create temporary file, then copy to all outputs
-- Failed destinations logged with specific error messages
-- Partial failures copy to error folder but don't rollback successful copies
-
-**Benefits Achieved**:
-- **Multiple Destinations**: Files copied to all configured output folders
-- **Atomic Per Destination**: Each destination handled independently
-- **Failure Resilience**: Partial failures don't affect successful destinations
-- **Comprehensive Logging**: Detailed error messages for failed destinations
-- **Flexible Configuration**: Command line and config file support
-
----
-
-### T-034: Keyboard Shortcuts Enhancement ✅ COMPLETED
-**Epic**: E-03 | **Story**: US-014
-**Completed**: Sep 21 | **Actual Time**: 1.5 hours
-
-**Description**: Add more keyboard shortcuts for faster navigation
-
-**Completion Notes**: Implemented enhanced keyboard shortcuts for both modern and legacy UI modes. Users can now use multiple ways to trigger operations including function keys, descriptive words, and control key combinations.
-
-**Implementation Details**:
-- Added `processKeyboardShortcuts()` method to both EnhancedMenu and LegacyUI
-- Enhanced shortcuts: F1/help/? for help, Ctrl+Q/exit/quit for quit, Ctrl+Z/undo for undo
-- Descriptive shortcuts: single/1 for single file, merge/2 for merge, archive for toggle
-- Added refresh shortcut (R/space/refresh) for manual display updates
-- Updated help text in both UI modes to document all available shortcuts
-- Extended FileOperations interface to support undo and archive toggle operations
-
-**Benefits Achieved**:
-- **Multiple Input Methods**: Users can type full words, numbers, or single letters
-- **Intuitive Shortcuts**: Common shortcuts like Ctrl+Z, F1, Ctrl+Q work as expected
-- **Cross-Platform**: Works in both modern terminals and legacy environments
-- **Comprehensive Help**: All shortcuts documented in interactive help system
-
----
-
-## 🗂️ Backlog (Future Work)
 
 ### T-029: Web Interface
 **Epic**: E-08 | **Story**: US-037
@@ -237,28 +92,6 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-036: Enhanced Clean Build Process ✅ COMPLETED
-**Epic**: E-06 | **Story**: US-010
-**Completed**: Sep 21 | **Actual Time**: 0.5 hours
-
-**Description**: Improve build script clean function to remove all development and test artefacts
-
-**Completion Notes**: Enhanced clean_build_dir() function to remove all build and test artefacts including local development binaries, test coverage files, and legacy test directories. Provides completely clean development environment.
-
-**Implementation Details**:
-- Added removal of 'blend-pdf' local development binary
-- Added removal of 'coverage.out' test coverage files
-- Added removal of 'version/' legacy test directory
-- Manually cleaned up existing artefacts
-- Tested clean function with comprehensive artifact removal
-
-**Benefits Achieved**:
-- **Complete Cleanup**: Clean build now removes ALL build and test artefacts
-- **Fresh Environment**: Completely clean state for development
-- **No Legacy Files**: Old test directories and coverage files removed
-- **Consistent Behaviour**: Clean means truly clean across all artifact types
-
----
 
 ### T-037: Error Recovery Enhancement
 **Epic**: E-01 | **Story**: US-004
@@ -276,30 +109,16 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ---
 
-### T-035: Fix --no-archive Flag for Merge Operations ✅ COMPLETED
-**Epic**: E-02 | **Story**: US-005
-**Completed**: Sep 21 | **Actual Time**: 0.5 hours
-
-**Description**: Fix inconsistency where --no-archive flag only worked for single file operations but not merge operations
-
-**Completion Notes**: Fixed merge operations to respect the CONFIG.ArchiveMode setting. Previously merge operations always archived regardless of the --no-archive flag, creating inconsistent behavior.
-
-**Implementation Details**:
-- Added CONFIG.ArchiveMode check to merge operations
-- Archive mode ON: Copy files to archive before moving to output (existing behavior)
-- Archive mode OFF: Remove original files directly without archiving
-- Updated undo tracking to handle cases where no archive files exist
-- Maintained backward compatibility: default behavior still archives for both operations
-
-**Benefits Achieved**:
-- **Consistent Behavior**: Both single file and merge operations now respect --no-archive flag
-- **User Control**: --no-archive flag works as expected for all operations
-- **Backward Compatibility**: Default archiving behavior unchanged
-- **Proper Undo Support**: Undo functionality works correctly with both archive modes
-
----
 
 ## ✅ Done
+
+
+
+
+
+
+
+
 
 ### T-046: Fix Multi-Output Folder Creation Logic ✅ COMPLETED
 **Epic**: E-02 | **Story**: US-005
