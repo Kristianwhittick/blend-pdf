@@ -1,10 +1,10 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (46 Total)
+## Task Summary (47 Total)
 - ✅ **Done**: 38 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 0 tasks
-- 🗂️ **Backlog**: 8 tasks
+- 🗂️ **Backlog**: 9 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -30,6 +30,50 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 
 ## 🗂️ Backlog (Future Work)
+
+### T-047: Binary Naming Consistency Issue
+**Epic**: E-06 | **Story**: US-010
+**Priority**: Low | **Estimate**: 1 hour
+
+**Description**: Resolve inconsistency between local testing binary name and GitHub release binary names
+
+**Background**: Currently there is an inconsistency in binary naming:
+- **Local Testing**: `blend-pdf` (with hyphen between blend and pdf)
+- **GitHub Releases**: `blendpdf-v1.3.1-windows-amd64.exe` (no hyphen between blend and pdf)
+
+**Root Cause**: Go module name is `blend-pdf` (with hyphen), so `go build` creates `blend-pdf` by default. Build system uses `blendpdf` (no hyphen) for release binaries to match project name.
+
+**Current Situation**:
+- All GitHub releases correctly use `blendpdf` without hyphen
+- Local testing uses `go build` which creates `blend-pdf` with hyphen
+- This creates confusion and inconsistency in documentation and usage
+
+**Options to Consider**:
+1. **Change local testing** to use `go build -o blendpdf` (no hyphen)
+2. **Change GitHub releases** to use `blend-pdf` (with hyphen)
+3. **Change Go module name** to `blendpdf` (major change)
+
+**⚠️ IMPORTANT**: No decision has been made. This must be discussed again before implementation.
+
+**Discussion Points**:
+- Project branding: "BlendPDFGo" → should executable be "blendpdf" or "blend-pdf"?
+- User expectations: What do users expect when they download the tool?
+- Consistency with existing releases: All current releases use "blendpdf"
+- Go conventions: Module names often use hyphens, executable names vary
+
+**Acceptance Criteria**:
+- [ ] Decision made on preferred binary naming convention
+- [ ] Consistency achieved between local testing and releases
+- [ ] Documentation updated to reflect chosen naming
+- [ ] Build processes updated if needed
+
+**Definition of Done**:
+- [ ] Discussion completed and decision documented
+- [ ] Implementation matches decision
+- [ ] All binary names consistent across local and release builds
+- [ ] Documentation reflects final naming convention
+
+---
 
 ### T-029: Web Interface
 **Epic**: E-08 | **Story**: US-037
