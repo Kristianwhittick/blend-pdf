@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2025-09-23
 
 ### Fixed
+- Multi-output folder paths now display as absolute paths for consistency
+- UI banner shows full paths like `/home/user/project/test1` instead of relative `test1`
+- Path display consistency maintained between single and multi-output folder modes
 - Stale lock file detection and automatic cleanup on startup
 - Lock files from terminated processes now automatically removed
 - PID validation prevents removal of active lock files
