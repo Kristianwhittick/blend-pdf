@@ -85,7 +85,23 @@ Follow Semantic Versioning (SemVer):
    git push origin main --tags
    ```
 
-5. **Local Binary Deployment**
+5. **Monitor GitHub Actions** (requires GitHub CLI)
+   ```bash
+   # Check recent workflow runs
+   gh run list --limit 5
+   
+   # View specific run details
+   gh run view <run-id>
+   
+   # Check release status
+   gh release list
+   gh release view <tag>
+   
+   # View workflow logs if needed
+   gh run logs <run-id>
+   ```
+
+6. **Local Binary Deployment** (FINAL STEP - only after GitHub Actions succeed)
    ```bash
    # Clean build all platforms
    make clean && make build-all
@@ -98,8 +114,6 @@ Follow Semantic Versioning (SemVer):
    cp dist/blendpdf-v1.1.0-linux-amd64 ~/local/bin/blendpdf
    chmod +x ~/local/bin/blendpdf
    ```
-
-6. **Monitor GitHub Actions** (requires GitHub CLI)
    ```bash
    # Check recent workflow runs
    gh run list --limit 5
