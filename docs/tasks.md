@@ -1,10 +1,10 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (47 Total)
+## Task Summary (48 Total)
 - ✅ **Done**: 38 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 0 tasks
-- 🗂️ **Backlog**: 9 tasks
+- 🗂️ **Backlog**: 10 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -30,6 +30,62 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 
 ## 🗂️ Backlog (Future Work)
+
+### T-048: Version Management Process Improvements
+**Epic**: E-06 | **Story**: US-010
+**Priority**: Medium | **Estimate**: 4 hours
+
+**Description**: Improve version number management to eliminate manual synchronization and reduce human error
+
+**Current Issues**:
+- Multiple sources of truth: CHANGELOG.md, constants.go, git tags
+- Manual synchronization required for each release
+- Human error potential with version mismatches
+- Process overhead with multiple manual steps
+
+**Options to Consider**:
+
+**Option 1: Git Tags as Single Source of Truth** ⭐ RECOMMENDED
+Use git tags as authoritative version, auto-sync everything else
+- Build-time version extraction from `git describe --tags`
+- Constants.go uses build-time injection instead of hardcoded string
+- Eliminates version synchronization issues
+
+**Sub-options for Option 1**:
+- **Solution A**: Pre-Release Commit Pattern - Use [UNRELEASED] placeholder, build system replaces with tag version
+- **Solution B**: Tag-First Approach - Create tag first, build system auto-generates CHANGELOG entry
+- **Solution C**: Manual Two-Commit Process - Update CHANGELOG with version, then create tag (eliminates race condition)
+
+**Option 2: VERSION File Approach**
+Single VERSION file, all other files reference it
+- VERSION file contains just version number (e.g., "1.3.2")
+- Build script reads VERSION file, injects into constants.go
+- CHANGELOG references VERSION file for consistency
+- Git tags created from VERSION file content
+
+**Option 3: Makefile/Build Script Automation**
+Automated version bumping with validation
+- Single commands: `make release-patch`, `make release-minor`, `make release-major`
+- Reads current version from git tags
+- Updates all files automatically, creates commit and tag
+- Validates consistency before proceeding
+
+**Question for Discussion**: Do we need the complete changelog in the .md file, or could release notes be generated from git commits/tags?
+
+**Acceptance Criteria**:
+- [ ] Single source of truth for version numbers
+- [ ] Automated synchronization between version locations
+- [ ] Reduced manual steps in release process
+- [ ] Elimination of version mismatch possibilities
+- [ ] Backward compatibility with existing releases
+
+**Definition of Done**:
+- [ ] Option selected and implemented
+- [ ] Release process updated and documented
+- [ ] All version sources synchronized automatically
+- [ ] Testing completed across multiple release scenarios
+
+---
 
 ### T-047: Binary Naming Consistency Issue
 **Epic**: E-06 | **Story**: US-010
