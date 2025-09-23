@@ -102,6 +102,10 @@ Follow Semantic Versioning (SemVer):
    ```
 
 6. **Local Binary Deployment** (FINAL STEP - only after GitHub Actions succeed)
+   
+   ⚠️ **IMPORTANT**: Only proceed with local deployment if step 5 GitHub Actions completed successfully. 
+   Do NOT update local binaries if GitHub Actions failed, as this could deploy broken builds.
+   
    ```bash
    # Clean build all platforms
    make clean && make build-all
