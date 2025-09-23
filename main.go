@@ -79,8 +79,14 @@ func runTUI() error {
 		return legacyUI.Run()
 	}
 
+	// Get output folders from config or use default
+	outputFolders := []string{OUTPUT}
+	if CONFIG != nil && len(CONFIG.OutputFolders) > 0 {
+		outputFolders = CONFIG.OutputFolders
+	}
+
 	// Create and run enhanced menu (modern terminals)
-	menu := ui.NewEnhancedMenu(FOLDER, ARCHIVE, OUTPUT, ERROR_DIR, VERSION, bridge)
+	menu := ui.NewEnhancedMenu(FOLDER, ARCHIVE, outputFolders, ERROR_DIR, VERSION, bridge)
 	return menu.Run()
 }
 

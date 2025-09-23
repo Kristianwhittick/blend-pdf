@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2025-09-23
 
 ### Fixed
+- Multi-output folder UI display now shows individual folders and counts
+- Banner displays "3 folders" with total count when using `-o "folder1,folder2,folder3"`
+- Individual folder counts shown for first 2 folders to fit within banner width
+- Real-time file count updates work correctly for all multi-output folders
 - Multi-output folder parsing bug where `-o "folder1,folder2,folder3"` was treated as watch directory
 - Output directories now created automatically when they don't exist
 - Command line argument parsing properly handles `-o` flag parameters

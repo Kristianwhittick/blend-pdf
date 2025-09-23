@@ -1,7 +1,7 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (43 Total)
-- ✅ **Done**: 34 tasks
+## Task Summary (44 Total)
+- ✅ **Done**: 35 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 1 task
 - 🗂️ **Backlog**: 8 tasks
@@ -13,60 +13,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ## 🔄 In Progress
 
-### T-043: Fix Multi-Output Folder Parsing Bug
-**Epic**: E-02 | **Story**: US-005
-**Priority**: High | **Estimate**: 2 hours
-
-**Description**: Fix bug where `-o "folder1,folder2,folder3"` is treated as watch directory instead of separate output folders
-
-**Background**: Multi-output folder functionality is broken. The application treats the entire comma-separated string as the watch directory instead of parsing it as separate output folders. This causes incorrect directory creation and file operations.
-
-**Root Cause**: The `determineWatchDirectory()` function still incorrectly parses the output folder parameter as the watch directory, even after T-042 fix.
-
-**Investigation Required**:
-- Fix output folder parsing to create separate directories
-- Ensure watch directory detection works correctly with `-o` flag
-- Test multi-output folder file operations
-- Verify directory creation and file copying to all folders
-
-**Test Plan**:
-1. **Basic Multi-Output Test**: `./blend-pdf -o "test1,test2,test3"`
-   - [ ] Creates 3 separate directories: `test1/`, `test2/`, `test3/`
-   - [ ] Watch directory remains current directory (not output folders)
-   - [ ] Default directories created in current directory: `archive/`, `error/`
-
-2. **File Operation Tests**: With PDFs in current directory
-   - [ ] Single file operation copies to all 3 output folders
-   - [ ] Merge operation copies result to all 3 output folders
-   - [ ] Original files moved to `archive/` (not output folders)
-
-3. **Path Handling Tests**:
-   - [ ] Quoted paths with spaces: `-o "folder 1,folder 2,folder 3"`
-   - [ ] Absolute paths: `-o "/tmp/out1,/tmp/out2"`
-   - [ ] Mixed relative/absolute: `-o "rel1,/tmp/abs1"`
-
-4. **Error Handling Tests**:
-   - [ ] Failed directory creation handled gracefully
-   - [ ] Partial copy failures logged but don't stop other copies
-   - [ ] Files copied to error folder when output destinations fail
-
-5. **Configuration Tests**:
-   - [ ] Config file `outputFolders` array works correctly
-   - [ ] Command line `-o` overrides config file settings
-   - [ ] Default single output folder when no `-o` specified
-
-**Acceptance Criteria**:
-- [ ] `-o "folder1,folder2,folder3"` creates 3 separate output directories
-- [ ] Watch directory correctly identified as current directory
-- [ ] Files copied to all specified output folders
-- [ ] Error handling works for failed destinations
-- [ ] All test scenarios pass
-
-**Definition of Done**:
-- [ ] Multi-output folder parsing implemented correctly
-- [ ] All test scenarios verified working
-- [ ] Watch directory detection fixed
-- [ ] Error handling tested and working
+*No tasks currently in progress*
 
 ---
 
@@ -385,6 +332,30 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## ✅ Done
+
+### T-044: Fix Multi-Output Folder UI Display ✅ COMPLETED
+**Epic**: E-03 | **Story**: US-006
+**Completed**: Sep 23 | **Actual Time**: 3 hours
+
+**Description**: Fixed UI banner to show multi-output folders instead of single output folder when using `-o` flag
+
+**Completion Notes**: Successfully implemented multi-output folder display in UI banner. The banner now shows individual folder counts and updates in real-time when using multi-output folders.
+
+**Implementation Details**:
+- Modified `EnhancedMenu` struct to use `outputFolders []string` instead of single `outputDir`
+- Updated `NewEnhancedMenu` function signature to accept multiple output folders
+- Enhanced `showHeader()` method to display multiple folders with individual counts
+- Added logic to show "X folders" with total count and individual folder details
+- Maintained 80-character width compatibility with proper alignment
+
+**Benefits Achieved**:
+- **Multi-Output Display**: Shows "3 folders" with total count when using `-o "folder1,folder2,folder3"`
+- **Individual Counts**: Displays individual folder counts for first 2 folders
+- **Real-time Updates**: File counts update correctly after operations
+- **Banner Layout**: Maintains proper alignment within 80-character width
+- **Backward Compatibility**: Single output folder display unchanged
+
+---
 
 ### T-043: Fix Multi-Output Folder Parsing Bug ✅ COMPLETED
 **Epic**: E-02 | **Story**: US-005

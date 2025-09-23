@@ -31,7 +31,7 @@ import (
 type EnhancedMenu struct {
 	watchDir       string
 	archiveDir     string
-	outputDir      string
+	outputFolders  []string
 	errorDir       string
 	version        string
 	fileOps        FileOperations
@@ -59,11 +59,11 @@ type RecentOperation struct {
 }
 
 // NewEnhancedMenu creates an enhanced menu
-func NewEnhancedMenu(watchDir, archiveDir, outputDir, errorDir, version string, fileOps FileOperations) *EnhancedMenu {
+func NewEnhancedMenu(watchDir, archiveDir string, outputFolders []string, errorDir, version string, fileOps FileOperations) *EnhancedMenu {
 	menu := &EnhancedMenu{
 		watchDir:       watchDir,
 		archiveDir:     archiveDir,
-		outputDir:      outputDir,
+		outputFolders:  outputFolders,
 		errorDir:       errorDir,
 		version:        version,
 		fileOps:        fileOps,
@@ -201,7 +201,6 @@ func (e *EnhancedMenu) showHeader() {
 	}
 
 	archiveCount := e.fileOps.CountPDFFiles(e.archiveDir)
-	outputCount := e.fileOps.CountPDFFiles(e.outputDir)
 	errorCount := e.fileOps.CountPDFFiles(e.errorDir)
 
 	fmt.Println("┌─────────────────────────────────────────────────────────────────────────────┐")
@@ -214,7 +213,29 @@ func (e *EnhancedMenu) showHeader() {
 	// Total: 77 chars = Label(9) + Path(59) + Space(3) + Number(6)
 	fmt.Printf("│ Watch  : %-59s %6d │\n", e.watchDir, len(mainFiles))
 	fmt.Printf("│ Archive: %-59s %6d │\n", e.archiveDir, archiveCount)
-	fmt.Printf("│ Output : %-59s %6d │\n", e.outputDir, outputCount)
+
+	// Display output folders - single or multiple
+	if len(e.outputFolders) == 1 {
+		outputCount := e.fileOps.CountPDFFiles(e.outputFolders[0])
+		fmt.Printf("│ Output : %-59s %6d │\n", e.outputFolders[0], outputCount)
+	} else {
+		// Multiple output folders - show first with total count
+		totalCount := 0
+		for _, folder := range e.outputFolders {
+			totalCount += e.fileOps.CountPDFFiles(folder)
+		}
+		fmt.Printf("│ Output : %-59s %6d │\n", fmt.Sprintf("%d folders", len(e.outputFolders)), totalCount)
+
+		// Show individual folders if space allows (max 2 additional lines)
+		for i, folder := range e.outputFolders {
+			if i >= 2 { // Limit to first 2 folders to fit in border
+				break
+			}
+			count := e.fileOps.CountPDFFiles(folder)
+			fmt.Printf("│   %s: %-56s %6d │\n", fmt.Sprintf("%d", i+1), folder, count)
+		}
+	}
+
 	fmt.Printf("│ Error  : %-59s %6d │\n", e.errorDir, errorCount)
 
 	fmt.Println("└─────────────────────────────────────────────────────────────────────────────┘")
