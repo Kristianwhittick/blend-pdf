@@ -47,6 +47,7 @@ clean: ## Clean build directory and artifacts
 	@echo "$(YELLOW)Cleaning build artifacts...$(NC)"
 	@rm -rf $(BUILD_DIR)
 	@rm -f $(APP_NAME)
+	@rm -f blend-pdf
 	@echo "$(GREEN)✓ Clean completed$(NC)"
 
 ## Build for current platform
