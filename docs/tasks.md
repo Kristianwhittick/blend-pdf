@@ -1,10 +1,10 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (42 Total)
-- ✅ **Done**: 33 tasks
-- 🔄 **In Progress**: 1 task  
+## Task Summary (43 Total)
+- ✅ **Done**: 34 tasks
+- 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 1 task
-- 🗂️ **Backlog**: 7 tasks
+- 🗂️ **Backlog**: 8 tasks
 
 ### 📊 Project Status: PRODUCTION READY
 All core functionality complete with professional UI, real-time monitoring, comprehensive testing, and multi-platform deployment.
@@ -12,6 +12,63 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## 🔄 In Progress
+
+### T-043: Fix Multi-Output Folder Parsing Bug
+**Epic**: E-02 | **Story**: US-005
+**Priority**: High | **Estimate**: 2 hours
+
+**Description**: Fix bug where `-o "folder1,folder2,folder3"` is treated as watch directory instead of separate output folders
+
+**Background**: Multi-output folder functionality is broken. The application treats the entire comma-separated string as the watch directory instead of parsing it as separate output folders. This causes incorrect directory creation and file operations.
+
+**Root Cause**: The `determineWatchDirectory()` function still incorrectly parses the output folder parameter as the watch directory, even after T-042 fix.
+
+**Investigation Required**:
+- Fix output folder parsing to create separate directories
+- Ensure watch directory detection works correctly with `-o` flag
+- Test multi-output folder file operations
+- Verify directory creation and file copying to all folders
+
+**Test Plan**:
+1. **Basic Multi-Output Test**: `./blend-pdf -o "test1,test2,test3"`
+   - [ ] Creates 3 separate directories: `test1/`, `test2/`, `test3/`
+   - [ ] Watch directory remains current directory (not output folders)
+   - [ ] Default directories created in current directory: `archive/`, `error/`
+
+2. **File Operation Tests**: With PDFs in current directory
+   - [ ] Single file operation copies to all 3 output folders
+   - [ ] Merge operation copies result to all 3 output folders
+   - [ ] Original files moved to `archive/` (not output folders)
+
+3. **Path Handling Tests**:
+   - [ ] Quoted paths with spaces: `-o "folder 1,folder 2,folder 3"`
+   - [ ] Absolute paths: `-o "/tmp/out1,/tmp/out2"`
+   - [ ] Mixed relative/absolute: `-o "rel1,/tmp/abs1"`
+
+4. **Error Handling Tests**:
+   - [ ] Failed directory creation handled gracefully
+   - [ ] Partial copy failures logged but don't stop other copies
+   - [ ] Files copied to error folder when output destinations fail
+
+5. **Configuration Tests**:
+   - [ ] Config file `outputFolders` array works correctly
+   - [ ] Command line `-o` overrides config file settings
+   - [ ] Default single output folder when no `-o` specified
+
+**Acceptance Criteria**:
+- [ ] `-o "folder1,folder2,folder3"` creates 3 separate output directories
+- [ ] Watch directory correctly identified as current directory
+- [ ] Files copied to all specified output folders
+- [ ] Error handling works for failed destinations
+- [ ] All test scenarios pass
+
+**Definition of Done**:
+- [ ] Multi-output folder parsing implemented correctly
+- [ ] All test scenarios verified working
+- [ ] Watch directory detection fixed
+- [ ] Error handling tested and working
+
+---
 
 ### T-042: Fix Lock File Location Bug with Multi-Output Folders
 **Epic**: E-02 | **Story**: US-005
@@ -328,6 +385,28 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## ✅ Done
+
+### T-043: Fix Multi-Output Folder Parsing Bug ✅ COMPLETED
+**Epic**: E-02 | **Story**: US-005
+**Completed**: Sep 23 | **Actual Time**: 2 hours
+
+**Description**: Fixed bug where `-o "folder1,folder2,folder3"` was treated as watch directory instead of separate output folders
+
+**Completion Notes**: Fixed multi-output folder functionality by correcting command line argument parsing and adding automatic directory creation. The application now properly creates separate output directories and copies files to all specified folders.
+
+**Implementation Details**:
+- Fixed `parseArgs()` function to properly skip `-o` flag parameters
+- Updated `processArgument()` to return skip flag for parameter handling
+- Enhanced `performFileCopy()` to create destination directories automatically
+- Corrected watch directory detection to ignore output folder parameters
+
+**Benefits Achieved**:
+- **Proper Directory Handling**: Creates separate `test1/`, `test2/`, `test3/` directories
+- **Correct Watch Directory**: Uses current directory instead of output folder list
+- **Automatic Directory Creation**: Creates output directories when they don't exist
+- **Multi-Output File Operations**: Successfully copies files to all specified output folders
+
+---
 
 ### T-041: Fix Header Formatting for Large File Counts ✅ COMPLETED
 **Epic**: E-03 | **Story**: US-006

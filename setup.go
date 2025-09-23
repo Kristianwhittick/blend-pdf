@@ -47,7 +47,7 @@ func determineWatchDirectory() string {
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
 
-		// Skip flags that take parameters
+		// Skip flags that take parameters and their values
 		if arg == "-o" || arg == "--output" {
 			i++ // Skip the next argument (output folder list)
 			continue
@@ -58,7 +58,7 @@ func determineWatchDirectory() string {
 			continue
 		}
 
-		// This is a directory argument
+		// This is a non-flag argument - it should be the watch directory
 		watchDir = arg
 		break
 	}
@@ -183,9 +183,13 @@ func parseArgs() (string, error) {
 	args := os.Args[1:]
 	folder := ""
 
-	for i, arg := range args {
-		if err := processArgument(arg, args, i, &folder); err != nil {
+	for i := 0; i < len(args); i++ {
+		skipNext, err := processArgument(args[i], args, i, &folder)
+		if err != nil {
 			return "", err
+		}
+		if skipNext {
+			i++ // Skip the next argument
 		}
 	}
 
@@ -233,7 +237,7 @@ func applyCommandLineOverrides(args []string) {
 }
 
 // Process individual command line argument
-func processArgument(arg string, args []string, index int, folder *string) error {
+func processArgument(arg string, args []string, index int, folder *string) (bool, error) {
 	switch arg {
 	case "-h", "--help":
 		showHelp()
@@ -250,10 +254,11 @@ func processArgument(arg string, args []string, index int, folder *string) error
 	case "-o", "--output":
 		// Skip the next argument (it's the folder list)
 		// Handled in applyCommandLineOverrides
+		return true, nil // Return true to skip next argument
 	default:
-		return handleNonFlagArgument(arg, args, index, folder)
+		return false, handleNonFlagArgument(arg, args, index, folder)
 	}
-	return nil
+	return false, nil
 }
 
 // Show version information
@@ -491,6 +496,12 @@ func performFileCopy(src, dst string) error {
 		return err
 	}
 	defer sourceFile.Close()
+
+	// Create destination directory if it doesn't exist
+	destDir := filepath.Dir(dst)
+	if err := os.MkdirAll(destDir, 0750); err != nil {
+		return fmt.Errorf("failed to create destination directory %s: %v", destDir, err)
+	}
 
 	destFile, err := os.Create(dst) // #nosec G304 - path validated above
 	if err != nil {
