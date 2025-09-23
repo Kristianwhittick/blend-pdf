@@ -219,20 +219,10 @@ func (e *EnhancedMenu) showHeader() {
 		outputCount := e.fileOps.CountPDFFiles(e.outputFolders[0])
 		fmt.Printf("│ Output : %-59s %6d │\n", e.outputFolders[0], outputCount)
 	} else {
-		// Multiple output folders - show first with total count
-		totalCount := 0
+		// Multiple output folders - show each as "Output :"
 		for _, folder := range e.outputFolders {
-			totalCount += e.fileOps.CountPDFFiles(folder)
-		}
-		fmt.Printf("│ Output : %-59s %6d │\n", fmt.Sprintf("%d folders", len(e.outputFolders)), totalCount)
-
-		// Show individual folders if space allows (max 2 additional lines)
-		for i, folder := range e.outputFolders {
-			if i >= 2 { // Limit to first 2 folders to fit in border
-				break
-			}
 			count := e.fileOps.CountPDFFiles(folder)
-			fmt.Printf("│   %s: %-56s %6d │\n", fmt.Sprintf("%d", i+1), folder, count)
+			fmt.Printf("│ Output : %-59s %6d │\n", folder, count)
 		}
 	}
 
