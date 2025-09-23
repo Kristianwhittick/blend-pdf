@@ -1,9 +1,9 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (41 Total)
+## Task Summary (42 Total)
 - ✅ **Done**: 33 tasks
-- 🔄 **In Progress**: 0 tasks  
-- 📋 **To Do**: 0 tasks
+- 🔄 **In Progress**: 1 task  
+- 📋 **To Do**: 1 task
 - 🗂️ **Backlog**: 7 tasks
 
 ### 📊 Project Status: PRODUCTION READY
@@ -12,7 +12,32 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## 🔄 In Progress
-*No tasks currently in progress*
+
+### T-042: Fix Lock File Location Bug with Multi-Output Folders
+**Epic**: E-02 | **Story**: US-005
+**Priority**: High | **Estimate**: 1 hour
+
+**Description**: Fix bug where lock file is created in output folder instead of working directory when using -o flag
+
+**Background**: When using `-o "path1,path2"` flag, the `determineWatchDirectory()` function incorrectly uses the output folder list as the watch directory, causing lock file creation to fail with "The specified path is invalid" on Windows.
+
+**Root Cause**: `determineWatchDirectory()` uses last command line argument as watch directory without understanding that `-o` flag takes a parameter.
+
+**Investigation Required**:
+- Fix `determineWatchDirectory()` to properly parse command line flags
+- Ensure lock file is always created in working directory on Windows
+- Test multi-output folder functionality with spaces in paths
+
+**Acceptance Criteria**:
+- [ ] Lock file created in working directory, not output folder
+- [ ] Multi-output folders work with quoted paths containing spaces
+- [ ] Command line parsing correctly handles `-o` flag parameters
+- [ ] Windows UNC paths work correctly
+
+**Definition of Done**:
+- [ ] Bug fix implemented and tested
+- [ ] Multi-output folder functionality verified
+- [ ] Windows path handling confirmed working
 
 ---
 

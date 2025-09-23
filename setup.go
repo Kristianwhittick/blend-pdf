@@ -42,11 +42,25 @@ func setupLock() error {
 func determineWatchDirectory() string {
 	watchDir := "." // Default to current directory
 
-	if len(os.Args) > 1 {
-		lastArg := os.Args[len(os.Args)-1]
-		if !strings.HasPrefix(lastArg, "-") {
-			watchDir = lastArg
+	// Parse arguments to find directory, skipping flags and their parameters
+	args := os.Args[1:] // Skip program name
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+
+		// Skip flags that take parameters
+		if arg == "-o" || arg == "--output" {
+			i++ // Skip the next argument (output folder list)
+			continue
 		}
+
+		// Skip other flags
+		if strings.HasPrefix(arg, "-") {
+			continue
+		}
+
+		// This is a directory argument
+		watchDir = arg
+		break
 	}
 
 	return watchDir

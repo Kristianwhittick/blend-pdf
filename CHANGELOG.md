@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2025-09-23
 
 ### Fixed
+- Lock file location bug when using `-o` flag with multi-output folders
+- Lock file now correctly created in working directory instead of output folder
+- Command line parsing properly handles `-o` flag parameters
 - Header formatting alignment issue with large file counts (389+ files)
 - Numbers now consistently right-aligned regardless of path length
 - Proper border width calculation for 6-digit file count support
