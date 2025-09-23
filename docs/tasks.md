@@ -2,8 +2,8 @@
 
 ## Task Summary (44 Total)
 - ✅ **Done**: 35 tasks
-- 🔄 **In Progress**: 0 tasks  
-- 📋 **To Do**: 1 task
+- 🔄 **In Progress**: 1 task  
+- 📋 **To Do**: 0 tasks
 - 🗂️ **Backlog**: 8 tasks
 
 ### 📊 Project Status: PRODUCTION READY
@@ -13,7 +13,40 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ## 🔄 In Progress
 
-*No tasks currently in progress*
+### T-037: Lock File Cleanup Investigation
+**Epic**: E-06 | **Story**: US-010
+**Priority**: Medium | **Estimate**: 2 hours
+
+**Description**: Investigate and fix lock file cleanup to ensure proper release on application exit
+
+**Background**: Found 20 stale lock files in /tmp/ during cleanup, indicating lock files are not being properly released when application terminates (likely from Ctrl+C, crashes, or abnormal exits).
+
+**Investigation Findings** (Sep 23):
+- **Confirmed Issue**: Found 2 additional stale lock files after testing (PIDs 187685, 188379)
+- **Root Cause**: Lock files not cleaned up when process terminated abnormally (timeout, Ctrl+C)
+- **Current Behavior**: Lock files remain in /tmp/ after process death
+- **Impact**: Prevents new instances from starting in same directory until manual cleanup
+- **Test Scenario**: Files left after `timeout 10s ./blend-pdf` commands during testing
+
+**Investigation Required**:
+- Review signal handling for graceful shutdown
+- Ensure lock file cleanup in defer statements
+- Test lock file release on normal exit, Ctrl+C, and crashes
+- Consider adding lock file age checking and auto-cleanup
+- Add PID validation on startup to detect stale lock files
+
+**Acceptance Criteria**:
+- [ ] Lock files properly released on normal application exit
+- [ ] Lock files cleaned up on Ctrl+C (SIGINT) signal
+- [ ] Lock files handled appropriately on crashes
+- [ ] Stale lock file detection and cleanup on startup (check PID validity)
+- [ ] Test across different termination scenarios
+
+**Definition of Done**:
+- [ ] Signal handling reviewed and improved
+- [ ] Lock file cleanup tested in all exit scenarios
+- [ ] Documentation updated with lock file behaviour
+- [ ] No stale lock files left after normal usage
 
 ---
 
@@ -47,39 +80,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ## 📋 To Do (Ready for Work)
 
-### T-037: Lock File Cleanup Investigation
-**Epic**: E-06 | **Story**: US-010
-**Priority**: Medium | **Estimate**: 2 hours
-
-**Description**: Investigate and fix lock file cleanup to ensure proper release on application exit
-
-**Background**: Found 20 stale lock files in /tmp/ during cleanup, indicating lock files are not being properly released when application terminates (likely from Ctrl+C, crashes, or abnormal exits).
-
-**Investigation Findings** (Sep 23):
-- **Confirmed Issue**: Found 2 additional stale lock files after forced termination (PIDs 119458, 127452)
-- **Root Cause**: Lock files not cleaned up when process terminated abnormally (kill -9, Ctrl+C timeout)
-- **Current Behavior**: Lock files remain in /tmp/ after process death
-- **Impact**: Prevents new instances from starting in same directory until manual cleanup
-
-**Investigation Required**:
-- Review signal handling for graceful shutdown
-- Ensure lock file cleanup in defer statements
-- Test lock file release on normal exit, Ctrl+C, and crashes
-- Consider adding lock file age checking and auto-cleanup
-- Add PID validation on startup to detect stale lock files
-
-**Acceptance Criteria**:
-- [ ] Lock files properly released on normal application exit
-- [ ] Lock files cleaned up on Ctrl+C (SIGINT) signal
-- [ ] Lock files handled appropriately on crashes
-- [ ] Stale lock file detection and cleanup on startup (check PID validity)
-- [ ] Test across different termination scenarios
-
-**Definition of Done**:
-- [ ] Signal handling reviewed and improved
-- [ ] Lock file cleanup tested in all exit scenarios
-- [ ] Documentation updated with lock file behaviour
-- [ ] No stale lock files left after normal usage
+*No tasks currently ready for work*
 
 ---
 

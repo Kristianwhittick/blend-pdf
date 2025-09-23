@@ -22,6 +22,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"syscall"
 )
 
 // Lock file management functions
@@ -105,9 +106,42 @@ func createPlatformSpecificLockPath(watchDir, lockFileName string) string {
 // Check if lock file already exists
 func checkExistingLockFile() error {
 	if _, err := os.Stat(LOCKFILE); err == nil {
+		// Lock file exists, check if process is still running
+		if isLockFileStale() {
+			printInfo(fmt.Sprintf("Removing stale lock file: %s", LOCKFILE))
+			if err := os.Remove(LOCKFILE); err != nil {
+				printWarning(fmt.Sprintf("Failed to remove stale lock file: %v", err))
+				return createLockFileExistsError()
+			}
+			return nil // Stale lock file removed, can proceed
+		}
 		return createLockFileExistsError()
 	}
 	return nil
+}
+
+// Check if lock file is stale (process no longer running)
+func isLockFileStale() bool {
+	content, err := os.ReadFile(LOCKFILE)
+	if err != nil {
+		return true // Can't read lock file, assume stale
+	}
+
+	pidStr := strings.TrimSpace(string(content))
+	pid, err := strconv.Atoi(pidStr)
+	if err != nil {
+		return true // Invalid PID format, assume stale
+	}
+
+	// Check if process is still running
+	process, err := os.FindProcess(pid)
+	if err != nil {
+		return true // Process not found
+	}
+
+	// On Unix, try to send signal 0 to check if process exists
+	err = process.Signal(syscall.Signal(0))
+	return err != nil // If signal fails, process is not running
 }
 
 // Create error for existing lock file
