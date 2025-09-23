@@ -1,7 +1,7 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (40 Total)
-- ✅ **Done**: 32 tasks
+## Task Summary (41 Total)
+- ✅ **Done**: 33 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 0 tasks
 - 🗂️ **Backlog**: 7 tasks
@@ -26,17 +26,24 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 **Background**: Found 20 stale lock files in /tmp/ during cleanup, indicating lock files are not being properly released when application terminates (likely from Ctrl+C, crashes, or abnormal exits).
 
+**Investigation Findings** (Sep 23):
+- **Confirmed Issue**: Found 2 additional stale lock files after forced termination (PIDs 119458, 127452)
+- **Root Cause**: Lock files not cleaned up when process terminated abnormally (kill -9, Ctrl+C timeout)
+- **Current Behavior**: Lock files remain in /tmp/ after process death
+- **Impact**: Prevents new instances from starting in same directory until manual cleanup
+
 **Investigation Required**:
 - Review signal handling for graceful shutdown
 - Ensure lock file cleanup in defer statements
 - Test lock file release on normal exit, Ctrl+C, and crashes
 - Consider adding lock file age checking and auto-cleanup
+- Add PID validation on startup to detect stale lock files
 
 **Acceptance Criteria**:
 - [ ] Lock files properly released on normal application exit
 - [ ] Lock files cleaned up on Ctrl+C (SIGINT) signal
 - [ ] Lock files handled appropriately on crashes
-- [ ] Consider stale lock file detection and cleanup on startup
+- [ ] Stale lock file detection and cleanup on startup (check PID validity)
 - [ ] Test across different termination scenarios
 
 **Definition of Done**:
@@ -296,6 +303,37 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## ✅ Done
+
+### T-041: Fix Header Formatting for Large File Counts ✅ COMPLETED
+**Epic**: E-03 | **Story**: US-006
+**Completed**: Sep 23 | **Actual Time**: 1 hour
+
+**Description**: Fixed header display formatting when file counts become large numbers (100+)
+
+**Completion Notes**: Fixed header formatting alignment issue through multiple iterations. Final solution uses `%-59s %6d` format to properly align numbers within the 80-character border width.
+
+**Implementation Details**:
+- Modified `showHeader()` method in `ui/enhanced_menu.go`
+- **Final format**: `%-59s %6d` (59-char left-aligned path + 6-char right-aligned number)
+- **Width calculation**: Label(9) + Path(59) + Space(3) + Number(6) = 77 characters total
+- **Border compatibility**: Fits within 80-character border (77 content + 2 border chars + 1 newline)
+- Supports file counts up to 999,999 with consistent right-alignment
+
+**Debugging Process**:
+- **Initial attempts failed** due to width calculation errors (tried 57, 61, 62 character widths)
+- **Root cause**: Content was 3 characters too wide, causing overflow beyond border
+- **Solution method**: Manual character counting and border width measurement using `wc -m`
+- **Testing**: Verified with both short paths (blend-pdf) and long paths (scan) directories
+
+**Benefits Achieved**:
+- **Consistent Alignment**: Numbers appear at same position regardless of path length
+- **Large Number Support**: Handles counts up to 999,999 without overflow
+- **Visual Consistency**: Clean bordered layout maintained across all scenarios
+- **Professional Appearance**: Proper alignment for 1-6 digit numbers
+
+**Knowledge Documented**: Created `docs/alignment-checking-knowledge.md` with debugging techniques and lessons learned for future UI alignment work.
+
+---
 
 ### T-001: Fix getPageCount Function ✅ COMPLETED
 **Epic**: E-01 | **Story**: US-001

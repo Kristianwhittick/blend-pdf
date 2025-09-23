@@ -210,11 +210,12 @@ func (e *EnhancedMenu) showHeader() {
 	fmt.Printf("│%*s%s%*s│\n", padding, "", title, 77-padding-len(title), "")
 	fmt.Println("├─────────────────────────────────────────────────────────────────────────────┤")
 
-	// Format paths with counts on the right
-	fmt.Printf("│ Watch  : %-63s %2d │\n", e.watchDir, len(mainFiles))
-	fmt.Printf("│ Archive: %-63s %2d │\n", e.archiveDir, archiveCount)
-	fmt.Printf("│ Output : %-63s %2d │\n", e.outputDir, outputCount)
-	fmt.Printf("│ Error  : %-63s %2d │\n", e.errorDir, errorCount)
+	// Format paths with counts on the right (supports 1-6 digits)
+	// Total: 77 chars = Label(9) + Path(59) + Space(3) + Number(6)
+	fmt.Printf("│ Watch  : %-59s %6d │\n", e.watchDir, len(mainFiles))
+	fmt.Printf("│ Archive: %-59s %6d │\n", e.archiveDir, archiveCount)
+	fmt.Printf("│ Output : %-59s %6d │\n", e.outputDir, outputCount)
+	fmt.Printf("│ Error  : %-59s %6d │\n", e.errorDir, errorCount)
 
 	fmt.Println("└─────────────────────────────────────────────────────────────────────────────┘")
 	fmt.Println()
