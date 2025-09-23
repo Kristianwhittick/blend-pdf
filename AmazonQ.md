@@ -1,137 +1,21 @@
 # Amazon Q Development Methodology
 
-## ⚠️ CRITICAL: UK ENGLISH SPELLING REQUIREMENT
+## ⚠️ CRITICAL RULE #1
+**Amazon Q MUST follow the appropriate processes and checklists for EVERY prompt given during development work.**
 
-**MANDATORY**: Use UK English spelling in ALL text, documentation, comments, and commit messages:
-- behaviour (not behavior)
-- colour (not color)
-- optimise (not optimize)
-- realise (not realize)
-- centre (not center)
-- licence (not license as noun)
-- analyse (not analyze)
+- Check `.amazonq/rules/checklists.md` for the relevant checklist before responding
+- Follow the process steps defined in `.amazonq/rules/process-map.md`
+- Apply coding and documentation standards from `.amazonq/rules/documentation-standards.md`
+- Use proper task formats from `.amazonq/rules/task-formats.md`
 
-**PROCESS**: Check every response and commit for US spellings before submitting.
-
-## Operation Checklists
-
-### Before Every Response
-- [ ] Use UK English spelling (behaviour, colour, optimise, realise, centre, licence, analyse)
-- [ ] Check if task documentation needs updating
-- [ ] Verify if CHANGELOG.md needs updating
-- [ ] Consider if README.md needs updating
-
-### Code Changes Checklist
-- [ ] Use UK English in all comments and documentation
-- [ ] Update relevant task in docs/tasks.md if completing/fixing something
-- [ ] Add entry to CHANGELOG.md if user-facing change
-- [ ] Update README.md if new features or significant changes
-- [ ] Run tests before committing
-- [ ] Use proper commit message format with UK spelling
-
-### Bug Fixes Checklist
-- [ ] Document the fix in the relevant task (T-XXX completion notes)
-- [ ] Add fix to CHANGELOG.md Fixed section
-- [ ] Use UK English in all documentation updates
-- [ ] Test the fix thoroughly
-- [ ] Update any affected documentation
-
-### New Features Checklist
-- [ ] Update task status in docs/tasks.md
-- [ ] Add feature to CHANGELOG.md Added section
-- [ ] Update README.md features section if significant
-- [ ] Use UK English throughout
-- [ ] Include proper documentation and comments
-
-### Documentation Updates Checklist
-- [ ] Use UK English spelling throughout
-- [ ] Update all affected files (tasks.md, CHANGELOG.md, README.md)
-- [ ] Ensure consistency across all documentation
-- [ ] Check cross-references are still valid
-
-### Release Process Checklist
-- [ ] Update CHANGELOG.md with new version entry
-- [ ] Sync version in constants.go to match git tag
-- [ ] Create git tag (vX.Y.Z format)
-- [ ] Push tag to trigger GitHub Actions
-- [ ] Verify release artifacts and checksums
-- [ ] Test downloaded binaries
-
-### Debugging Process Checklist
-- [ ] Create debug programs for complex issues
-- [ ] Document findings in task completion notes
-- [ ] Update relevant documentation with solutions
-- [ ] Test fixes across all affected platforms
-- [ ] Commit fixes with descriptive messages
-
-## Process Cross-References
-
-**Development Tasks** also require:
-- Git processes (commits, branches)
-- Documentation updates
-- Testing validation
-
-**Release Tasks** also require:
-- Documentation updates (CHANGELOG, README)
-- Git tag management
-- Build and deployment processes
-
-**Bug Fixes** also require:
-- Debugging processes
-- Testing validation
-- Documentation updates
-
-**See**: `docs/process_map.md` for complete process tree and detailed cross-references.
-
-## Project-Specific Methodologies
-
-### Go Project Standards
-
-#### UK English Spelling - CRITICAL REQUIREMENT ⚠️
-**ALWAYS use UK English spelling in ALL documentation, comments, and user-facing text:**
-- behaviour (not behavior)
-- colour (not color) 
-- optimise (not optimize)
-- realise (not realize)
-- centre (not center)
-- licence (not license as noun)
-- analyse (not analyze)
-
-**Check EVERY commit for US spellings before committing.**
-
-#### Experiment Organization
-- **Individual Folders**: Each experiment in separate folder (`exp01/`, `exp02/`, etc.) to prevent Go linting warnings
-- **Unified Runner**: `experiments/run_experiments.go` handles execution of all experiments
-- **Naming Convention**: `experiment##_description.go` within each folder
-- **Usage**: `go run experiments/run_experiments.go ##`
-
-#### API Research Process
-1. **Create Experiment**: New experiment in next available `exp##/` folder
-2. **Update Runner**: Add case to `run_experiments.go` switch statement
-3. **Document Results**: Update `docs/api_knowledge.md` with findings
-4. **Commit Changes**: Follow git workflow for experiment commits
-
-#### Testing Integration
-- Experiments excluded from main test suite (no test files in experiment folders)
-- API validation through experimental testing rather than unit tests
-- Results documented in knowledge base for reference
-
-### Development Workflow Additions
-
-#### Experiment-Driven Development
-- Use experiments to validate API assumptions before implementation
-- Document breakthrough discoveries in task updates
-- Reference experiment numbers in commit messages and documentation
-
-#### Knowledge Management
-- `docs/api_knowledge.md`: Comprehensive API function reference
-- `docs/api_experiments_procedures.md`: Step-by-step testing procedures
-- Experiment results inform implementation decisions
+**This is not optional - it ensures consistency, quality, and proper documentation across all development activities.**
 
 ---
 
 ## Overview
-This document defines the standardized approach to development using Amazon Q Developer. Choose between Light and Full methodologies based on your project needs.
+This document defines the standardised approach to development using Amazon Q Developer. Choose between Light and Full methodologies based on your project needs.
+
+**Master Files**: All detailed standards, checklists, and templates are maintained in `~/.aws/amazonq/rules/` and copied into projects during setup.
 
 ---
 
@@ -169,66 +53,13 @@ When starting a new project, run the setup process:
 - **User Story**: Specific user requirement ("As a [user], I want [goal] so that [benefit]")
 - **Definition of Done**: Clear acceptance criteria for completion
 - **Task**: Implementation work item with specific deliverables
-- **Backlog**: Prioritized list of work items (Epics, Stories, Tasks)
+- **Backlog**: Prioritised list of work items (Epics, Stories, Tasks)
 
 ### Kanban Board Structure
-- **📋 To Do**: Ready for work, prioritized
+- **📋 To Do**: Ready for work, prioritised
 - **🔄 In Progress**: Currently being worked on
 - **✅ Done**: Completed and validated
-- **🗂️ Backlog**: Future work, not yet prioritized
-
----
-
-## File Structure Standards
-
-### Light Methodology Structure
-```
-project-name/
-├── README.md
-├── AmazonQ.md
-├── summary.txt                 # Daily progress summary
-├── .amazonq/
-│   └── rules/
-│       ├── git-workflow.md
-│       └── documentation-standards.md
-├── docs/
-│   ├── requirements.md         # Initial ideas and needs
-│   ├── overview.md            # Project vision and goals
-│   ├── stories.md             # User stories
-│   ├── tasks.md               # Kanban task board
-│   └── testing.md             # Basic test checklist
-├── src/                       # Source code
-└── tests/                     # Test files
-```
-
-### Full Methodology Structure
-```
-project-name/
-├── README.md
-├── AmazonQ.md
-├── summary.txt                 # Daily progress summary
-├── .amazonq/
-│   └── rules/
-│       ├── git-workflow.md
-│       └── documentation-standards.md
-├── docs/
-│   ├── requirements.md         # Initial ideas and needs
-│   ├── overview.md            # Project vision and goals
-│   ├── features.md            # Epics and major features
-│   ├── stories.md             # User stories
-│   ├── tasks.md               # Kanban task board
-│   ├── design.md              # Technical architecture
-│   ├── testing.md             # Test strategy and procedures
-│   └── standards/
-│       ├── coding.md
-│       ├── workflow.md
-│       └── quality.md
-├── completion-summaries/       # Excluded from git
-│   ├── T-XXX-COMPLETION-SUMMARY.md
-│   └── EPIC-X-COMPLETION-SUMMARY.md
-├── src/                       # Source code (varies by project type)
-└── tests/                     # Test files (varies by project type)
-```
+- **🗂️ Backlog**: Future work, not yet prioritised
 
 ---
 
@@ -261,10 +92,26 @@ project-name/
 
 ### Phase 0: Project Setup
 1. **Run interactive setup** to create project structure
-2. **Initialize version control** with proper .gitignore
-3. **Copy default standards** from `~/.aws/amazonq/rules/` to `.amazonq/rules/`:
+2. **Initialise version control** with proper .gitignore
+3. **Copy master standards files** from `~/.aws/amazonq/rules/` to project `.amazonq/rules/`:
+   ```bash
+   mkdir -p .amazonq/rules/
+   cp ~/.aws/amazonq/rules/git-workflow.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/documentation-standards.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/process-map.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/checklists.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/project-templates.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/task-formats.md .amazonq/rules/
+   cp ~/.aws/amazonq/rules/suggestions.md .amazonq/rules/
+   ```
+   These provide:
    - `git-workflow.md` - Git branching, commits, and merge standards
    - `documentation-standards.md` - Code commenting and README requirements
+   - `process-map.md` - Complete process tree and detailed cross-references
+   - `checklists.md` - All operation checklists for consistent quality
+   - `project-templates.md` - File structure templates for both methodologies
+   - `task-formats.md` - Standard formats for tasks, stories, and epics
+   - `suggestions.md` - Current methodology improvements and migration guides
 4. **Create initial documentation** from templates
 5. **Set up development environment** and tools
 
@@ -291,60 +138,6 @@ project-name/
 
 ---
 
-## Quality Standards
-
-### Definition of Done (Minimum)
-- [ ] Functionality works as specified in user story
-- [ ] Code follows project coding standards
-- [ ] Basic tests written and passing
-- [ ] Documentation updated to reflect changes
-- [ ] Code reviewed (team projects)
-
-### Definition of Done (Comprehensive - Full Methodology)
-- [ ] All acceptance criteria met
-- [ ] Unit tests written with good coverage
-- [ ] Integration tests passing
-- [ ] Performance requirements met
-- [ ] Security considerations addressed
-- [ ] Accessibility requirements met (if applicable)
-- [ ] Documentation comprehensive and current
-- [ ] Code review completed and approved
-
----
-
-## Task Management
-
-### Task Lifecycle
-1. **Creation**: Document in tasks.md with Epic/Story reference
-2. **Planning**: Add acceptance criteria and estimates
-3. **Implementation**: Move to In Progress, implement solution
-4. **Testing**: Validate against Definition of Done
-5. **Review**: Code review and quality checks (team projects)
-6. **Completion**: Move to Done, update documentation
-
-### Task Format
-```markdown
-### T-XXX: Task Title [Status]
-**Epic**: E-XX | **Story**: US-XX
-**Estimate**: X hours/days
-**Priority**: High/Medium/Low
-**Dependencies**: T-YYY, T-ZZZ
-
-**Description**: What needs to be done
-
-**Acceptance Criteria**:
-- [ ] Specific measurable outcome 1
-- [ ] Specific measurable outcome 2
-- [ ] Specific measurable outcome 3
-
-**Definition of Done**:
-- [ ] Functionality implemented and tested
-- [ ] Documentation updated
-- [ ] Code reviewed (if team project)
-```
-
----
-
 ## Daily Progress Management
 
 ### Summary.txt File
@@ -356,46 +149,6 @@ project-name/
 - **Task Board Updates**: Move tasks between Kanban columns
 - **Completion Summaries**: Detailed task completion documentation
 - **Regular Reviews**: Weekly retrospectives to improve process
-
----
-
-## Suggestions and Improvements
-
-### New Working Practices
-When you discover effective new practices during project work:
-
-1. **Document the practice** in your project's AmazonQ.md
-2. **Test effectiveness** over multiple uses
-3. **Evaluate applicability** to other project types
-4. **Suggest addition** to main methodology if valuable
-
-### Suggestion Categories
-- **Process Improvements**: Better task management or workflow approaches
-- **Tool Recommendations**: Useful development tools and configurations  
-- **Quality Practices**: Testing, documentation, and code quality methods
-- **Collaboration Techniques**: Team communication and coordination methods
-
-### Current Suggestions for Evaluation
-*This section will be populated as new practices are discovered and tested*
-
----
-
-## Migration Guide
-
-### For Existing Projects
-1. **Backup current structure** before making changes
-2. **Choose appropriate methodology** (Light vs Full)
-3. **Map existing files** to new naming convention
-4. **Convert requirements to user stories** format
-5. **Restructure tasks** into Kanban format
-6. **Update AmazonQ.md** to new template
-7. **Test new structure** with a few development cycles
-
-### File Mapping Examples
-- `requirements.md` → Keep as initial requirements, create new `stories.md`
-- `tasks.md` → Restructure into Kanban format with Epic/Story references
-- `technical-architecture.md` → Rename to `design.md`
-- `user-stories.md` → Rename to `stories.md`
 
 ---
 
@@ -414,5 +167,27 @@ When you discover effective new practices during project work:
 - **Team Coordination**: Effective collaboration (team projects)
 
 ---
+
+## Project-Specific Standards
+
+See `docs/project-standards.md` for this project's specific standards including:
+- Go experiment organisation and API research process
+- Experiment-driven development workflow
+- Knowledge management approach
+- Project-specific release process
+
+---
+
+## Reference Files
+
+All detailed information is maintained in master files:
+
+- **`.amazonq/rules/checklists.md`** - Operation checklists for all development activities
+- **`.amazonq/rules/project-templates.md`** - File structure templates and setup commands
+- **`.amazonq/rules/task-formats.md`** - Standard formats for tasks, stories, and epics
+- **`.amazonq/rules/suggestions.md`** - Current methodology improvements and migration guides
+- **`.amazonq/rules/git-workflow.md`** - Version control standards and practices
+- **`.amazonq/rules/documentation-standards.md`** - Code commenting and documentation requirements
+- **`.amazonq/rules/process-map.md`** - Complete process tree and cross-references
 
 This methodology evolves based on practical usage and feedback. Document successful patterns and suggest improvements to keep it effective and current.

@@ -48,3 +48,4 @@ When creating or modifying code, Q Developer should:
 - Review documentation during code reviews
 - Ensure documentation is accessible to new team members
 - **UK Spelling**: Use British English spelling where possible (colour, optimise, realise, behaviour, etc.)
+- **Markdown Filenames**: Use hyphens (-) not underscores (_) in markdown filenames for URL-friendliness and consistency

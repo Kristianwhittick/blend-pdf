@@ -4,8 +4,8 @@
 Documentation of pdfcpu API functions based on experimental testing.
 
 ## Related Documentation
-- **[API Experiments Procedures](api_experiments_procedures.md)**: Step-by-step testing procedures
-- **[Memory Processing Research](memory_processing_research.md)**: In-memory processing research and conclusions
+- **[API Experiments Procedures](api-experiments-procedures.md)**: Step-by-step testing procedures
+- **[Memory Processing Research](memory-processing-research.md)**: In-memory processing research and conclusions
 - **[Testing Guide](testing.md)**: Comprehensive testing procedures for the application
 
 ## Breakthrough: Stream-Based APIs Discovered ✅

@@ -4,8 +4,8 @@
 Results from testing pdfcpu library for in-memory PDF processing to eliminate temporary files during merging operations.
 
 ## Related Documentation
-- **[API Knowledge Base](api_knowledge.md)**: Complete pdfcpu API function reference and experimental results
-- **[API Experiments Procedures](api_experiments_procedures.md)**: Step-by-step testing procedures
+- **[API Knowledge Base](api-knowledge.md)**: Complete pdfcpu API function reference and experimental results
+- **[API Experiments Procedures](api-experiments-procedures.md)**: Step-by-step testing procedures
 - **[Testing Guide](testing.md)**: Comprehensive testing procedures for the application
 
 ## Key Findings

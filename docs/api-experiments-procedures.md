@@ -68,5 +68,5 @@ go run experiments/run_experiments.go 29    # Test discovered stream-based APIs
 - Each experiment is in its own subfolder (exp01/, exp02/, etc.)
 - All experiments run through the unified runner: `go run experiments/run_experiments.go <number>`
 - Results verified using pdftotext
-- Detailed experiment results documented in api_knowledge.md
-- Memory processing research documented in memory_processing_research.md
+- Detailed experiment results documented in api-knowledge.md
+- Memory processing research documented in memory-processing-research.md

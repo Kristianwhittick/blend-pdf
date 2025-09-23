@@ -1,27 +1,10 @@
 # Git Workflow and Development Process
 
-## 📝 Commit Message Conventions
+> **Note**: Basic git workflow standards are defined in `.amazonq/rules/git-workflow.md`. This file contains project-specific extensions and examples.
 
-### Prefixes
-- `feat:` - New features
-- `fix:` - Bug fixes
-- `docs:` - Documentation changes
-- `perf:` - Performance improvements
-- `refactor:` - Code refactoring
-- `test:` - Adding or updating tests
-- `chore:` - Maintenance tasks
+## Project-Specific Commit Examples
 
-### Format
-```
-<type>: <short description>
-
-<detailed description>
-- Bullet point 1
-- Bullet point 2
-- Bullet point 3
-```
-
-### Examples
+### BlendPDF-Specific Commit Messages
 ```bash
 feat: Add smart PDF processing with page reversal logic
 
@@ -44,116 +27,6 @@ docs: Update API usage examples
 
 - Add new function examples for memory processing
 - Update parameter descriptions
-- Include error handling patterns
-```
-
----
-
-## 🎯 Branching Strategy
-
-### Main Branch
-- **`main`**: Production-ready code
-- All commits should be stable and tested
-- Direct commits only for hotfixes and documentation updates
-
-### Feature Development
-```bash
-# Create feature branch from main
-git checkout main
-git pull origin main
-git checkout -b feature/feature-name
-
-# Make changes and commits
-git add .
-git commit -m "feat: implement new feature"
-
-# Push and create PR
-git push origin feature/feature-name
-# Create Pull Request on GitHub
-```
-
-### Bug Fixes
-```bash
-# Create fix branch from main
-git checkout main
-git pull origin main
-git checkout -b fix/bug-description
-
-# Make changes and commits
-git add .
-git commit -m "fix: resolve specific issue"
-
-# Push and create PR
-git push origin fix/bug-description
-# Create Pull Request on GitHub
-```
-
-### Documentation Updates
-```bash
-# Create docs branch from main
-git checkout main
-git pull origin main
-git checkout -b docs/update-description
-
-# Make changes and commits
-git add .
-git commit -m "docs: update documentation"
-
-# Push and create PR (or direct commit for minor updates)
-git push origin docs/update-description
-```
-
-### Hotfixes
-```bash
-# Create hotfix branch from main
-git checkout main
-git pull origin main
-git checkout -b hotfix/critical-fix
-
-# Make changes and commits
-git add .
-git commit -m "fix: critical production issue"
-
-# Push and merge immediately
-git push origin hotfix/critical-fix
-git checkout main
-git merge hotfix/critical-fix
-git push origin main
-git branch -d hotfix/critical-fix
-```
-
----
-
-## 📋 Pull Request Guidelines
-
-### PR Title Format
-```
-<type>: <short description>
-```
-
-### PR Description Template
-```markdown
-## Description
-Brief description of changes made.
-
-## Type of Change
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-
-## Testing
-- [ ] Unit tests pass
-- [ ] Integration tests pass
-- [ ] Manual testing completed
-
-## Checklist
-- [ ] Code follows project style guidelines
-- [ ] Self-review completed
-- [ ] Documentation updated
-- [ ] No new warnings introduced
-```
-
 ---
 
 ## 🏷️ Release Process

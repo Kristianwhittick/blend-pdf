@@ -483,7 +483,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 **Description**: Research and evaluate CLI libraries for enhanced user experience
 
-**Completion Notes**: Comprehensive research documented in cli_library_research.md with recommendations for future enhancements.
+**Completion Notes**: Comprehensive research documented in cli-library-research.md with recommendations for future enhancements.
 
 ---
 
@@ -629,9 +629,9 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ### Development Guidelines
 - Future development should maintain backward compatibility
 - Comprehensive research and test code available for reference in `/experiments/`
-- All API knowledge documented in `/docs/api_knowledge.md`
-- Memory processing research documented in `/docs/memory_processing_research.md`
-- Follow git workflow and commit conventions in `/docs/git_flow.md`
+- All API knowledge documented in `/docs/api-knowledge.md`
+- Memory processing research documented in `/docs/memory-processing-research.md`
+- Follow git workflow and commit conventions in `/docs/project-git-flow.md`
 
 ---
 
@@ -831,7 +831,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Requirements**: Quality assurance for all requirements (R1.1-R16.9)
 - **Priority**: Quality Assurance (High)
 - **Description**: Implement comprehensive unit testing framework for Go code
-- **Prerequisites**: Move experiment content from testing.md to api_experiments_procedures.md ✅
+- **Prerequisites**: Move experiment content from testing.md to api-experiments-procedures.md ✅
 - **Implementation**: Applied Go built-in testing + Testify framework
 - **Deliverables**:
   - Research document with framework comparison and recommendations
@@ -857,8 +857,8 @@ All core functionality complete with professional UI, real-time monitoring, comp
 - **Implementation**: Applied approved changes from documentation review analysis
 - **Deliverables**:
   - Reorganised API documentation structure
-  - Moved experiment summaries to api_knowledge.md
-  - Streamlined api_experiments_procedures.md for testing procedures only
+  - Moved experiment summaries to api-knowledge.md
+  - Streamlined api-experiments-procedures.md for testing procedures only
   - Updated all cross-references and file links
   - Added consistent navigation sections
   - Removed documentation_review_analysis.md after completion
@@ -893,7 +893,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - Perfect Interleaving: Native zip merge provides exact pattern needed
   - Better Performance: Fewer I/O operations and API calls
   - True Solution: Uses intended pdfcpu APIs, not workarounds
-- **Files Modified**: pdfops.go, docs/api_knowledge.md, experiments 20-22
+- **Files Modified**: pdfops.go, docs/api-knowledge.md, experiments 20-22
 - **Testing**: All tests pass with new implementation, verified correct output pattern
 
 ### Task 20: CLI Library Research
@@ -905,7 +905,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - Researched 6 major Go CLI libraries (Cobra, Bubble Tea, Survey, Termui, Progressbar, Fatih/Color)
   - Analysed pros/cons and use cases for each library
   - Identified 3 implementation approaches with effort estimates
-  - Created comprehensive findings document in `docs/cli_library_research.md`
+  - Created comprehensive findings document in `docs/cli-library-research.md`
   - Recommended phased approach: Survey + Progressbar + Fatih/Color for quick wins
 - **Deliverables**:
   - ✅ Complete library comparison with maintenance status
@@ -952,7 +952,7 @@ All core functionality complete with professional UI, real-time monitoring, comp
   - Benefits: Reduced disk I/O, better memory efficiency, cleaner application architecture
 - **Implementation Completed**:
   - ✅ GitHub issue research and analysis completed
-  - ✅ Technical specification document created (`docs/pdfcpu_feature_request.md`)
+  - ✅ Technical specification document created (`docs/pdfcpu-feature-request.md`)
   - ✅ Feature request markdown ready for review
   - ✅ GitHub issue submitted
   - [ ] Follow-up on maintainer feedback (pending response)

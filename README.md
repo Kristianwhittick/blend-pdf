@@ -361,8 +361,8 @@ blend-pdf/
 ├── fileops.go          # File management operations
 ├── docs/               # Comprehensive documentation
 │   ├── tasks.md        # Development roadmap (Phase 4 remaining)
-│   ├── git_flow.md     # Git history and workflow
-│   ├── api_knowledge.md # pdfcpu API research
+│   ├── project-git-flow.md # Git history and workflow
+│   ├── api-knowledge.md # pdfcpu API research
 │   ├── specification.md # Project requirements
 │   └── TEST.md         # Testing procedures
 └── experiments/        # API research and test programs
