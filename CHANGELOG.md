@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2025-09-23
 
 ### Fixed
+- Multi-output folder creation logic now works correctly at startup
+- Default `output/` folder no longer created when using `-o` flag
+- Multi-output folders (`test1`, `test2`, `test3`) now created at startup alongside `archive/` and `error/`
+- Consistent folder creation timing eliminates confusion about when folders appear
 - Multi-output folder paths now display as absolute paths for consistency
 - UI banner shows full paths like `/home/user/project/test1` instead of relative `test1`
 - Path display consistency maintained between single and multi-output folder modes

@@ -1,7 +1,7 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (45 Total)
-- ✅ **Done**: 37 tasks
+## Task Summary (46 Total)
+- ✅ **Done**: 38 tasks
 - 🔄 **In Progress**: 0 tasks  
 - 📋 **To Do**: 0 tasks
 - 🗂️ **Backlog**: 8 tasks
@@ -300,6 +300,37 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## ✅ Done
+
+### T-046: Fix Multi-Output Folder Creation Logic ✅ COMPLETED
+**Epic**: E-02 | **Story**: US-005
+**Completed**: Sep 23 | **Actual Time**: 2 hours
+
+**Description**: Fixed directory creation logic to not create default output folder when using `-o` flag and create multi-output folders at startup
+
+**Completion Notes**: Successfully implemented both parts of the fix. The application now correctly handles multi-output folder creation with consistent timing and proper conditional logic.
+
+**Implementation Details**:
+- Modified `createRequiredDirectories()` function in fileops.go
+- Added conditional logic to check `CONFIG.OutputFolders` before creating default output
+- Skip default `output/` folder creation when `-o` flag is used
+- Create multi-output folders at startup alongside `archive/` and `error/`
+- Used `append(dirs, CONFIG.OutputFolders...)` for cleaner code
+- All folder creation now happens consistently at startup
+
+**Testing Results**:
+- ✅ Default behavior: `./blend-pdf` creates `archive/`, `output/`, `error/`
+- ✅ Multi-output: `./blend-pdf -o "test1,test2,test3"` creates `archive/`, `error/`, `test1/`, `test2/`, `test3/` (no `output/`)
+- ✅ Operations work correctly with pre-created folders
+- ✅ File counts update properly: archive(1), test1(1), test2(1), test3(1)
+
+**Benefits Achieved**:
+- **Consistent Timing**: All folders created at startup, not during operations
+- **Logical Behavior**: No default output folder when using custom output folders
+- **Better UX**: Users see all folders immediately after startup
+- **No Regression**: Default single-output behavior unchanged
+- **Cleaner Code**: Simplified logic with proper conditional handling
+
+---
 
 ### T-045: Fix Multi-Output Folder Path Display ✅ COMPLETED
 **Epic**: E-03 | **Story**: US-006
