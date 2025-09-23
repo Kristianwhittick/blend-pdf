@@ -3,7 +3,7 @@
 # Licensed under the Apache License, Version 2.0
 
 # Configuration
-APP_NAME := blendpdf
+APP_NAME := blend-pdf
 VERSION := $(shell grep 'VERSION = ' constants.go | cut -d'"' -f2)
 BUILD_DIR := dist
 GO_VERSION := $(shell go version | cut -d' ' -f3)
@@ -47,7 +47,6 @@ clean: ## Clean build directory and artifacts
 	@echo "$(YELLOW)Cleaning build artifacts...$(NC)"
 	@rm -rf $(BUILD_DIR)
 	@rm -f $(APP_NAME)
-	@rm -f blend-pdf
 	@echo "$(GREEN)✓ Clean completed$(NC)"
 
 ## Build for current platform
