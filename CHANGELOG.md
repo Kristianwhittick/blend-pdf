@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.3.1] - 2025-09-23
 
 ### Fixed
+- Stale lock file detection and automatic cleanup on startup
+- Lock files from terminated processes now automatically removed
+- PID validation prevents removal of active lock files
 - Multi-output folder UI display now shows individual folders and counts
 - Banner displays "3 folders" with total count when using `-o "folder1,folder2,folder3"`
 - Individual folder counts shown for first 2 folders to fit within banner width

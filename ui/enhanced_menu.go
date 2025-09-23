@@ -217,12 +217,20 @@ func (e *EnhancedMenu) showHeader() {
 	// Display output folders - single or multiple
 	if len(e.outputFolders) == 1 {
 		outputCount := e.fileOps.CountPDFFiles(e.outputFolders[0])
-		fmt.Printf("│ Output : %-59s %6d │\n", e.outputFolders[0], outputCount)
+		absPath, err := filepath.Abs(e.outputFolders[0])
+		if err != nil {
+			absPath = e.outputFolders[0] // Fallback to original path
+		}
+		fmt.Printf("│ Output : %-59s %6d │\n", absPath, outputCount)
 	} else {
-		// Multiple output folders - show each as "Output :"
+		// Multiple output folders - show each as "Output :" with absolute paths
 		for _, folder := range e.outputFolders {
 			count := e.fileOps.CountPDFFiles(folder)
-			fmt.Printf("│ Output : %-59s %6d │\n", folder, count)
+			absPath, err := filepath.Abs(folder)
+			if err != nil {
+				absPath = folder // Fallback to original path
+			}
+			fmt.Printf("│ Output : %-59s %6d │\n", absPath, count)
 		}
 	}
 

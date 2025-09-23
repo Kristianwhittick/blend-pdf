@@ -1,7 +1,7 @@
 # Task Board - BlendPDFGo
 
-## Task Summary (44 Total)
-- ✅ **Done**: 35 tasks
+## Task Summary (45 Total)
+- ✅ **Done**: 36 tasks
 - 🔄 **In Progress**: 1 task  
 - 📋 **To Do**: 0 tasks
 - 🗂️ **Backlog**: 8 tasks
@@ -13,40 +13,46 @@ All core functionality complete with professional UI, real-time monitoring, comp
 
 ## 🔄 In Progress
 
-### T-037: Lock File Cleanup Investigation
-**Epic**: E-06 | **Story**: US-010
-**Priority**: Medium | **Estimate**: 2 hours
+### T-045: Fix Multi-Output Folder Path Display
+**Epic**: E-03 | **Story**: US-006
+**Priority**: Medium | **Estimate**: 1 hour
 
-**Description**: Investigate and fix lock file cleanup to ensure proper release on application exit
+**Description**: Fix multi-output folder UI to show absolute paths instead of relative paths for consistency
 
-**Background**: Found 20 stale lock files in /tmp/ during cleanup, indicating lock files are not being properly released when application terminates (likely from Ctrl+C, crashes, or abnormal exits).
+**Background**: When using multi-output folders with `-o "folder1,folder2,folder3"`, the UI banner shows relative paths (e.g., `test1`, `test2`) instead of absolute paths. Single output folder display shows absolute paths for consistency.
 
-**Investigation Findings** (Sep 23):
-- **Confirmed Issue**: Found 2 additional stale lock files after testing (PIDs 187685, 188379)
-- **Root Cause**: Lock files not cleaned up when process terminated abnormally (timeout, Ctrl+C)
-- **Current Behavior**: Lock files remain in /tmp/ after process death
-- **Impact**: Prevents new instances from starting in same directory until manual cleanup
-- **Test Scenario**: Files left after `timeout 10s ./blend-pdf` commands during testing
+**Current Behavior**:
+```
+│ Output : test1                                                            1 │
+│ Output : test2                                                            1 │
+│ Output : test3                                                            1 │
+```
+
+**Expected Behavior**:
+```
+│ Output : /home/user/project/test1                                         1 │
+│ Output : /home/user/project/test2                                         1 │
+│ Output : /home/user/project/test3                                         1 │
+```
 
 **Investigation Required**:
-- Review signal handling for graceful shutdown
-- Ensure lock file cleanup in defer statements
-- Test lock file release on normal exit, Ctrl+C, and crashes
-- Consider adding lock file age checking and auto-cleanup
-- Add PID validation on startup to detect stale lock files
+- Convert relative output folder paths to absolute paths before display
+- Ensure consistency with single output folder display format
+- Maintain proper alignment within 80-character banner width
+- Test with various path types (relative, absolute, mixed)
 
 **Acceptance Criteria**:
-- [ ] Lock files properly released on normal application exit
-- [ ] Lock files cleaned up on Ctrl+C (SIGINT) signal
-- [ ] Lock files handled appropriately on crashes
-- [ ] Stale lock file detection and cleanup on startup (check PID validity)
-- [ ] Test across different termination scenarios
+- [ ] Multi-output folders display absolute paths in UI banner
+- [ ] Path display consistent with single output folder format
+- [ ] Banner alignment maintained within 80-character width
+- [ ] Works with relative paths, absolute paths, and mixed configurations
+- [ ] File counts remain accurate and update correctly
 
 **Definition of Done**:
-- [ ] Signal handling reviewed and improved
-- [ ] Lock file cleanup tested in all exit scenarios
-- [ ] Documentation updated with lock file behaviour
-- [ ] No stale lock files left after normal usage
+- [ ] Multi-output folder paths converted to absolute paths for display
+- [ ] UI consistency maintained with single output folder display
+- [ ] All path types tested and working correctly
+- [ ] Banner formatting preserved
 
 ---
 
@@ -333,6 +339,40 @@ All core functionality complete with professional UI, real-time monitoring, comp
 ---
 
 ## ✅ Done
+
+### T-037: Lock File Cleanup Investigation ✅ COMPLETED
+**Epic**: E-06 | **Story**: US-010
+**Completed**: Sep 23 | **Actual Time**: 2 hours
+
+**Description**: Investigated and fixed lock file cleanup to ensure proper release on application exit
+
+**Completion Notes**: Successfully implemented stale lock file detection and automatic cleanup. The application now detects lock files from terminated processes and removes them automatically on startup, while preserving protection against concurrent instances.
+
+**Root Cause Identified**: Lock files were not cleaned up when processes terminated abnormally (SIGKILL, crashes, forced termination). Signal handling was working correctly for SIGINT/SIGTERM, but SIGKILL cannot be caught.
+
+**Implementation Details**:
+- Added PID validation in `checkExistingLockFile()` function
+- Implemented `isLockFileStale()` to check if process is still running
+- Uses `process.Signal(syscall.Signal(0))` to test process existence on Unix
+- Automatically removes stale lock files with informative logging
+- Maintains protection against concurrent instances with valid PIDs
+- Added syscall import for process validation
+
+**Testing Results**:
+- ✅ Stale lock files (non-existent PIDs) automatically removed
+- ✅ Active lock files (valid PIDs) preserved and protected
+- ✅ Normal signal handling (SIGINT/SIGTERM) continues to work
+- ✅ Graceful shutdown cleanup still functions correctly
+- ✅ No stale lock files accumulate from testing
+
+**Benefits Achieved**:
+- **Automatic Cleanup**: Stale lock files removed without manual intervention
+- **Robust Detection**: PID validation ensures accurate stale file identification
+- **Preserved Protection**: Concurrent instance prevention still works correctly
+- **Better UX**: No more manual lock file removal required
+- **Reliable Operation**: Eliminates lock file accumulation from abnormal termination
+
+---
 
 ### T-044: Fix Multi-Output Folder UI Display ✅ COMPLETED
 **Epic**: E-03 | **Story**: US-006
