@@ -42,7 +42,17 @@ func setupDirectories(folder string) error {
 
 // Create required directories if they don't exist
 func createRequiredDirectories() error {
-	dirs := []string{ARCHIVE, OUTPUT, ERROR_DIR}
+	// Always create archive and error directories
+	dirs := []string{ARCHIVE, ERROR_DIR}
+
+	// Only create default output directory if not using multi-output folders
+	if CONFIG == nil || len(CONFIG.OutputFolders) == 0 {
+		dirs = append(dirs, OUTPUT)
+	} else {
+		// Create multi-output folders at startup
+		dirs = append(dirs, CONFIG.OutputFolders...)
+	}
+
 	for _, dir := range dirs {
 		if err := os.MkdirAll(dir, 0750); err != nil {
 			return fmt.Errorf("failed to create directory %s: %v", dir, err)
