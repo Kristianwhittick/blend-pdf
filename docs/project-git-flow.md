@@ -111,11 +111,11 @@ Follow Semantic Versioning (SemVer):
    make clean && make build-all
    
    # Deploy Windows binary
-   cp dist/blendpdf-v1.3.2-windows-amd64.exe /mnt/c/Users/krist/bin/blendpdf.exe
+   cp dist/blendpdf-v*-windows-amd64.exe /mnt/c/Users/krist/bin/blendpdf.exe
    
    # Deploy Linux binary
    mkdir -p ~/local/bin
-   cp dist/blendpdf-v1.3.2-linux-amd64 ~/local/bin/blendpdf
+   cp dist/blendpdf-v*-linux-amd64 ~/local/bin/blendpdf
    chmod +x ~/local/bin/blendpdf
    ```
    ```bash
